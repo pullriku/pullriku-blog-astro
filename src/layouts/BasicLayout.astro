@@ -1,0 +1,70 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import '../styles/global.css';
+import { BLOG_NAME, LIGHT_BG } from '../lib/consts';
+
+type Props = {
+    title?: string;
+    slug?: string;
+};
+
+const { title, slug: slug } = Astro.props;
+const titleWithBlogName = title ? `${title} | ${BLOG_NAME}` : BLOG_NAME;
+const obImagePath = slug ? await getImagePathBySlug(slug) : "/ogp-img.png";
+
+export const headerPadding = "8";
+
+export async function getImagePathBySlug(slug: string) {
+
+    if (slug) {
+        
+        const pngsRecord = import.meta.glob(["/public/covers/*.png", "/public/covers/*.jpg", "/public/covers/*.jpeg"]);
+        const pngs = Object.entries(pngsRecord);
+        // console.log(pngs);
+        
+        for (let [key, _image] of pngs) {
+            if (key.split("/").pop()?.split(".")[0] === slug) {
+                return key.replace("/public", "");
+            }
+        }
+        return `/ogp-img.png`;
+    } else {
+        return `/ogp-img.png`;
+    }
+}
+
+---
+<!doctype html>
+<html lang="ja" class=` ${LIGHT_BG} dark:bg-gray-900 dark:text-white`>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
+        <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
+        <link rel="shortcut icon" href="/favicon/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+        <meta name="apple-mobile-web-app-title" content="pullriku" />
+        <link rel="manifest" href="/favicon/site.webmanifest" />
+
+        <meta property="og:title" content={titleWithBlogName}>
+        <meta property="og:type" content="website">
+        <meta property="og:url" content={Astro.url}>
+        <meta property="og:image" content={obImagePath}>
+        <meta property="og:site_name" content={BLOG_NAME}>
+        <meta property="og:description" content="pullrikuによる技術ブログです。">
+        <meta property="og:locale" content="ja_JP">
+
+        <title>{titleWithBlogName}</title>
+        <!-- <ClientRouter /> -->
+    </head>
+    <body>
+        <Header />
+        <div class=`py-${headerPadding}`>
+            <slot />
+        </div>
+        <Footer />
+    </body>
+</html>

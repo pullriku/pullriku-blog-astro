@@ -1,0 +1,19 @@
+---
+import { BLOG_NAME, LIGHT_OVERLAY, N_CAHRS_STRONG_TITLE } from "../lib/consts";
+import Hamburger from "./Hamburger.astro";
+import Navigation from "./Navigation.astro";
+const titleStrong = BLOG_NAME.slice(0, N_CAHRS_STRONG_TITLE);
+const titleNormalColor = BLOG_NAME.slice(N_CAHRS_STRONG_TITLE);
+
+---
+<header class=`p-4 shadow-lg dark:shadow-none ${LIGHT_OVERLAY} dark:bg-gray-800 flex flex-col md:flex-row items-center gap-4 md:gap-8`>
+    <a href="/">
+        <div class="text-3xl font-bold">
+            <span class="text-blue-600 dark:text-blue-400">{titleStrong}</span>{titleNormalColor}
+        </div>
+    </a>
+
+    <nav class="w-auto">
+        <Navigation />
+    </nav>
+</header>

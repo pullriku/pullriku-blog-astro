@@ -1,0 +1,25 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { getAllPosts } from "../lib/unitl";
+import PostPreview from "./PostPreview.astro";
+
+const maxArticles = 10;
+
+// const posts = (await getAllPosts()).slice(-maxArticles);
+
+type Props = {
+    posts: CollectionEntry<'posts'>[],
+}
+
+const { posts } = Astro.props;
+---
+
+<ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {
+        posts.map((post) => (
+            <li>
+                <PostPreview post={post} />
+            </li>
+        ))
+    }
+</ul>

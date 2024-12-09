@@ -1,0 +1,31 @@
+---
+import { Image } from "astro:assets";
+import SingleColumnLayout from "../layouts/SingleColumnLayout.astro";
+
+import pullrikuImage from "../assets/pullriku.jpeg";
+import { DARK_OVERLAY, LIGHT_OVERLAY } from "../lib/consts";
+import ServiceIcon from "../components/ServiceIcon.astro";
+
+---
+
+<SingleColumnLayout title="自己紹介">
+	<div class={"m-4 p-4 md:px-8 max-w-lg mx-auto rounded-lg shadow-lg" + ` ${LIGHT_OVERLAY} dark:${DARK_OVERLAY} `}>
+		<div>
+			<div class="flex flex-row justify-center gap-8 items-center">
+				<div>
+					<Image src={pullrikuImage} alt="ウミガメの画像。サイト制作者のアイコン。" width={100} height={100} class="rounded-full" />
+				</div>
+				<div>
+					<h1 class="mb-0">Riku<br><small class="text-md text-gray-600 dark:text-gray-400">@pullriku</small></h1>
+				</div>
+			</div>
+		</div>
+		<div class="flex flex-row items-center gap-2 justify-center m-4">
+			<ServiceIcon href="https://github.com/pullriku" name="mdi:github" width={24} height={24} />
+			<ServiceIcon href="https://zenn.dev/pullriku" name="simple-icons:zenn" width={24} height={24} />
+			<ServiceIcon href="https://x.com/pullriku" name="prime:twitter" width={24} height={24} />
+		</div>
+		<p>情報系の大学3年生。専攻はネットワーク・セキュリティで、これらと機械学習をうまく組み合わせる方法を考えたいなと思っている。普段はRust言語を触ることが多い。プログラミング言語を自作しかけたが未完。</p>
+	</div>
+</SingleColumnLayout>
+

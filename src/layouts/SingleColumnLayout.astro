@@ -1,0 +1,15 @@
+---
+import BasicLayout from "./BasicLayout.astro";
+
+type Props = {
+    title?: string;
+};
+
+const { title } = Astro.props;
+---
+
+<BasicLayout title={title}>
+    <div class="mx-auto px-4 lg:px-16">
+        <slot />
+    </div>
+</BasicLayout>

@@ -1,0 +1,23 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getAllPosts, getPostsByTag } from '../../lib/unitl';
+import SingleColumnLayout from '../../layouts/SingleColumnLayout.astro';
+import MoreArticles from '../../components/MoreArticles.astro';
+
+export const getStaticPaths = (async () => {
+    const allPosts = await getAllPosts();
+    const tags = allPosts.flatMap((post) => post.data.tags ?? []);
+    const uniqueTags = [...new Set(tags)];
+
+    return uniqueTags.map((tag) => ({
+        params: { tag: tag },
+    }));
+}) satisfies GetStaticPaths;
+
+const { tag } = Astro.params;
+const posts = await getPostsByTag(tag);
+---
+<SingleColumnLayout title={tag}>
+    <h1 class="text-4xl font-bold mb-4">タグ: {tag}</h1>
+    <MoreArticles posts={posts} />
+</SingleColumnLayout>

@@ -1,0 +1,16 @@
+---
+import type { Page } from "astro";
+import BlueLink from "./BlueLink.astro";
+import type { CollectionEntry } from "astro:content";
+
+type Props = {
+    page: Page<CollectionEntry<any>>;
+};
+
+const { page }: Props = Astro.props;
+---
+
+<div class="flex gap-8 w-fit mx-auto">
+    {page.url.prev ? <BlueLink text="前へ" href={page.url.prev} /> : null}
+    {page.url.next ? <BlueLink text="次へ" href={page.url.next} /> : null}
+</div>

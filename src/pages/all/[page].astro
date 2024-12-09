@@ -1,0 +1,32 @@
+---
+import type { GetStaticPaths, Page } from 'astro';
+import { getAllPosts } from '../../lib/unitl';
+import SingleColumnLayout from '../../layouts/SingleColumnLayout.astro';
+import MoreArticles from '../../components/MoreArticles.astro';
+import { headerPadding } from '../../layouts/BasicLayout.astro';
+import type { CollectionEntry } from 'astro:content';
+import BlueLink from '../../components/BlueLink.astro';
+import PageLink from '../../components/PageLink.astro';
+
+export const pageSize = 30
+
+export const getStaticPaths =  (async ({paginate}) => {
+    const posts = await getAllPosts();
+    
+    return paginate(posts, {pageSize: pageSize});
+}) satisfies GetStaticPaths;
+
+const { page }: { page: Page<CollectionEntry<'posts'>>} = Astro.props;
+
+---
+<SingleColumnLayout title='すべての記事'>
+    <h1 class=`text-4xl font-bold mb-${headerPadding}`>すべての記事</h1>
+    
+    <PageLink page={page} />
+
+    <div class="mt-8">
+        <MoreArticles posts={page.data} />
+    </div>
+
+    <PageLink page={page} />
+</SingleColumnLayout>

@@ -1,0 +1,50 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import PostPreview from './PostPreview.astro';
+import { LIGHT_OVERLAY } from '../lib/consts';
+import { zennUrl } from '../lib/foreign';
+import zenn from "../assets/zenn.svg";
+
+type Props = {
+    post: CollectionEntry<'posts'>,
+};
+
+const { post } = Astro.props;
+const coverPath = post.data.cover ?? `/covers/${post.slug}.png`
+const href = post.data.zenn ? zennUrl(post.slug) : `/posts/${post.slug}`;
+---
+{/* displayがmd未満のときは PostPreview */}
+<article class="md:hidden mb-4">
+    <PostPreview post={post} />
+</article>
+
+{/* displayがmd以上のときは HeroArticle */}
+<article class="justify-center md:flex hidden mb-8">
+    <a href={href}>
+        <div class=`flex h-full gap-4 items-center shadow-2xl dark:shadow-none ${LIGHT_OVERLAY} dark:bg-slate-800 p-8 rounded-lg`>
+            <img
+                src={coverPath}
+                alt={`記事「${post.data.title}」のサムネイル`}
+                class="max-h-52 max-w-52 object-contain shadow-md rounded-lg"
+            />
+            <div class="flex flex-col h-full ">
+                 <div class="my-auto">
+                    <h1 class="font-bold text-xl hover:underline">{post.data.title}</h1>
+                    <p>{post.data.desc}</p>
+                 </div>
+                 <div class=" bottom-0 flex w-full justify-end  flex-row items-center mt-2">
+                    {
+                        post.data.zenn && (
+                        <Image src={zenn} alt="Zennのロゴ" width="20" height="20" class="inline-block mr-2" />
+                        <p class="text-gray-500">外部サイト(Zenn)</p>
+                        )
+                    }
+                    <div class="text-sm text-gray-500 text-right ml-auto">
+                        <time datetime={post.data.pubDate.toISOString().split('T')[0]}>{post.data.pubDate.toISOString().split('T')[0]}</time>
+                    </div>
+                 </div>
+            </div>
+        </div>
+    </a>
+</article>

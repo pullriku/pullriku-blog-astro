@@ -1,0 +1,40 @@
+---
+import { Image } from 'astro:assets'
+import type { CollectionEntry } from 'astro:content'
+import { LIGHT_OVERLAY } from '../lib/consts';
+import { getImagePathBySlug } from '../layouts/BasicLayout.astro';
+import zenn from "../assets/zenn.svg";
+import { zennUrl } from '../lib/foreign.ts';
+
+type Props = {
+    post: CollectionEntry<'posts'>,
+}
+
+const { post } = Astro.props
+
+const coverPath = await getImagePathBySlug(post.slug);
+const time = post.data.pubDate.toISOString().split('T')[0]
+
+const href = post.data.zenn ? zennUrl(post.slug) : `/posts/${post.slug}`;
+---
+
+<a href={href}>
+    <div class=`inline-block p-8 w-full h-full shadow-2xl dark:shadow-none ${LIGHT_OVERLAY} dark:bg-slate-800 rounded-lg flex flex-col`>
+        <Image src={coverPath} alt=`記事「${post.data.title}」のサムネイル` width=200 height=200 class=" mb-4 object-cover drop-shadow-md rounded-lg w-full h-44"/>
+        <span class="text-xl hover:underline">
+            {post.data.title}
+        </span>
+        
+        <div class="flex flex-row mt-auto items-center">
+            {
+                post.data.zenn && (
+                    <Image src={zenn} alt="Zennのロゴ" width="20" height="20" class="inline-block mr-2" />
+                    <p class="text-gray-500">外部サイト(Zenn)</p>
+                )
+            }
+            <div class="text-sm text-gray-500 text-right ml-auto">
+                <time datetime={time}>{time}</time>
+            </div>
+        </div>
+    </div>
+</a>

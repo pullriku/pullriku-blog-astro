@@ -1,0 +1,106 @@
+---
+import type { GetStaticPaths } from "astro";
+import { type CollectionEntry } from "astro:content";
+import BasicLayout, { getImagePathBySlug } from "../../layouts/BasicLayout.astro";
+import Prose from "../../layouts/Prose.astro";
+
+import { getAllPosts } from "../../lib/unitl";
+import BackButton from "../../components/BackButton.astro";
+import { DARK_BG, DARK_OVERLAY, LIGHT_OVERLAY } from "../../lib/consts";
+import Tag from "../../components/Tag.astro";
+import RoundedBox from "../../layouts/RoundedBox.astro";
+
+export const getStaticPaths = (async() => {
+    const posts = await getAllPosts();
+    
+    return posts.map((post) => ({
+        params: {
+            slug: post.slug,
+        },
+        props: post,
+    })) ?? [];
+}) satisfies GetStaticPaths;
+
+type Props = CollectionEntry<'posts'>;
+
+const post = Astro.props;
+console.log(post);
+
+
+const { Content, headings } = await post.render();
+const imageSrc = await getImagePathBySlug(post.slug);
+---
+<BasicLayout title={post.data.title}>
+    <div class="px-4 md:px-12 py-4">
+        {
+            // タグ
+            (post.data.tags ?? []).map((tag) => (
+                <RoundedBox>
+                    <Tag tag={tag} />
+                </RoundedBox>
+            ))
+        }
+    </div>
+    <div class="px-0 md:px-4">
+        <div class="mx-auto justify-center lg:flex gap-10">
+            { /* 記事の列 */ }
+            <div class=`max-w-4xl p-4 md:p-12 pt-5 flex-1 min-w-0  mx-auto lg:mx-0 lg:w-fit ${LIGHT_OVERLAY} dark:${DARK_BG} rounded-lg`>
+                    <img src={imageSrc} alt={`記事「${post.data.title}」のサムネイル`} class="max-w-52 max-h-52 object-contain mx-auto drop-shadow-md rounded-lg" />
+                <!-- <BackButton source_path="/" /> -->
+                <div>
+                    <!-- <div set:html={html}></div> -->
+                    <h1 class="text-3xl font-bold py-8">{post.data.title}</h1>
+                    <Prose>
+                        <Content/>
+                    </Prose>
+                </div>
+            </div>
+            { /* 目次の列（スクロールのためのコンテナ） */ }
+            <div class="lg:h-auto lg:w-72">
+                { /* 目次 */ }
+                <div class="
+                    hidden lg:block
+                    top-4 p-4
+                    break-words overflow-scroll
+                    max-h-80-lvh sticky
+                    border-2 border-gray-400 dark:border-gray-600 rounded-lg dark:bg-sky-950
+                ">
+                <p class="text-center">目次</p>
+                <hr class="m-4 border-cyan-500 dark:border-cyan-800">
+                    {
+                        headings.map((heading) => (
+                            <a href={`#${heading.slug}`} class="block hover:underline">
+                                {
+                                    // 見出しレベルに応じたインデント
+                                    heading.depth === 1
+                                        ? <span class="text-base font-bold">{heading.text}</span>
+                                        : heading.depth === 2
+                                            ? <span class="text-base indent-8">{heading.text}</span>
+                                            : heading.depth === 3
+                                                ? <span class="text-base indent-16">{heading.text}</span>
+                                                : <></>
+                                }
+                            </a>
+                        ))
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</BasicLayout>
+<style is:global>
+    .max-h-80-lvh {
+        max-height: 80vh;
+    }
+
+    .remark-code-title {
+        @apply text-base pl-3 rounded-t-lg font-bold bg-slate-600 text-white
+    }
+    .remark-code-title+pre {
+        @apply mt-0 rounded-t-none;
+    }
+
+    details {
+        @apply pb-4
+    }
+</style>
