@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-    @apply break-words overflow-x-hidden;
-}
-
 p {
     @apply py-1;
 }
@@ -16,8 +12,4 @@ h1 {
 
 .link {
     @apply text-blue-500;
-}
-
-.himawariSunFlower {
-    @apply hidden
 }

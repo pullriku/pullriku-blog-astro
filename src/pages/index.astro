@@ -27,9 +27,9 @@ if (others.length > numOthers) {
 	<MoreArticles posts={posts} />
 	<div class="flex justify-center">
 		{
-			omitted ? (
+			omitted ?? (
 				<BlueLink text="もっと見る" href="/all/1" />
-			) : null
+			)
 		}
 	</div>
 </SingleColumnLayout>
