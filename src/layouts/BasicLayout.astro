@@ -3,16 +3,22 @@ import { ClientRouter } from 'astro:transitions';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import '../styles/global.css';
-import { BLOG_NAME, LIGHT_BG } from '../lib/consts';
+import { BLOG_NAME, DARK_BG, LIGHT_BG } from '../lib/consts';
 
-type Props = {
+export interface MetaContent {
     title?: string;
+    desc: string;
     slug?: string;
+    keywords?: string[];
+    canonicalUrl?: string;
 };
 
-const { title, slug: slug } = Astro.props;
+type Props = MetaContent;
+
+const { title, desc, slug, keywords, canonicalUrl } = Astro.props;
 const titleWithBlogName = title ? `${title} | ${BLOG_NAME}` : BLOG_NAME;
-const obImagePath = slug ? await getImagePathBySlug(slug) : "/ogp-img.png";
+const defaultOgpImagePath = "/ogp-img.png";
+const obImagePath = slug ? await getImagePathBySlug(slug) : defaultOgpImagePath;
 
 export const headerPadding = "8";
 
@@ -27,19 +33,33 @@ export async function getImagePathBySlug(slug: string) {
                 return key.replace("/public", "");
             }
         }
-        return `/ogp-img.png`;
+        return defaultOgpImagePath;
     } else {
-        return `/ogp-img.png`;
+        return defaultOgpImagePath;
     }
 }
-
 ---
 <!doctype html>
-<html lang="ja" class=` ${LIGHT_BG} dark:bg-gray-900 dark:text-white`>
+<html lang="ja" class=` ${LIGHT_BG} dark:${DARK_BG} dark:text-white`>
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+        <meta name="description" content={desc}>
+
+        {
+            canonicalUrl && (
+                <link rel="canonical" href={canonicalUrl}>
+            )
+        }
+
+        {
+            keywords && (
+                <meta name="keywords" content={keywords.join(",")}>
+            )
+        }
+
+        {/* favicon */}
         <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
         <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
         <link rel="shortcut icon" href="/favicon/favicon.ico" />
@@ -47,6 +67,7 @@ export async function getImagePathBySlug(slug: string) {
         <meta name="apple-mobile-web-app-title" content="pullriku" />
         <link rel="manifest" href="/favicon/site.webmanifest" />
 
+        {/* OGPの設定 */}
         <meta property="og:title" content={titleWithBlogName}>
         <meta property="og:type" content="website">
         <meta property="og:url" content={Astro.url}>
@@ -56,7 +77,6 @@ export async function getImagePathBySlug(slug: string) {
         <meta property="og:locale" content="ja_JP">
 
         <title>{titleWithBlogName}</title>
-        <!-- <ClientRouter /> -->
     </head>
     <body>
         <Header />

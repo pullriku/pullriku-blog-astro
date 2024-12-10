@@ -9,6 +9,8 @@ import BackButton from "../../components/BackButton.astro";
 import { DARK_BG, DARK_OVERLAY, LIGHT_OVERLAY } from "../../lib/consts";
 import Tag from "../../components/Tag.astro";
 import RoundedBox from "../../layouts/RoundedBox.astro";
+import { zennUrl } from "../../lib/foreign";
+import ServiceIcon from "../../components/ServiceIcon.astro";
 
 export const getStaticPaths = (async() => {
     const posts = await getAllPosts();
@@ -28,7 +30,7 @@ const post = Astro.props;
 const { Content, headings } = await post.render();
 const imageSrc = await getImagePathBySlug(post.slug);
 ---
-<BasicLayout title={post.data.title}>
+<BasicLayout title={post.data.title} desc={post.data.desc}, canonicalUrl={post.data.zenn ? zennUrl(post.slug) : undefined}>
     <div class="px-4 md:px-12 py-4">
         {
             // タグ
@@ -48,13 +50,20 @@ const imageSrc = await getImagePathBySlug(post.slug);
                 <div>
                     <!-- <div set:html={html}></div> -->
                     <h1 class="text-3xl font-bold py-8">{post.data.title}</h1>
-                    <Prose>
-                        <Content/>
-                    </Prose>
+                    
+                        {
+                            post.data.zenn
+                                ? (
+                                    <div class="flex flex-row items-center">
+                                        <ServiceIcon href={zennUrl(post.slug)} name="simple-icons:zenn" width={24} height={24} />
+                                        <a href={zennUrl(post.slug)}><p class="text-gray-500">外部サイト(Zenn)</p></a>
+                                    </div>)
+                                : <Prose><Content /></Prose>
+                        }
                 </div>
             </div>
             { /* 目次の列（スクロールのためのコンテナ） */ }
-            <div class="lg:h-auto lg:w-72">
+            <div class={"lg:h-auto lg:w-72" + post.data.zenn ? "hidden" : ""}>
                 { /* 目次 */ }
                 <div class="
                     hidden lg:block
