@@ -19,10 +19,8 @@ export const headerPadding = "8";
 export async function getImagePathBySlug(slug: string) {
 
     if (slug) {
-        
         const pngsRecord = import.meta.glob(["/public/covers/*.png", "/public/covers/*.jpg", "/public/covers/*.jpeg"]);
         const pngs = Object.entries(pngsRecord);
-        // console.log(pngs);
         
         for (let [key, _image] of pngs) {
             if (key.split("/").pop()?.split(".")[0] === slug) {

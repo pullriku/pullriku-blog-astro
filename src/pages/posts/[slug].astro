@@ -24,8 +24,6 @@ export const getStaticPaths = (async() => {
 type Props = CollectionEntry<'posts'>;
 
 const post = Astro.props;
-console.log(post);
-
 
 const { Content, headings } = await post.render();
 const imageSrc = await getImagePathBySlug(post.slug);
