@@ -1,10 +1,12 @@
 ---
 //ヘッダー。ブログ名とナビゲーションを表示する。
 import { BLOG_NAME, LIGHT_OVERLAY, N_CAHRS_STRONG_TITLE } from "../lib/consts";
-import Navigation from "./Navigation.astro";
+import Navigation, { NavigationPage, type NavigationProps } from "./Navigation.astro";
 const titleStrong = BLOG_NAME.slice(0, N_CAHRS_STRONG_TITLE);
 const titleNormalColor = BLOG_NAME.slice(N_CAHRS_STRONG_TITLE);
 
+type Props = NavigationProps;
+const { selectedPage } = Astro.props;
 ---
 <header class=`p-4 shadow-lg dark:shadow-none ${LIGHT_OVERLAY} dark:bg-gray-800 flex flex-col md:flex-row items-center gap-4 md:gap-8`>
     <a href="/">
@@ -14,6 +16,6 @@ const titleNormalColor = BLOG_NAME.slice(N_CAHRS_STRONG_TITLE);
     </a>
 
     <nav class="w-auto">
-        <Navigation />
+        <Navigation selectedPage={selectedPage}/>
     </nav>
 </header>

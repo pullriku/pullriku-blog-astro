@@ -1,0 +1,19 @@
+---
+type Props = {
+    href: string;
+    title: string;
+    selected?: boolean;
+};
+
+const { href, title, selected } = Astro.props;
+
+const bold = selected ? ' font-bold ' : '';
+---
+<div class="flex flex-col relative items-center h-full">
+    <a href={href} class={"" + bold}>{title}</a>
+    {
+        selected && (
+            <div class={"rounded-full w-1 h-1 bg-blue-600 absolute -bottom-2"}></div>
+        )
+    }
+</div>

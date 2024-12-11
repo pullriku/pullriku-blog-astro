@@ -1,12 +1,13 @@
 ---
+import type { NavigationProps } from "../components/Navigation.astro";
 import BasicLayout, { type MetaContent } from "./BasicLayout.astro";
 
-type Props = MetaContent;
+type Props = MetaContent & NavigationProps;
 
-const { title, desc, slug, keywords, canonicalUrl } = Astro.props;
+const { title, desc, slug, keywords, canonicalUrl, selectedPage } = Astro.props;
 ---
 
-<BasicLayout title={title}, desc={desc}, slug={slug}, keywords={keywords}, canonicalUrl={canonicalUrl}>
+<BasicLayout title={title}, desc={desc}, slug={slug}, keywords={keywords}, canonicalUrl={canonicalUrl} selectedPage={selectedPage}>
     <div class="mx-auto px-4 lg:px-16">
         <slot />
     </div>

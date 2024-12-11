@@ -6,6 +6,7 @@ import MoreArticles from '../../components/MoreArticles.astro';
 import { headerPadding } from '../../layouts/BasicLayout.astro';
 import type { CollectionEntry } from 'astro:content';
 import PageLink from '../../components/PageLink.astro';
+import { NavigationPage } from '../../components/Navigation.astro';
 
 export const pageSize = 30
 
@@ -18,7 +19,7 @@ export const getStaticPaths =  (async ({paginate}) => {
 const { page }: { page: Page<CollectionEntry<'posts'>> } = Astro.props;
 
 ---
-<SingleColumnLayout title='すべての記事' desc='@pullrikuによる技術ブログの、すべての記事を見ることができます。'>
+<SingleColumnLayout title='すべての記事' desc='@pullrikuによる技術ブログの、すべての記事を見ることができます。' selectedPage={NavigationPage.Posts}>
     <h1 class=`text-4xl font-bold mb-${headerPadding}`>すべての記事</h1>
     
     <PageLink page={page} />

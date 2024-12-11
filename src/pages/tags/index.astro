@@ -4,6 +4,7 @@ import { getTags } from "../../lib/unitl";
 import Tag from "../../components/Tag.astro";
 import RoundedBox from "../../layouts/RoundedBox.astro";
 import BasicLayout from "../../layouts/BasicLayout.astro";
+import { NavigationPage } from "../../components/Navigation.astro";
 
 const tagInfoList = await getTags();
 const sortedTagInfoList = tagInfoList.sort((a, b) => {
@@ -14,7 +15,7 @@ const sortedTagInfoList = tagInfoList.sort((a, b) => {
     }
 });
 ---
-<BasicLayout title="すべてのタグ">
+<BasicLayout title="すべてのタグ" desc="@pullrikuによる技術ブログの、すべての記事を見ることができます。" selectedPage={NavigationPage.Tags}>
     <div class="px-4 lg:px-16">
         <h1>すべてのタグ</h1>
     </div>
