@@ -17,7 +17,7 @@ export const getStaticPaths = (async () => {
 const { tag } = Astro.params;
 const posts = await getPostsByTag(tag);
 ---
-<SingleColumnLayout title={tag}>
+<SingleColumnLayout title={tag} desc=`本ブログのタグ「${tag}」についての記事を見ることができます。`>
     <h1 class="text-4xl font-bold mb-4">タグ: {tag}</h1>
     <MoreArticles posts={posts} />
 </SingleColumnLayout>
