@@ -22,8 +22,8 @@ const obImagePath = slug ? await getImagePathBySlug(slug) : defaultOgpImagePath;
 
 export const headerPadding = "8";
 
-export async function getImagePathBySlug(slug: string) {
-
+export async function getImagePathBySlug(slug: string): Promise<string> {
+    const defaultOgpImagePath = "/ogp-img.png";
     if (slug) {
         const pngsRecord = import.meta.glob(["/public/covers/*.png", "/public/covers/*.jpg", "/public/covers/*.jpeg"]);
         const pngs = Object.entries(pngsRecord);
@@ -40,7 +40,7 @@ export async function getImagePathBySlug(slug: string) {
 }
 ---
 <!doctype html>
-<html lang="ja" class={`${LIGHT_BG} dark:${DARK_BG} dark:text-white`}>
+<html lang="ja" class={`${LIGHT_BG} ${DARK_BG} dark:text-white`}>
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
