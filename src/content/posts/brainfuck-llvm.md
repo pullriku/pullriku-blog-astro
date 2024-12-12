@@ -8,6 +8,7 @@ tags:
     - Brainfuck
     - inkwell
     - コンパイラ
+pub: true
 zenn: true
 ---
 
