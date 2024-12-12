@@ -20,10 +20,6 @@ const sortedTagInfoList = tagInfoList.sort((a, b) => {
         <h1>すべてのタグ</h1>
     </div>
     <div class="overflow-scroll pb-4 px-4 lg:px-16">
-        <!-- <RoundedBox><Tag tag="テストタグ" count={100}/></RoundedBox>
-        <RoundedBox><Tag tag="テストタグ" count={50}/></RoundedBox>
-        <RoundedBox><Tag tag="test" count={10}/></RoundedBox>
-        <RoundedBox><Tag tag="test" count={5}/></RoundedBox> -->
         {sortedTagInfoList.map(({tag, count}) => (
             <RoundedBox><Tag tag={tag} count={count}/></RoundedBox>
         ))}
