@@ -1,8 +1,17 @@
-import { glob } from "astro/loaders";
-import { getCollection, getEntry } from "astro:content";
+import { getCollection, getEntry, type CollectionEntry } from "astro:content";
 
-export async function getAllPosts() {
-    return (await getCollection("posts")).filter((post) => post.data.pub ?? true);
+/**
+ * すべての公開の投稿を取得する。
+ * 開発モードのときは非公開の投稿も取得する。
+ * 
+ * @returns 投稿の配列
+ */
+export async function getAllPosts(): Promise<CollectionEntry<"posts">[]> {
+    const result =  (await getCollection("posts")).filter((post) => {
+        return (post.data.pub ?? false) || import.meta.env.DEV;
+    });
+
+    return result;
 }
 
 export async function getAllPostsWithHero() {
