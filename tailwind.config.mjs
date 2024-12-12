@@ -7,7 +7,7 @@ export default {
 				DEFAULT: {
 					css: {
 						"h1, h2, h3, h4, h5, h6": {
-							"@apply border-b-4": ""
+							"@apply border-b-4 leading-relaxed": ""
 						},
 						"code": {
 							"@apply bg-slate-200 dark:bg-slate-700 p-1 rounded-md": "",

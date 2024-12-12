@@ -32,20 +32,10 @@ const imageSrc = await getImagePathBySlug(post.slug);
 ---
 <BasicLayout title={post.data.title} desc={post.data.desc}, canonicalUrl={post.data.zenn ? zennUrl(post.slug) : undefined}>
     <div class="px-0 md:px-4">
-        <!-- <div class="px-4 md:px-12 py-4 mx-auto overflow-x-scroll">
-            {
-                // タグ
-                (post.data.tags ?? []).map((tag) => (
-                    <RoundedBox>
-                        <Tag tag={tag} count={undefined} />
-                    </RoundedBox>
-                ))
-            }
-        </div> -->
         <div class="mx-auto justify-center lg:flex gap-10">
             { /* 記事の列 */ }
             <div class="max-w-4xl min-w-0 flex-1 lg:mx-0 lg:w-fit">
-                <div class="h-16">
+                <div class="h-16 px-4 md:px-0">
                     {
                         // タグ
                         (post.data.tags ?? []).map((tag) => (
@@ -83,7 +73,7 @@ const imageSrc = await getImagePathBySlug(post.slug);
                     top-4 p-4
                     break-words overflow-scroll
                     max-h-80-lvh sticky
-                    border-2 border-gray-400 dark:border-gray-600 rounded-lg dark:bg-sky-950
+                    border-2 border-gray-400 dark:border-gray-600 rounded-lg dark:bg-gray-800
                 ">
                 <p class="text-center">目次</p>
                 <hr class="m-4 border-cyan-500 dark:border-cyan-800">
