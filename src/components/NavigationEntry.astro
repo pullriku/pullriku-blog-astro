@@ -7,11 +7,12 @@ type Props = {
 
 const { href, title, selected } = Astro.props;
 
-const bold = selected ? ' font-bold ' : '';
+const selectingClass = selected ? ' font-bold ' : '';
 ---
 <div class="flex flex-col relative items-center h-full">
-    <a href={href} class={"" + bold}>{title}</a>
+    <a href={href} class={"hover:underline" + selectingClass}>{title}</a>
     {
+        // 選択中の場合は下に青い丸を表示
         selected && (
             <div class={"rounded-full w-1 h-1 bg-blue-600 absolute -bottom-2"}></div>
         )

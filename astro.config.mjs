@@ -26,6 +26,9 @@ export default defineConfig({
       footnoteLabel: "脚注",
       footnoteBackContent: "↩",
       footnoteLabelTagName: "hr",
+    },
+    shikiConfig: {
+      // theme: "dark-plus",
     }
   }
 });
