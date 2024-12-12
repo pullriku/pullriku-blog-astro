@@ -9,9 +9,9 @@ export const BLOG_NAME = "Riku's Tech Blog";
  */
 export const N_CAHRS_STRONG_TITLE = 4;
 
-export const LIGHT_BG = "bg-gray-100 ";
-export const DARK_BG = "bg-gray-900 ";
+export const LIGHT_BG = "bg-slate-100 ";
+export const DARK_BG = "dark:bg-slate-900 ";
 export const LIGHT_OVERLAY = "bg-white ";
-export const DARK_OVERLAY = "bg-slate-800 ";
+export const DARK_OVERLAY = "dark:bg-slate-800 ";
 export const LIGHT_BORDER = "border-gray-300 ";
-export const DARK_BORDER = "border-gray-600 ";
+export const DARK_BORDER = "dark:border-gray-600 ";
