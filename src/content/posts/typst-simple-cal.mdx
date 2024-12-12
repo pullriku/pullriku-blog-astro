@@ -10,7 +10,6 @@ pub: false
 
 本記事で紹介するソースコードは、以下のGitHubリポジトリから閲覧することができます。
 
-
 https://github.com/pullriku/typst-simple-calendar
 
 {/* :::details ビルド
@@ -70,3 +69,39 @@ just
 
 # 仕組み
 
+月のカレンダーを出力する`month_calendar`関数と、この巻数を複数回呼び出して一年のカレンダーを出力する`year_calendar`巻数を作りました。
+
+## `month_calendar`関数
+
+カレンダーは下半分に表があります。まずはこの表を出力する関数`month_calendar_table`に注目します。
+
+### `month_calendar_table`関数
+
+```c
+#let month_calendar_table(
+  year, month, holiday_data: (:), weekday_names: default_weekday_names,
+) = {
+
+}
+```
+
+次に
+
+```c
+let month_day_1 = datetime(
+    year: year,
+    month: month,
+    day: 1,
+  )
+
+  let days = range(0, 31)
+    .map(day => month_day_1 + duration(days: day))
+    .filter(day => day.month() == month)
+
+  let first_day_padding = calc.rem-euclid(
+    int(days.first().display("[weekday repr:monday]")),
+    7
+  )
+```
+
+a
