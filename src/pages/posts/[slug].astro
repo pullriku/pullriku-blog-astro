@@ -38,8 +38,9 @@ if (willSubtractDepth) {
     });
 }
 
-const coverImage = (await getCover(post.slug))?.src ?? await ogpImagePath(post.slug);
-
+// const coverImage = (await getCover(post.slug))?.src ?? await ogpImagePath(post.slug);
+const coverImageOpt = await getCover(post.slug);
+const ogpImageUrl = await ogpImagePath(post.slug);
 ---
 <BasicLayout title={post.data.title} desc={post.data.desc}, canonicalUrl={post.data.zenn ? zennUrl(post.slug) : undefined} slug={post.slug} keywords={post.data.tags}>
     <div class="px-0 md:px-4">
@@ -57,7 +58,30 @@ const coverImage = (await getCover(post.slug))?.src ?? await ogpImagePath(post.s
                     }
                 </div>
                 <div class={` p-4 md:p-12 pt-5 mx-auto ${LIGHT_OVERLAY} ${DARK_BG} rounded-lg`}>
-                    <a href={coverImage} target="_blank" class="block w-fit mx-auto"><Image src={coverImage} alt={`記事「${post.data.title}」のサムネイル`} width={208} height={208} class="drop-shadow-md rounded-lg hover:scale-110 transition" /></a>
+                    <a href={coverImageOpt?.src ?? ogpImageUrl} target="_blank" class="block w-fit mx-auto">
+                        {
+                            coverImageOpt && (
+                                <Image
+                                    src={coverImageOpt}
+                                    alt={`記事「${post.data.title}」のサムネイル`}
+                                    width={208}
+                                    height={208}
+                                    class="drop-shadow-md rounded-lg hover:scale-110 transition"
+                                />
+                            )
+                        }
+                        {
+                            !coverImageOpt && (
+                                <Image 
+                                    src={ogpImageUrl}
+                                    alt={`記事「${post.data.title}」のサムネイル`}
+                                    width={208}
+                                    height={208}
+                                    class="drop-shadow-md rounded-lg hover:scale-110 transition" 
+                                />
+                            )
+                        }
+                    </a>
                     <div>
                          <div class="py-10">
                             <h1 class="text-4xl font-bold">{post.data.title}</h1>
