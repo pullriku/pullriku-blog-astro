@@ -65,7 +65,7 @@ export async function getCoverPath(slug: string): Promise<string | undefined> {
 ---
 <!doctype html>
 <html lang="ja" class={`${LIGHT_BG} ${DARK_BG} dark:text-white`}>
-    <head>
+    <head prefix="og: https://ogp.me/ns#">
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -93,12 +93,14 @@ export async function getCoverPath(slug: string): Promise<string | undefined> {
 
         {/* OGPの設定 */}
         <meta property="og:title" content={title}>
-        <meta property="og:type" content="website">
+        <meta property="og:type" content={slug ? "article" : "blog"}>
         <meta property="og:url" content={Astro.url}>
         <meta property="og:image" content={`${Astro.url.protocol}//${Astro.url.host}${ogImagePath}`}>
         <meta property="og:site_name" content={BLOG_NAME}>
         <meta property="og:description" content={desc ?? "pullrikuによる技術ブログです。"}>
         <meta property="og:locale" content="ja_JP">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:site" content="@pullriku">
 
         <title>{titleWithBlogName}</title>
     </head>
