@@ -57,11 +57,8 @@ const coverImage = (await getCover(post.slug))?.src ?? await ogpImagePath(post.s
                     }
                 </div>
                 <div class={` p-4 md:p-12 pt-5 mx-auto ${LIGHT_OVERLAY} ${DARK_BG} rounded-lg`}>
-                    <!-- <a href={imageSrc} target="_blank" class="block w-fit mx-auto"><img src={imageSrc} alt={`記事「${post.data.title}」のサムネイル`} class="max-w-52 max-h-52 object-contain drop-shadow-md rounded-lg hover:scale-110 transition" /></a> -->
                     <a href={coverImage} target="_blank" class="block w-fit mx-auto"><Image src={coverImage} alt={`記事「${post.data.title}」のサムネイル`} width={208} height={208} class="drop-shadow-md rounded-lg hover:scale-110 transition" /></a>
-                    <!-- <BackButton source_path="/" /> -->
                     <div>
-                        <!-- <div set:html={html}></div> -->
                          <div class="py-10">
                             <h1 class="text-4xl font-bold">{post.data.title}</h1>
                             <time datetime={post.data.pubDate.toISOString()} class="text-gray-500 block">公開日: {post.data.pubDate.toISOString().split('T')[0]}</time>
