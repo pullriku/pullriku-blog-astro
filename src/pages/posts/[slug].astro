@@ -53,7 +53,7 @@ export async function articleOgpImage(slug: string): Promise<ImageMetadata> {
 }
 
 ---
-<BasicLayout title={post.data.title} desc={post.data.desc}, canonicalUrl={post.data.zenn ? zennUrl(post.slug) : undefined}>
+<BasicLayout title={post.data.title} desc={post.data.desc}, canonicalUrl={post.data.zenn ? zennUrl(post.slug) : undefined} slug={post.slug} keywords={post.data.tags}>
     <div class="px-0 md:px-4">
         <div class="mx-auto justify-center lg:flex gap-10">
             { /* 記事の列 */ }
