@@ -40,7 +40,7 @@ if (willSubtractDepth) {
 
 const coverImage = (await getCover(post.slug)) ?? await articleOgpImage(post.slug);
 
-async function articleOgpImage(slug: string): Promise<ImageMetadata> {
+export async function articleOgpImage(slug: string): Promise<ImageMetadata> {
     const match = import.meta.glob<{ default: ImageMetadata }>(
         "../posts/*.png",
     );

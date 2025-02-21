@@ -11,6 +11,7 @@ import {
 import type { NavigationProps } from "../components/Navigation.astro";
 import type { ImageMetadata } from "astro";
 import { ogpImagePath } from "../lib/ogp";
+import { articleOgpImage } from "../pages/posts/[slug].astro";
 
 export interface MetaContent {
     title?: string;
@@ -24,7 +25,7 @@ type Props = MetaContent & NavigationProps;
 
 const { title, desc, slug, keywords, canonicalUrl, selectedPage } = Astro.props;
 const titleWithBlogName = title ? `${title} | ${BLOG_NAME}` : BLOG_NAME;
-const ogImagePath = slug ? ogpImagePath(slug) : DEFAULT_OGP_IMAGE_PATH;
+const ogImagePath = slug ? (await articleOgpImage(slug)).src : DEFAULT_OGP_IMAGE_PATH;
 
 export const headerPadding = "7";
 
