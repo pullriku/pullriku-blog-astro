@@ -28,6 +28,21 @@ const postsCollection = defineCollection({
     }),
 });
 
+const documentsCollection = defineCollection({
+    type: "content",
+    schema: z.object({
+        /** ドキュメントのタイトル */
+        title: z.string(),
+        /** ドキュメントの説明 */
+        desc: z.string(),
+        /** 公開日 */
+        pubDate: z.date(),
+        /** 更新日 */
+        updatedDate: z.date().optional(),
+    }),
+});
+
 export const collections = {
     posts: postsCollection,
+    docs: documentsCollection,
 };

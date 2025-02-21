@@ -1,0 +1,33 @@
+---
+import type { GetStaticPaths } from "astro";
+import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
+import CollectionDoc from "../../components/CollectionDoc.astro";
+export const getStaticPaths = (async () => {
+    const collection = await getCollection("docs");
+
+    return (
+        collection.map((post) => ({
+            params: {
+                slug: post.slug,
+            },
+            props: post,
+        })) ?? []
+    );
+}) satisfies GetStaticPaths;
+
+type Props = CollectionEntry<"docs">;
+const post = Astro.props as Props;
+
+const { Content, headings } = await post.render();
+---
+
+<CollectionDoc
+    title={post.data.title}
+    desc={post.data.desc}
+    slug={post.slug}
+    pubDate={post.data.pubDate}
+    updatedDate={post.data.updatedDate}
+    Content={Content}
+    headings={headings}
+/>

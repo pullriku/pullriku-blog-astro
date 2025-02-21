@@ -1,0 +1,112 @@
+---
+// 必要なレイアウトやコンポーネントのインポート
+import BasicLayout from "../layouts/BasicLayout.astro";
+import Prose from "../layouts/Prose.astro";
+import Tag from "./Tag.astro";
+import RoundedBox from "../layouts/RoundedBox.astro";
+import { DARK_BG, LIGHT_OVERLAY } from "../lib/consts";
+
+// 見出しの型定義
+type Heading = {
+    depth: number;
+    text: string;
+    slug: string;
+};
+
+// コンポーネントの Props 型定義（CollectionEntry は使用しない）
+type Props = {
+    title: string;
+    desc?: string;
+    slug: string;
+    pubDate: Date;
+    updatedDate?: Date;
+    // Markdown 渡されたコンテンツ（コンポーネントとして渡す想定）
+    Content: any;
+    // Markdown 内で生成された目次情報
+    headings: Heading[];
+};
+
+const { title, desc, slug, pubDate, updatedDate, Content, headings } =
+    Astro.props as Props;
+
+// 見出しの深さ調整（最上位が depth 1 でない場合、全体を 1 減算する）
+const willSubtractDepth = !headings.map((heading) => heading.depth).includes(1);
+if (willSubtractDepth) {
+    headings.forEach((heading) => {
+        heading.depth -= 1;
+    });
+}
+---
+<BasicLayout title={title} desc={desc} slug={slug}>
+  <div class="px-0 md:px-4">
+    <div class="mx-auto justify-center lg:flex gap-10">
+      { /* 本文表示の列 */ }
+      <div class="max-w-4xl min-w-0 flex-1 lg:mx-0 lg:w-fit break-words mx-auto">
+        <div class={`p-4 md:p-12 pt-5 mx-auto ${LIGHT_OVERLAY} ${DARK_BG} rounded-lg`}>
+          <div class="py-10">
+            <h1 class="text-4xl font-bold">{title}</h1>
+            <time datetime={pubDate.toISOString()} class="text-gray-500 block">
+              公開日: {pubDate.toISOString().split('T')[0]}
+            </time>
+            { updatedDate ? (
+              <time datetime={updatedDate.toISOString()} class="text-gray-500 block">
+                更新日: {updatedDate.toISOString().split('T')[0]}
+              </time>
+            ) : null }
+          </div>
+          <Prose>
+            <Content />
+          </Prose>
+        </div>
+      </div>
+      { /* 目次（TOC）表示の列 */ }
+      <div class="lg:h-auto lg:w-72 hidden lg:block">
+        <div class="h-16"></div>
+        <div class="
+          hidden lg:block
+          top-10 p-4
+          break-words overflow-scroll
+          max-h-80-lvh sticky
+          border-2 border-gray-400 dark:border-gray-600 rounded-lg dark:bg-slate-800
+        ">
+          <p class="text-center">目次</p>
+          <hr class="m-4 border-cyan-500 dark:border-cyan-800 text-left" />
+          {
+            headings.map((heading) => (
+              <a href={`#${heading.slug}`} class="block hover:underline">
+                {
+                  // 見出しレベルに応じたインデント調整
+                  heading.depth === 1
+                    ? <span class="block text-base font-bold">{heading.text}</span>
+                    : heading.depth === 2
+                      ? <span class="block text-base indent-4">{heading.text}</span>
+                      : heading.depth === 3
+                        ? <span class="block text-base indent-8">{heading.text}</span>
+                        : heading.depth === 4
+                          ? <span class="block text-base indent-12">{heading.text}</span>
+                          : <span class="block text-base indent-12">{heading.text}</span>
+                }
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</BasicLayout>
+<style is:global>
+  @import "tailwindcss";
+  @plugin "@tailwindcss/typography";
+  @config "../../tailwind.config.mjs";
+
+  .max-h-80-lvh {
+    max-height: 80vh;
+  }
+
+  .remark-code-title {
+    @apply text-base pl-3 rounded-t-lg font-bold bg-slate-600 text-white;
+  }
+  .remark-code-title+pre {
+    @apply mt-0 rounded-t-none;
+  }
+</style>

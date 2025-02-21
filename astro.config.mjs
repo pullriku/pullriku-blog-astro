@@ -13,11 +13,12 @@ import rehypeRaw from "rehype-raw";
 import rehypeExternalLinks from "rehype-external-links";
 
 import react from "@astrojs/react";
+import partytown from "@astrojs/partytown";
 
 // https://astro.build/config
 export default defineConfig({
-    "site": "https://pullriku.net",
-    "base": "/",
+    site: "https://pullriku.net",
+    base: "/",
     vite: {
         optimizeDeps: {
             exclude: ["@resvg/resvg-js"],
@@ -27,7 +28,11 @@ export default defineConfig({
         },
         plugins: [tailwind()],
     },
-    integrations: [mdx(), react()],
+    integrations: [
+        mdx(),
+        react(),
+        partytown({ config: { forward: ["dataLayer.push"] } }),
+    ],
     markdown: {
         remarkPlugins: [
             remarkCodeTiles,
@@ -35,12 +40,15 @@ export default defineConfig({
             [
                 remarkLinkCard,
                 // { shortenUrl: true },
-                { cache: true, shortenUrl: true, }
+                { cache: true, shortenUrl: true },
             ],
         ],
         rehypePlugins: [
             rehypeRaw,
-            [rehypeExternalLinks, { target: "_blank", rel: ["noopener", "noreferrer"] }],
+            [
+                rehypeExternalLinks,
+                { target: "_blank", rel: ["noopener", "noreferrer"] },
+            ],
             rehypeFigure,
         ],
         remarkRehype: {

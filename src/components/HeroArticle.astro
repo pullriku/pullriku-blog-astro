@@ -13,7 +13,7 @@ type Props = {
 };
 
 const { post } = Astro.props;
-const cover = (await getCover(post.slug)) ?? await getDefaultOgpImage();
+const cover = (await getCover(post.slug)) ?? (await getDefaultOgpImage());
 const href = post.data.zenn ? zennUrl(post.slug) : `/posts/${post.slug}`;
 ---
 {/* displayがmd未満のときは PostPreview */}
