@@ -1,34 +1,53 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+import { defineConfig } from "astro/config";
 
-import tailwind from '@astrojs/tailwind';
-
-import mdx from '@astrojs/mdx';
-
+import tailwind from "@tailwindcss/vite";
+import mdx from "@astrojs/mdx";
 import remarkCodeTiles from "remark-flexible-code-titles";
+import remarkBreaks from "remark-breaks";
+// @ts-ignore
+import remarkLinkCard from "remark-link-card";
+// @ts-ignore
+import rehypeFigure from "rehype-figure";
+import rehypeRaw from "rehype-raw";
+import rehypeExternalLinks from "rehype-external-links";
 
-import remarkBreaks from 'remark-breaks';
+import react from "@astrojs/react";
 
 // https://astro.build/config
 export default defineConfig({
-  vite: {
+    vite: {
         optimizeDeps: {
-            exclude: []
-        }
+            exclude: ["@resvg/resvg-js"],
+        },
+        ssr: {
+            external: ["@resvg/resvg-js"],
+        },
+        plugins: [tailwind()],
     },
-  integrations: [tailwind(), mdx()],
-  markdown: {
-    remarkPlugins: [
-      remarkCodeTiles,
-      remarkBreaks,
-    ],
-    remarkRehype: {
-      footnoteLabel: "脚注",
-      footnoteBackContent: "↩",
-      footnoteLabelTagName: "hr",
+    integrations: [mdx(), react()],
+    markdown: {
+        remarkPlugins: [
+            remarkCodeTiles,
+            remarkBreaks,
+            [
+                remarkLinkCard,
+                // { shortenUrl: true },
+                { cache: true, shortenUrl: true, }
+            ],
+        ],
+        rehypePlugins: [
+            rehypeRaw,
+            [rehypeExternalLinks, { target: "_blank", rel: ["noopener", "noreferrer"] }],
+            rehypeFigure,
+        ],
+        remarkRehype: {
+            footnoteLabel: "脚注",
+            footnoteBackContent: "↩",
+            footnoteLabelTagName: "hr",
+        },
+        shikiConfig: {
+            // theme: "dark-plus",
+        },
     },
-    shikiConfig: {
-      // theme: "dark-plus",
-    }
-  }
 });

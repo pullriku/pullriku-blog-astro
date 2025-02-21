@@ -1,18 +1,19 @@
 ---
 // 大きく表示される記事のプレビュー。md以上の画面幅で表示される。小さい画面では PostPreview を使う。
-import { Image } from 'astro:assets';
-import type { CollectionEntry } from 'astro:content';
-import PostPreview from './PostPreview.astro';
-import { LIGHT_OVERLAY } from '../lib/consts';
-import { zennUrl } from '../lib/foreign';
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+import PostPreview from "./PostPreview.astro";
+import { DEFAULT_OGP_IMAGE_PATH, LIGHT_OVERLAY } from "../lib/consts";
+import { zennUrl } from "../lib/foreign";
 import zenn from "../assets/zenn.svg";
+import { getCoverPath } from "../layouts/BasicLayout.astro";
 
 type Props = {
-    post: CollectionEntry<'posts'>,
+    post: CollectionEntry<"posts">;
 };
 
 const { post } = Astro.props;
-const coverPath = post.data.cover ?? `/covers/${post.slug}.png`
+const coverPath = (await getCoverPath(post.slug)) ?? DEFAULT_OGP_IMAGE_PATH;
 const href = post.data.zenn ? zennUrl(post.slug) : `/posts/${post.slug}`;
 ---
 {/* displayがmd未満のときは PostPreview */}
@@ -21,7 +22,7 @@ const href = post.data.zenn ? zennUrl(post.slug) : `/posts/${post.slug}`;
 </article>
 
 {/* displayがmd以上のときは HeroArticle */}
-<article class="justify-center md:flex hidden mb-8">
+<article class="justify-center md:flex hidden my-8">
     <a href={href}>
         <div class=`flex h-full gap-4 items-center shadow-2xl dark:shadow-none ${LIGHT_OVERLAY} dark:bg-slate-800 p-8 rounded-lg`>
             <img

@@ -1,8 +1,9 @@
 ---
-import type { GetStaticPaths } from 'astro';
-import { getAllPosts, getPostsByTag } from '../../lib/unitl';
-import SingleColumnLayout from '../../layouts/SingleColumnLayout.astro';
-import MoreArticles from '../../components/MoreArticles.astro';
+import type { GetStaticPaths } from "astro";
+import { getAllPosts, getPostsByTag } from "../../lib/util";
+import SingleColumnLayout from "../../layouts/SingleColumnLayout.astro";
+import MoreArticles from "../../components/MoreArticles.astro";
+import PageTitle from "../../layouts/PageTitle.astro";
 
 export const getStaticPaths = (async () => {
     const allPosts = await getAllPosts();
@@ -18,6 +19,6 @@ const { tag } = Astro.params;
 const posts = await getPostsByTag(tag);
 ---
 <SingleColumnLayout title={tag} desc=`本ブログのタグ「${tag}」についての記事を見ることができます。`>
-    <h1 class="text-4xl font-bold mb-4">タグ: {tag}</h1>
+    <PageTitle>タグ: {tag}</PageTitle>
     <MoreArticles posts={posts} />
 </SingleColumnLayout>

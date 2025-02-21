@@ -1,10 +1,10 @@
 ---
-import MoreArticles from '../components/MoreArticles.astro';
-import HeroArticle from '../components/HeroArticle.astro';
-import SingleColumnLayout from '../layouts/SingleColumnLayout.astro';
-import { getAllPostsWithHero } from '../lib/unitl';
-import BlueLink from '../components/BlueLink.astro';
-import { NavigationPage } from '../components/Navigation.astro';
+import MoreArticles from "../components/MoreArticles.astro";
+import HeroArticle from "../components/HeroArticle.astro";
+import SingleColumnLayout from "../layouts/SingleColumnLayout.astro";
+import { getAllPostsWithHero } from "../lib/util";
+import BlueLink from "../components/BlueLink.astro";
+import { NavigationPage } from "../components/Navigation.astro";
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
@@ -16,8 +16,8 @@ const numOthers = 30;
 let posts = others;
 let omitted = false;
 if (others.length > numOthers) {
-	posts = others.slice(0, numOthers);
-	omitted = true;
+    posts = others.slice(0, numOthers);
+    omitted = true;
 }
 ---
 

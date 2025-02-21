@@ -1,30 +1,29 @@
 ---
-import type { GetStaticPaths, Page } from 'astro';
-import { getAllPosts } from '../../lib/unitl';
-import SingleColumnLayout from '../../layouts/SingleColumnLayout.astro';
-import MoreArticles from '../../components/MoreArticles.astro';
-import { headerPadding } from '../../layouts/BasicLayout.astro';
-import type { CollectionEntry } from 'astro:content';
-import PageLink from '../../components/PageLink.astro';
-import { NavigationPage } from '../../components/Navigation.astro';
+import type { GetStaticPaths, Page } from "astro";
+import { getAllPosts } from "../../lib/util";
+import SingleColumnLayout from "../../layouts/SingleColumnLayout.astro";
+import MoreArticles from "../../components/MoreArticles.astro";
+import type { CollectionEntry } from "astro:content";
+import PageLink from "../../components/PageLink.astro";
+import { NavigationPage } from "../../components/Navigation.astro";
+import PageTitle from "../../layouts/PageTitle.astro";
 
-export const pageSize = 30
+export const pageSize = 30;
 
-export const getStaticPaths =  (async ({paginate}) => {
+export const getStaticPaths = (async ({ paginate }) => {
     const posts = await getAllPosts();
-    
-    return paginate(posts, {pageSize: pageSize});
+
+    return paginate(posts, { pageSize: pageSize });
 }) satisfies GetStaticPaths;
 
-const { page }: { page: Page<CollectionEntry<'posts'>> } = Astro.props;
-
+const { page }: { page: Page<CollectionEntry<"posts">> } = Astro.props;
 ---
 <SingleColumnLayout title='すべての記事' desc='@pullrikuによる技術ブログの、すべての記事を見ることができます。' selectedPage={NavigationPage.Posts}>
-    <h1 class=`text-4xl font-bold mb-${headerPadding}`>すべての記事</h1>
+    <PageTitle>すべての記事</PageTitle>
     
     <PageLink page={page} />
 
-    <div class="mt-8">
+    <div>
         <MoreArticles posts={page.data} />
     </div>
 

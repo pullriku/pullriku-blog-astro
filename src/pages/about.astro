@@ -3,30 +3,70 @@ import { Image } from "astro:assets";
 import SingleColumnLayout from "../layouts/SingleColumnLayout.astro";
 
 import pullrikuImage from "../assets/pullriku.jpeg";
-import { DARK_OVERLAY, LIGHT_OVERLAY } from "../lib/consts";
+import { DARK_OVERLAY, LIGHT_OVERLAY, ICON_GITHUB } from "../lib/consts";
 import ServiceIcon from "../components/ServiceIcon.astro";
 import { NavigationPage } from "../components/Navigation.astro";
-
+import Prose from "../layouts/Prose.astro";
+import PageTitle from "../layouts/PageTitle.astro";
+// import OverlayBox from "../layouts/OverlayBox.astro";
+// import Tag from "../components/Tag.astro";
+// import ProductionLink from "../components/ProductionLink.astro";
 ---
-
-<SingleColumnLayout title="自己紹介" desc="@pullrikuの自己紹介です。" selectedPage={NavigationPage.About}>
-	<div class={"m-4 p-4 md:px-8 max-w-lg mx-auto rounded-lg shadow-lg" + ` ${LIGHT_OVERLAY} ${DARK_OVERLAY} `}>
-		<div>
-			<div class="flex flex-row justify-center gap-8 items-center">
-				<div>
-					<Image src={pullrikuImage} alt="ウミガメの画像。サイト制作者のアイコン。" width={100} height={100} class="rounded-full" />
-				</div>
-				<div>
-					<h1 class="mb-0">Riku<br><small class="text-md text-gray-600 dark:text-gray-400">@pullriku</small></h1>
+<SingleColumnLayout class="max-w-screen-2xl flex flex-col gap-8" title="自己紹介" desc="@pullrikuの自己紹介です。" selectedPage={NavigationPage.About}>
+	<div>
+		<PageTitle>自己紹介</PageTitle>
+		<div class={"p-4 md:px-8 max-w-lg mx-auto rounded-lg" + ` ${LIGHT_OVERLAY} ${DARK_OVERLAY} `}>
+			<div>
+				<div class="flex flex-row justify-center gap-8 items-center">
+					<div>
+						<Image src={pullrikuImage} alt="ウミガメの画像。サイト制作者のアイコン。" width={100} height={100} class="rounded-full" />
+					</div>
+					<div>
+						<h1 class="mb-0 text-3xl font-bold">Riku<br><small class="text-md text-gray-600 dark:text-gray-400">@pullriku</small></h1>
+					</div>
 				</div>
 			</div>
+			<div class="flex flex-row items-center gap-2 justify-center m-4">
+				<ServiceIcon href="https://github.com/pullriku" name={ICON_GITHUB} width={24} height={24} />
+				<ServiceIcon href="https://zenn.dev/pullriku" name="simple-icons:zenn" width={24} height={24} />
+				<ServiceIcon href="https://x.com/pullriku" name="prime:twitter" width={24} height={24} />
+			</div>
+			<p>
+				りくです。このブログでは、技術に関する記事や探求のメモを記録しています。機械学習、言語処理、競技プログラミング、フロントエンド、電子工作、低レイヤー技術などの分野に興味があります。<br>
+			</p>
+			<p>
+				このブログの目的は、自分の学びを整理し、困ったときに検索で見つけてもらえるような記事を残すことです。同じ課題に直面した方の助けになれば幸いです。
+			</p>
 		</div>
-		<div class="flex flex-row items-center gap-2 justify-center m-4">
-			<ServiceIcon href="https://github.com/pullriku" name="mdi:github" width={24} height={24} />
-			<ServiceIcon href="https://zenn.dev/pullriku" name="simple-icons:zenn" width={24} height={24} />
-			<ServiceIcon href="https://x.com/pullriku" name="prime:twitter" width={24} height={24} />
-		</div>
-		<p>情報系の大学3年生。専攻はネットワーク・セキュリティで、これらと機械学習をうまく組み合わせる方法を考えたいなと思っている。普段はRust言語を触ることが多い。プログラミング言語を自作しかけたが未完。</p>
 	</div>
+	<!-- <div>
+		<h2>制作物のリンク集</h2>
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+			<ProductionLink
+				href="https://github.com/pullriku/brainfuck-rs",
+				title="Brainfuck言語のコンパイラ",
+				desc="BF言語のコンパイラです。LLVMを使ってコンパイルを行います。LLVMの最適化により、高速に動作できます。",
+				keywords={["Rust", "LLVM", "コンパイラ"]}
+			/>
+			<ProductionLink 
+				href="https://github.com/pullriku/pullriku-blog-astro" 
+				title="技術ブログ（このサイト）"
+				desc="自分用の技術ブログです。静的サイトジェネレータであるAstroを使って作成しています。Reactライクなコンポーネントを組み合わせてページを作ります。"
+				keywords={["Astro", "TailwindCSS", "TypeScript"]}
+			/>
+			<ProductionLink 
+				href="https://github.com/pullriku/zeta"
+				title="マークダウン変換ツール"
+				desc="異なるブログサイトのマークダウン記法を統一するためのツールです。独自記法で記事を執筆した後、各サイト向けに変換します。"
+				keywords={["Rust", "CLI", "マークダウン", "パーサー"]}
+			/>
+			<ProductionLink 
+				href="https://github.com/pullriku/one-dim-ca"
+				title="1次元セル・オートマトンの生成"
+				desc="1次元セル・オートマトンを生成するプログラムです。このGitHubリポジトリ内に掲載しているリンクから、実際の動作を確認することができます。ページを訪問するごとにランダムな種類のものが生成されます。"
+				keywords={["Rust", "セル・オートマトン"]}
+			/>
+		</div>
+	</div> -->
 </SingleColumnLayout>
 

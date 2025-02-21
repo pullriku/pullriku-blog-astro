@@ -1,13 +1,13 @@
 ---
 // 記事のタグ。タグの出現回数に応じてフォントサイズを変更する。
 type Props = {
-    tag: string,
-    count?: number,
-}
+    tag: string;
+    count?: number;
+};
 
 const { tag, count = 0 } = Astro.props;
 
-const fontRatio = 1 + Math.log10(count + 1) * 3 ;
+const fontRatio = 1 + Math.log10(count + 1) * 3;
 const fontSize = Math.floor(fontRatio);
 
 let fontSizeClass: string;
@@ -33,9 +33,8 @@ switch (fontSize) {
     default:
         fontSizeClass = "text-6xl";
         break;
-};
+}
 fontSizeClass = " " + fontSizeClass + " ";
-
 ---
 <div class="inline-block object-contain">
     <a href={`/tags/${tag}`} class=

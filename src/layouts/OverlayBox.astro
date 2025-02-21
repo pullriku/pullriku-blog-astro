@@ -1,0 +1,12 @@
+---
+import { LIGHT_OVERLAY } from "../lib/consts";
+
+type Props = {
+    class?: string;
+};
+
+const { class: className = "" } = Astro.props;
+---
+<div class={"p-8  shadow-2xl dark:shadow-none dark:bg-slate-800 rounded-lg flex flex-col break-words" + ` ${LIGHT_OVERLAY} ` + ` ${className} `}>
+    <slot />
+</div>

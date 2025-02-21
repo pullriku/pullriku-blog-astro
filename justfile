@@ -1,3 +1,10 @@
-new-article name:
-    cp ./template.mdx src/content/posts/{{name}}.mdx
-    mkdir -p src/assets/images/posts/{{name}}
+default:
+    just --list
+
+new-article slug:
+    cp ./template.mdx src/content/posts/{{slug}}.mdx
+    mkdir -p src/assets/images/posts/{{slug}}
+
+remove-article slug:
+    rm src/content/posts/{{slug}}.mdx
+    rm -rf src/assets/images/posts/{{slug}}

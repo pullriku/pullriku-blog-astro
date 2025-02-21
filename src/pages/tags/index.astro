@@ -1,23 +1,24 @@
 ---
 import SingleColumnLayout from "../../layouts/SingleColumnLayout.astro";
-import { getTags } from "../../lib/unitl";
+import { getTags } from "../../lib/util";
 import Tag from "../../components/Tag.astro";
 import RoundedBox from "../../layouts/RoundedBox.astro";
 import BasicLayout from "../../layouts/BasicLayout.astro";
 import { NavigationPage } from "../../components/Navigation.astro";
+import PageTitle from "../../layouts/PageTitle.astro";
 
 const tagInfoList = await getTags();
 const sortedTagInfoList = tagInfoList.sort((a, b) => {
     if (a.count == b.count) {
         return a.tag.localeCompare(b.tag);
     } else {
-        return (b.count - a.count)
+        return b.count - a.count;
     }
 });
 ---
 <BasicLayout title="すべてのタグ" desc="@pullrikuによる技術ブログの、すべての記事を見ることができます。" selectedPage={NavigationPage.Tags}>
     <div class="px-4 lg:px-16">
-        <h1>すべてのタグ</h1>
+        <PageTitle>すべてのタグ</PageTitle>
     </div>
     <div class="overflow-scroll pb-4 px-4 lg:px-16">
         {sortedTagInfoList.map(({tag, count}) => (

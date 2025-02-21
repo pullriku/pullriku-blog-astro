@@ -1,16 +1,16 @@
 ---
 //ヘッダー。ブログ名とナビゲーションを表示する。
-import { BLOG_NAME, LIGHT_OVERLAY, N_CAHRS_STRONG_TITLE } from "../lib/consts";
+import { BLOG_NAME, LIGHT_OVERLAY, N_CHARS_STRONG_TITLE } from "../lib/consts";
 import Navigation, { type NavigationProps } from "./Navigation.astro";
-const titleStrong = BLOG_NAME.slice(0, N_CAHRS_STRONG_TITLE);
-const titleNormalColor = BLOG_NAME.slice(N_CAHRS_STRONG_TITLE);
+const titleStrong = BLOG_NAME.slice(0, N_CHARS_STRONG_TITLE);
+const titleNormalColor = BLOG_NAME.slice(N_CHARS_STRONG_TITLE);
 
 type Props = NavigationProps;
 const { selectedPage } = Astro.props;
 ---
-<header class=`p-4 shadow-lg dark:shadow-none ${LIGHT_OVERLAY} dark:bg-gray-800 flex flex-col md:flex-row items-center gap-4 md:gap-8`>
+<header class=`p-4 mb-4 shadow-lg dark:shadow-none ${LIGHT_OVERLAY} dark:bg-gray-800 flex flex-col md:flex-row items-center gap-4 md:gap-8`>
     <a href="/">
-        <div class="text-3xl font-bold font-sans">
+        <div class="logo text-3xl font-bold font-sans">
             <span class="text-blue-600 dark:text-blue-400">{titleStrong}</span>{titleNormalColor}
         </div>
     </a>
@@ -19,3 +19,21 @@ const { selectedPage } = Astro.props;
         <Navigation selectedPage={selectedPage}/>
     </nav>
 </header>
+
+{ /* <script>
+	console.log('Hello, Astro!');
+	import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image'
+	const logo = document.getElementsByClassName('logo')[0] as HTMLElement;
+	console.log(logo);
+	toSvg(logo)
+		.then(dataUrl => {
+			console.log(dataUrl);
+			
+			const img = new Image();
+            img.src = dataUrl;
+            document.body.appendChild(img);
+		})
+		.catch(error =>
+			console.error('oops, something went wrong!', error)
+		);
+</script> */ }

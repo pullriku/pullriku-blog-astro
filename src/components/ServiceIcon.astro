@@ -3,15 +3,22 @@
 import { Icon } from "astro-iconify";
 
 type Props = {
-    href: string,
-    name: string,
-    width?: number,
-    height?: number,
-    class_?: string,
+    href?: string;
+    name: string;
+    width?: number;
+    height?: number;
+    class_?: string;
 };
 
 const { href, name, width = 24, height = 24, class_ = "" } = Astro.props;
 ---
-<a href={href}>
-    <Icon name={name} width={width} height={height} class={class_} />
-</a>
+{
+    href == undefined ? (
+        <Icon name={name} width={width} height={height} class={class_} />
+    ) : (
+        <a href={href}>
+            <Icon name={name} width={width} height={height} class={class_} />
+        </a>
+    )
+}
+
