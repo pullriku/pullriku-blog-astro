@@ -16,6 +16,8 @@ import react from "@astrojs/react";
 
 // https://astro.build/config
 export default defineConfig({
+    "site": "https://pullriku.net",
+    "base": "/",
     vite: {
         optimizeDeps: {
             exclude: ["@resvg/resvg-js"],

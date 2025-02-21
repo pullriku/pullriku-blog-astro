@@ -95,7 +95,7 @@ export async function getCoverPath(slug: string): Promise<string | undefined> {
         <meta property="og:title" content={title}>
         <meta property="og:type" content="website">
         <meta property="og:url" content={Astro.url}>
-        <meta property="og:image" content={`${Astro.url.protocol}//:${Astro.url.host}${ogImagePath}`}>
+        <meta property="og:image" content={`${Astro.url.protocol}//${Astro.url.host}${ogImagePath}`}>
         <meta property="og:site_name" content={BLOG_NAME}>
         <meta property="og:description" content={desc ?? "pullrikuによる技術ブログです。"}>
         <meta property="og:locale" content="ja_JP">
