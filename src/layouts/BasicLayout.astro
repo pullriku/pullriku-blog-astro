@@ -28,8 +28,28 @@ const ogImagePath = slug ? ogpImagePath(slug) : DEFAULT_OGP_IMAGE_PATH;
 
 export const headerPadding = "7";
 
+export async function getDefaultOgpImage(): Promise<ImageMetadata> {
+    const defaultMatch = import.meta.glob<{ default: ImageMetadata }>(
+        "/og-image.png",
+    );
+    return (await defaultMatch["/og-image.png"]()).default;
+}
+
+export async function getCover(slug: string): Promise<ImageMetadata | undefined> {
+    const pngsRecord = import.meta.glob<{ default: ImageMetadata }>(
+        "/src/assets/covers/*.{png,jpg,jpeg}",
+    );
+    const pngs = Object.entries(pngsRecord);
+
+    for (let [key, image] of pngs) {
+        if (key.split("/").pop()?.split(".")[0] === slug) {
+            return (await image()).default;
+        }
+    }
+    return undefined;
+}
+
 export async function getCoverPath(slug: string): Promise<string | undefined> {
-    // const pngsRecord = import.meta.glob<{default: ImageMetadata}>("/public/covers/*.{png,jpg,jpeg}");
     const pngsRecord = import.meta.glob<{ default: ImageMetadata }>(
         "/src/assets/covers/*.{png,jpg,jpeg}",
     );

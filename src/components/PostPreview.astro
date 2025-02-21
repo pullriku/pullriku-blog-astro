@@ -3,7 +3,7 @@
 import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 import { LIGHT_OVERLAY } from "../lib/consts";
-import { getCoverPath } from "../layouts/BasicLayout.astro";
+import { getCover } from "../layouts/BasicLayout.astro";
 import zenn from "../assets/zenn.svg";
 import { zennUrl } from "../lib/foreign.ts";
 
@@ -13,7 +13,7 @@ type Props = {
 
 const { post } = Astro.props;
 
-const coverPath = await getCoverPath(post.slug);
+const cover = await getCover(post.slug);
 const time = post.data.pubDate.toISOString().split("T")[0];
 
 const href = post.data.zenn ? zennUrl(post.slug) : `/posts/${post.slug}`;
@@ -22,8 +22,8 @@ const href = post.data.zenn ? zennUrl(post.slug) : `/posts/${post.slug}`;
 <a href={href}>
     <div class=`inline-block p-4 md:p-8 w-full h-full shadow-2xl dark:shadow-none ${LIGHT_OVERLAY} dark:bg-slate-800 rounded-lg flex flex-col break-words`>
         {
-            coverPath && (
-                <Image src={coverPath} alt=`記事「${post.data.title}」のサムネイル` width=200 height=200 class=" mb-4 object-cover drop-shadow-md rounded-lg w-full h-36 sm:h-44"/>
+            cover && (
+                <Image src={cover} alt=`記事「${post.data.title}」のサムネイル` width=200 height=200 class=" mb-4 object-cover drop-shadow-md rounded-lg w-full h-36 sm:h-44"/>
             )
         }
         <span class="text-xl hover:underline">
