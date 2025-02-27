@@ -1,12 +1,12 @@
 {
-  "files.associations": {
-    "*.css": "tailwindcss"
-  },
-  "[mdx]": {
-    "editor.wordWrap": "on"
-  },
-  "search.exclude": {
-    "**/.yarn": true,
-    "**/.pnp.*": true
-  }
+    "files.associations": {
+        "*.css": "tailwindcss"
+    },
+    "[mdx]": {
+        "editor.wordWrap": "on"
+    },
+    "search.exclude": {
+        "**/.yarn": true,
+        "**/.pnp.*": true
+    }
 }
