@@ -47,7 +47,7 @@ const ogpImageUrl = await ogpImagePath(post.slug);
         <div class="mx-auto justify-center lg:flex gap-10">
             { /* 記事の列 */ }
             <div class="max-w-4xl min-w-0 flex-1 lg:mx-0 lg:w-fit break-words mx-auto">
-                <div class="h-16 px-4 md:px-0 overflow-x-scroll flex flex-row">
+                <div class="h-16 px-4 md:px-0 overflow-x-scroll flex flex-row hide-scrollbar">
                     {
                         // タグ
                         (post.data.tags ?? []).map((tag) => (
