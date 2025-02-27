@@ -1,7 +1,7 @@
 ---
-import type { AstroInstance, GetStaticPaths } from "astro";
+import type { GetStaticPaths } from "astro";
 import { type CollectionEntry } from "astro:content";
-import BasicLayout, { getCoverPath } from "../../layouts/BasicLayout.astro";
+import BasicLayout from "../../layouts/BasicLayout.astro";
 import Prose from "../../layouts/Prose.astro";
 import { Image } from "astro:assets";
 
@@ -47,16 +47,22 @@ const ogpImageUrl = await ogpImagePath(post.slug);
         <div class="mx-auto justify-center lg:flex gap-10">
             { /* 記事の列 */ }
             <div class="max-w-4xl min-w-0 flex-1 lg:mx-0 lg:w-fit break-words mx-auto">
-                <div class="h-16 px-4 md:px-0 overflow-x-scroll flex flex-row hide-scrollbar">
-                    {
+                <div class="relative">
+                    <div class="h-16 px-4 md:px-0 overflow-x-scroll flex flex-row hide-scrollbar">
+                      {
                         // タグ
                         (post.data.tags ?? []).map((tag) => (
-                            <RoundedBox>
-                                <Tag tag={tag} count={undefined} />
-                            </RoundedBox>
+                          <RoundedBox key={tag}>
+                            <Tag tag={tag} count={undefined} />
+                          </RoundedBox>
                         ))
-                    }
-                </div>
+                      }
+                    </div>
+                    {/* グラデーションオーバーレイ */}
+                    <div class="absolute top-0 right-0 h-full w-12 pointer-events-none bg-gradient-to-l from-slate-100 dark:from-slate-950 to-transparent"></div>
+                  </div>
+                  
+                  
                 <div class={` p-4 md:p-12 pt-5 mx-auto ${LIGHT_OVERLAY} ${DARK_BG} rounded-lg`}>
                     <a href={coverImageOpt?.src ?? ogpImageUrl} target="_blank" class="block w-fit mx-auto">
                         {
@@ -129,30 +135,31 @@ const ogpImageUrl = await ogpImagePath(post.slug);
                 <div class="
                     hidden lg:block
                     top-10 p-4
-                    break-words overflow-scroll
-                    max-h-80-lvh sticky
+                    break-words overflow-y-scroll
+                    hide-scrollbar
+                    max-h-[calc(100vh-5rem)] sticky
                     border-2 border-gray-400 dark:border-gray-600 rounded-lg dark:bg-slate-800
                 ">
-                <p class="text-center">目次</p>
-                <hr class="m-4 border-cyan-500 dark:border-cyan-800 text-left" />
-                    {
-                        headings.map((heading) => (
-                            <a href={`#${heading.slug}`} class="block hover:underline">
-                                {
-                                    // 見出しレベルに応じたインデント
-                                    heading.depth === 1
-                                        ? <span class="block text-base font-bold">{heading.text}</span>
-                                        : heading.depth === 2
-                                            ? <span class="block text-base indent-4">{heading.text}</span>
-                                            : heading.depth === 3
-                                                ? <span class="block text-base indent-8">{heading.text}</span>
-                                                : heading.depth === 4
-                                                    ? <span class="block text-base indent-12">{heading.text}</span>
-                                                    : <span class="block text-base indent-12">{heading.text}</span>
-                                }
-                            </a>
-                        ))
-                    }
+                    <p class="text-center">目次</p>
+                    <hr class="m-4 border-cyan-500 dark:border-cyan-800 text-left" />
+                        {
+                            headings.map((heading) => (
+                                <a href={`#${heading.slug}`} class="block hover:underline text-sm *:py-1">
+                                    {
+                                        // 見出しレベルに応じたインデント
+                                        heading.depth === 1
+                                            ? <span class="block font-semibold">{heading.text}</span>
+                                            : heading.depth === 2
+                                                ? <span class="block indent-4">{heading.text}</span>
+                                                : heading.depth === 3
+                                                    ? <span class="block indent-8">{heading.text}</span>
+                                                    : heading.depth === 4
+                                                        ? <span class="block indent-12">{heading.text}</span>
+                                                        : <span class="block indent-12">{heading.text}</span>
+                                    }
+                                </a>
+                            ))
+                        }
                 </div>
             </div>
         </div>
