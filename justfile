@@ -1,4 +1,4 @@
-default:
+help:
     just --list
 
 new-article slug:
