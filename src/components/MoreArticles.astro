@@ -1,12 +1,7 @@
 ---
 // 記事の一覧。渡された記事の一覧を表示する。
 import type { CollectionEntry } from "astro:content";
-import { getAllPosts } from "../lib/util";
 import PostPreview from "./PostPreview.astro";
-
-const maxArticles = 10;
-
-// const posts = (await getAllPosts()).slice(-maxArticles);
 
 type Props = {
     posts: CollectionEntry<"posts">[];

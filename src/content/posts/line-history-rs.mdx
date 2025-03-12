@@ -1,0 +1,613 @@
+---
+title: LINEの.txt履歴解析ライブラリを作った
+desc: .txt形式の履歴ファイルから、日付やキーワードで高速に検索できるライブラリを開発しました。
+pubDate: 2025-03-05
+tags: ["Rust", "LINE", "パーサー", "chrono", "criterion"]
+pub: false
+---
+
+import Details from "../../layouts/Details.astro";
+// 必ずclientディレクティブを設定する
+import Quiz from "../../components/Quiz";
+
+## はじめに
+
+LINEの履歴(.txt形式)を解析するライブラリを作りました。
+データを構造化し、日付やキーワードで検索したり、発言者での絞り込みができます。
+
+[GitHubリポジトリ](https://github.com/pullriku/line-history-rs)
+
+## ライブラリの全体構造
+
+まずは、ライブラリ全体のディレクトリ構成と主要なモジュールの役割を確認しましょう。
+
+### ソースコード（src/lib.rs）
+
+```rust
+#![warn(clippy::pedantic)]
+
+pub mod history;
+pub mod macros;
+pub mod parse;
+pub mod traits;
+#[cfg(feature = "rand")]
+pub mod rand;
+```
+
+#### 解説
+- **`pub mod history;`**  
+  チャット履歴のデータ構造や、参照版・所有権版の実装をまとめています。
+- **`pub mod macros;`**  
+  ファイル読み込みとパース処理をワンライナーで実行できる便利なマクロ群を提供。
+- **`pub mod parse;`**  
+  .txt形式の履歴ファイルから、各日付ごとのセクションやチャットエントリを抽出するパースロジックを実装。
+- **`pub mod traits;`**  
+  検索機能やデータ操作のためのトレイトを定義し、参照版と所有権版の両方で共通のインターフェースを提供。
+- **`#[cfg(feature = "rand")] pub mod rand;`**  
+  オプション機能として、ランダムに日付を抽出する検索機能を実装しています。
+
+
+
+## データ構造
+
+ライブラリの中核をなすデータモデルは、参照版と所有権版の2種類を用意。用途に応じて使い分ける設計です。
+
+### 参照版のデータ構造（src/history.rs）
+
+```rust
+use chrono::{NaiveDate, NaiveTime};
+use std::collections::HashMap;
+
+use crate::traits::{
+    ChatData, DayData, HistoryData, Search, SearchByDate, SearchByKeyword, SearchByKeywordResult,
+};
+
+/// 履歴全体
+#[derive(Debug, Clone)]
+pub struct History<'src> {
+    pub(crate) days: HashMap<NaiveDate, Day<'src>>,
+}
+
+/// 1日分のデータ
+#[derive(Debug, Clone)]
+pub struct Day<'src> {
+    pub(crate) date: NaiveDate,
+    pub(crate) chats: Vec<Chat<'src>>,
+}
+
+/// 1チャットのデータ
+#[derive(Debug, Clone)]
+pub struct Chat<'src> {
+    pub(crate) time: NaiveTime,
+    pub(crate) speaker: Option<&'src str>,
+    /// 複数行にまたがる発言内容（各行ごとに保持）
+    pub(crate) message_lines: Vec<&'src str>,
+}
+```
+
+#### 解説
+- **`History<'src>`**  
+  全体のチャット履歴を、日付ごとに`HashMap`へ整理。効率的な検索を可能にしています。
+- **`Day<'src>`**  
+  1日分のチャットデータを管理し、複数のエントリをリストとして保持。
+- **`Chat<'src>`**  
+  個々のチャットエントリを表現。発言時刻、発言者（任意）、および複数行にわたるメッセージ内容を格納。  
+  ライフタイムパラメータ `'src` により、元のテキストへの参照を維持し、不要なコピーを防いでいます。
+
+### 所有権版のデータ構造
+
+WASMや他言語との連携向けに、所有権を持つバージョンも実装しています。
+
+```rust
+#[derive(Debug, Clone)]
+pub struct OwnedHistory {
+    pub days: HashMap<NaiveDate, OwnedDay>,
+}
+
+#[derive(Debug, Clone)]
+pub struct OwnedDay {
+    pub date: NaiveDate,
+    pub chats: Vec<OwnedChat>,
+}
+
+#[derive(Debug, Clone)]
+pub struct OwnedChat {
+    pub time: NaiveTime,
+    pub speaker: Option<String>,
+    pub message_lines: Vec<String>,
+}
+```
+
+#### 解説
+- 参照版と同様のデータモデルですが、各フィールドは`String`や`Vec<String>`など所有権を持つ型で定義。
+- 実際の利用シーンに合わせ、両バージョンを使い分けられる設計となっています。
+
+
+
+## トレイトによる機能の抽象化
+
+共通のインターフェースを定義することで、参照版と所有権版の両方で同一の操作が可能となります。
+
+### トレイト定義（src/traits.rs）
+
+```rust
+use chrono::{NaiveDate, NaiveTime};
+use std::{borrow::Borrow, collections::HashMap};
+
+/// Search history
+#[cfg(feature = "rand")]
+pub trait Search: SearchByDate + SearchByKeyword + SearchByRandom {}
+#[cfg(not(feature = "rand"))]
+pub trait Search: SearchByDate + SearchByKeyword {}
+
+pub trait SearchByDate {
+    type Day: DayData<Self::Chat>;
+    type Chat: ChatData;
+    fn search_by_date(&self, date: &NaiveDate) -> Option<&Self::Day>;
+}
+
+pub trait SearchByKeyword {
+    type Chat: ChatData;
+    fn search_by_keyword(&self, keyword: &str) -> impl Iterator<Item = SearchByKeywordResult<Self::Chat>>;
+}
+
+#[derive(Debug)]
+pub struct SearchByKeywordResult<'a, C: ChatData> {
+    pub date: NaiveDate,
+    pub chat: &'a C,
+    pub index: usize,
+}
+
+pub trait SearchByRandom {
+    type Day: SearchByKeyword;
+    fn search_by_random(&self) -> &Self::Day;
+}
+
+pub trait HistoryData<'src, D: DayData<C>, C: ChatData>: Search {
+    fn from_text(text: &'src str) -> Self;
+    fn days(&self) -> &HashMap<NaiveDate, D>;
+    fn len(&self) -> usize;
+    fn is_empty(&self) -> bool;
+}
+
+pub trait DayData<C: ChatData> {
+    fn date(&self) -> &NaiveDate;
+    fn chats(&self) -> &[C];
+}
+
+pub trait ChatData {
+    type String: Borrow<str>;
+    fn time(&self) -> &NaiveTime;
+    fn sender(&self) -> Option<&str>;
+    fn message_lines(&self) -> &[Self::String];
+    fn contains(&self, keyword: &str) -> bool {
+        self.message_lines()
+            .iter()
+            .any(|line| line.borrow().contains(keyword))
+    }
+}
+```
+
+#### 解説
+- 各トレイトは、日付検索、キーワード検索、（オプションの）ランダム検索の機能を抽象化。  
+- これにより、異なるデータ構造間で統一した操作が可能となり、コードの再利用性と拡張性が向上しています。
+
+
+
+## パース機能の実装
+
+LINEの.txt履歴ファイルを効率的に解析するため、各セクションごとに日付行とチャットエントリを抽出するロジックを実装しています。
+
+### パース処理（src/parse.rs）
+
+```rust
+use chrono::{NaiveDate, NaiveTime};
+use std::collections::HashMap;
+
+use crate::history::{Chat, Day, History};
+
+#[derive(Debug)]
+pub enum ParseError<'src> {
+    EmptyFile,
+    InvalidEntry(&'src str),
+    ContinuationBeforeEntry(&'src str),
+    InvalidDate(&'src str),
+    InvalidTime(&'src str),
+    InternalError { line: &'src str, error: &'src str },
+}
+
+/// テキスト全体からチャット履歴を解析します。
+/// 各部分は元の&strのスライスとして保持されるため、コピーを最小限に抑えています。
+///
+/// # Errors
+/// フォーマットが不正な場合、ParseErrorを返します。
+pub fn parse_history(input: &str) -> Result<History<'_>, (History<'_>, Vec<ParseError<'_>>)> {
+    let Some(first_line) = input.lines().next() else {
+        return Err((History::new(HashMap::new()), vec![ParseError::EmptyFile]));
+    };
+    let input = if parse_date_line(first_line).is_some() {
+        input
+    } else {
+        skip_header(input).unwrap_or_default()
+    };
+
+    let mut days: HashMap<NaiveDate, Day<'_>> = HashMap::new();
+    let mut errors: Vec<ParseError> = Vec::new();
+
+    let mut current_date: Option<NaiveDate> = None;
+
+    // 各日付ごとのセクションは "\r\n\r\n" で区切られています
+    for section in input.split("\r\n\r\n") {
+        if section.is_empty() {
+            continue;
+        }
+        let mut lines = section.split("\r\n");
+        // セクションの最初の行は日付行（例："2025/01/01(水)"）です
+        let Some(date_line) = lines.next() else {
+            continue;
+        };
+
+        let date_parsed = parse_date_line(date_line);
+        let (mut chats, mut section_errors) = parse_chats(lines);
+        errors.append(&mut section_errors);
+
+        if let Some(date) = date_parsed {
+            days.insert(date, Day { date, chats });
+            current_date = Some(date);
+        } else {
+            if let Some(current_date) = current_date {
+                if let Some(day) = days.get_mut(&current_date) {
+                    day.chats.append(&mut chats);
+                } else {
+                    errors.push(ParseError::InternalError { line: date_line, error: "Day not found" });
+                }
+            } else {
+                errors.push(ParseError::InternalError { line: date_line, error: "Failed to parse date" });
+            }
+        }
+    }
+
+    if errors.is_empty() {
+        Ok(History::new(days))
+    } else {
+        Err((History::new(days), errors))
+    }
+}
+
+/// 日付行の最初の10文字（例："2025/01/01"）を抽出し、NaiveDateに変換します。
+fn parse_date_line(date_line: &str) -> Option<NaiveDate> {
+    let date_str = date_line.get(..10)?;
+    NaiveDate::parse_from_str(date_str, "%Y/%m/%d").ok()
+}
+
+fn skip_header(src: &str) -> Option<&str> {
+    let crlf_3rd_index = src.match_indices("\r\n").nth(2)?.0;
+    src.get(crlf_3rd_index + "\r\n".len()..)
+}
+
+/// 「HH:MM\t」形式の行かどうかを判定します。
+fn is_chat_start(line: &str) -> bool {
+    if line.len() < 6 {
+        return false;
+    }
+    let mut chars = line.chars();
+    let h1 = chars.next();
+    let h2 = chars.next();
+    let colon = chars.next();
+    let m1 = chars.next();
+    let m2 = chars.next();
+    let tab = chars.next();
+    matches!(
+        (h1, h2, colon, m1, m2, tab),
+        (Some(c1), Some(c2), Some(':'), Some(c3), Some(c4), Some('\t'))
+            if c1.is_ascii_digit() && c2.is_ascii_digit() && c3.is_ascii_digit() && c4.is_ascii_digit()
+    )
+}
+
+/// チャットエントリを抽出し、各チャットの開始行と継続行をまとめます。
+fn parse_chats<'src, I>(lines: I) -> (Vec<Chat<'src>>, Vec<ParseError<'src>>)
+where
+    I: Iterator<Item = &'src str>,
+{
+    let mut chats = Vec::new();
+    let mut errors = Vec::new();
+    let mut current_chat: Option<Chat<'src>> = None;
+
+    for line in lines {
+        if is_chat_start(line) {
+            if let Some(chat) = current_chat.take() {
+                chats.push(chat);
+            }
+            match parse_chat_entry(line) {
+                Ok(chat) => current_chat = Some(chat),
+                Err(err) => errors.push(err),
+            }
+        } else {
+            if let Some(ref mut chat) = current_chat {
+                chat.message_lines.push(line);
+            } else if !line.trim().is_empty() {
+                errors.push(ParseError::ContinuationBeforeEntry(line));
+            }
+        }
+    }
+    if let Some(chat) = current_chat {
+        chats.push(chat);
+    }
+    (chats, errors)
+}
+
+/// 「HH:MM\t」形式の行から時刻、発言者、メッセージを抽出し、Chat構造体を生成します。
+fn parse_chat_entry(line: &str) -> Result<Chat<'_>, ParseError<'_>> {
+    let mut parts = line.splitn(3, '\t');
+    let time_str = parts.next().ok_or(ParseError::InvalidEntry(line))?;
+    let time = NaiveTime::parse_from_str(time_str, "%H:%M")
+        .map_err(|_| ParseError::InvalidTime(time_str))?;
+    let speaker_str = parts.next().ok_or(ParseError::InvalidEntry(line))?;
+    let speaker = if speaker_str.trim().is_empty() {
+        None
+    } else {
+        Some(speaker_str)
+    };
+    let message_line = parts.next().ok_or(ParseError::InvalidEntry(line))?;
+    Ok(Chat {
+        time,
+        speaker,
+        message_lines: vec![message_line],
+    })
+}
+```
+
+#### 解説
+- テキスト全体を対象に、ヘッダーのスキップや日付行の抽出、チャットの開始行と継続行の判定など、堅牢なパース処理を実現。  
+- エラーが発生しても可能な限りデータを取り出す設計となっており、実運用時の信頼性を高めています。
+
+
+
+## 検索機能の実装
+
+解析後の履歴データから、日付やキーワードを用いた検索機能を実装。利用例も合わせて解説します。
+
+### 日付検索およびキーワード検索の実装（src/history.rs 内の実装例）
+
+```rust
+impl<'src> SearchByDate for History<'src> {
+    type Day = Day<'src>;
+    type Chat = Chat<'src>;
+    fn search_by_date(&self, date: &NaiveDate) -> Option<&Self::Day> {
+        self.days.get(date)
+    }
+}
+
+impl<'src> SearchByKeyword for History<'src> {
+    type Chat = Chat<'src>;
+    fn search_by_keyword(&self, keyword: &str) -> impl Iterator<Item = SearchByKeywordResult<Self::Chat>> {
+        self.days
+            .values()
+            .flat_map(move |day| day.search_by_keyword(keyword))
+    }
+}
+```
+
+#### 解説
+- **SearchByDate:**  
+  単純に内部の`HashMap`から日付に対応するデータを取得。シンプルながらも必要な機能を確実に実装しています。
+- **SearchByKeyword:**  
+  全日付のチャットを対象に、キーワードが含まれるエントリを列挙。flat_mapを活用して、全体を一つのストリームにまとめています。
+
+### ランダム検索の実装（src/rand.rs）
+
+```rust
+use rand::Rng;
+
+use crate::{history::{Day, History, OwnedDay, OwnedHistory}, traits::{HistoryData, SearchByRandom}};
+
+impl<'src> SearchByRandom for History<'src> {
+    type Day = Day<'src>;
+    fn search_by_random(&self) -> &Self::Day {
+        let mut rng = rand::rng();
+        let index = rng.random_range(0..self.len());
+        self.days.values().nth(index).unwrap()
+    }
+}
+
+impl SearchByRandom for OwnedHistory {
+    type Day = OwnedDay;
+    fn search_by_random(&self) -> &Self::Day {
+        let mut rng = rand::rng();
+        let index = rng.random_range(0..self.len());
+        self.days.values().nth(index).unwrap()
+    }
+}
+```
+
+#### 解説
+- `rand`クレートを活用し、履歴全体からランダムに1日分のデータを抽出。  
+- 参照版と所有権版の両方で同様の実装を行い、どちらの利用シーンにも柔軟に対応しています。
+
+
+
+## 便利なマクロ
+
+コードの重複を避け、ファイル読み込みとパース処理を簡潔に実行するためのマクロを用意しています。
+
+### マクロ定義（src/macros.rs）
+
+```rust
+#[macro_export]
+macro_rules! read_from_file {
+    ($path:expr, let $var_src:ident, let $var_history:ident) => {
+        let $var_src = std::fs::read_to_string($path).unwrap();
+        let $var_history = $crate::parse::parse_history(&$var_src);
+    };
+}
+```
+
+#### 解説
+- **read_from_file!**  
+  指定したパスからテキストを読み込み、その内容をパースして履歴データを取得する一連の処理を1行で実現。利用者にとって非常に使いやすい仕組みとなっています。
+
+
+
+## 使用例
+
+実際にライブラリを利用する例として、日付検索、キーワード検索、ランダム検索の各シナリオを紹介します。
+
+### 日付検索の例（examples/search_date_example.rs）
+
+```rust
+use chrono::NaiveDate;
+use line_history::{
+    history::ignore_errors,
+    read_from_file,
+    traits::{ChatData, DayData, SearchByDate},
+};
+
+fn main() {
+    read_from_file!("./history.txt", let src, let history);
+    let history = ignore_errors(history);
+
+    let result = history
+        .search_by_date(&NaiveDate::from_ymd_opt(2024, 12, 20).unwrap())
+        .unwrap();
+
+    for chat in result.chats() {
+        println!(
+            "{}({}): {}",
+            chat.sender().unwrap_or_default(),
+            chat.time(),
+            chat.message_lines().join("\n")
+        );
+    }
+}
+```
+
+#### 解説
+- **読み込みとパース:**  
+  `read_from_file!`マクロで、テキストファイルからデータを簡単に取得。
+- **日付検索:**  
+  指定した日付のチャットデータを抽出し、各エントリの詳細をコンソールに出力しています。
+
+### キーワード検索の例（examples/search_keyword_example.rs）
+
+```rust
+use line_history::{history::ignore_errors, read_from_file, traits::SearchByKeyword};
+
+fn main() {
+    read_from_file!("./history.txt", let src, let history);
+    let history = ignore_errors(history);
+    let result = history.search_by_keyword("本");
+    println!("{:?}", result.collect::<Vec<_>>());
+}
+```
+
+#### 解説
+- キーワード「本」を含むチャットエントリを検索し、結果をデバッグ出力で確認する例です。
+
+### ランダム検索の例（examples/search_random_example.rs）
+
+```rust
+use line_history::{history::ignore_errors, read_from_file, traits::SearchByRandom};
+
+fn main() {
+    read_from_file!("./history.txt", let src, let history);
+    let history = ignore_errors(history);
+    let result = history.search_by_random();
+    println!("{:?}", result);
+}
+```
+
+#### 解説
+- ランダムに1日分のチャット履歴を抽出し、その内容を表示。思いがけない発見があるかもしれません。
+
+
+
+## ベンチマーク
+
+パース処理や変換処理のパフォーマンスを評価するため、Criterionクレートを用いたベンチマークコードを用意しています。
+
+### ベンチマークコード（benches/parse.rs）
+
+```rust
+use criterion::{criterion_group, criterion_main};
+use line_history::history::ignore_errors;
+
+fn bench_parse(criterion: &mut criterion::Criterion) {
+    let mut group = criterion.benchmark_group("size");
+
+    let src = std::fs::read_to_string("./history.txt").unwrap();
+    group.bench_function("parse", |b| {
+        b.iter(|| {
+            let _history = line_history::parse::parse_history(&src);
+        })
+    });
+
+    group.bench_function("parse into_owned", |b| {
+        b.iter(|| {
+            let history = line_history::parse::parse_history(&src);
+            let history = ignore_errors(history);
+            let _ = history.into_owned();
+        });
+    });
+
+    group.bench_function("clone into_owned", |b| {
+        let history = line_history::parse::parse_history(&src);
+        let history = ignore_errors(history);
+        b.iter(|| {
+            let _ = history.clone().into_owned();
+        });
+    });
+}
+
+criterion_group!(benches, bench_parse);
+criterion_main!(benches);
+```
+
+#### 解説
+- 各処理（パース、参照版から所有権版への変換、クローン後の変換）について、個別にベンチマークを行い、性能特性を把握できるようにしています。
+
+
+
+## Pythonスクリプトによるベンチマーク用データ生成
+
+大量のテストデータを自動生成するためのPythonスクリプトも用意。ベンチマークやテスト時に、大規模な履歴データを手軽に作成できます。
+
+### Pythonスクリプト（scripts/make_bench.py）
+
+```python
+import datetime
+
+with open("history.txt", "w") as f:
+    f.write("[LINE] xxxのトーク履歴\n保存日時：2024/01/01 00:00\n\n")
+    
+    for i in range(10_000):
+        date = datetime.datetime(2024, 1, 1, 0, 0) + datetime.timedelta(days=i)
+        f.write(f"{date:%Y/%m/%d(%a)}\n")
+        for j in range(100):
+            time = date + datetime.timedelta(minutes=j)
+            f.write(f"{time:%H:%M}\tNAME\tMESSAGE\n")
+        f.write(f"{time:%H:%M}\tNAME\t\"MESSAGE LINE 0\nMESSAGE LINE 1\nMESSAGE LINE 2\nMESSAGE LINE 3\nMESSAGE LINE 4\nMESSAGE LINE 5\nMESSAGE LINE 6\nMESSAGE LINE 7\nMESSAGE LINE 8\"\n")
+        f.write("\n")
+```
+
+#### 解説
+- スクリプトは、10,000日分の履歴を生成。各日に100件の通常メッセージと1件の複数行メッセージを追加し、大規模なデータセットを簡単に用意できます。
+
+
+
+## まとめ
+
+今回、.txt形式のLINEチャット履歴を効率的に解析し、日付やキーワード、ランダムに検索できるライブラリをRustで実装しました。  
+
+<Quiz question="「メッセージの送信を取り消しました」などのシステムメッセージは、このライブラリでどのように解析される？" answers={["無視される","エラーとして扱われる", "発言者「」のメッセージとして扱われる", "発言者Noneのメッセージとして扱われる"]} correctAnswer={[3]} client:visible>
+発言者を表す`speaker`フィールドが`Option<&'src str>`型であり、システムメッセージの場合は`None`が設定されます。
+</Quiz>
+
+## 参考リンク
+
+- [chronoクレート](https://github.com/chronotope/chrono)  
+- [criterionクレート](https://github.com/bheisler/criterion.rs)  
+- [randクレート](https://github.com/rust-random/rand)
+
+
+
+以上、あなたの執筆スタイルに則った推敲例です。全体の構造、コードブロックと解説のバランス、そして親しみやすさを保ちながら、実用的な技術解説となるよう工夫しました。answer

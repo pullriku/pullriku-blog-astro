@@ -1,5 +1,4 @@
 import { getCollection, getEntry, type CollectionEntry } from "astro:content";
-import { readFileSync, statSync } from "fs";
 
 /**
  * すべての公開の投稿を取得する。
@@ -68,4 +67,8 @@ export async function getTags(): Promise<TagInfo[]> {
         tag,
         count,
     }));
+}
+
+export function getPostUrl(slug: string): string {
+    return `/posts/${slug}/`;
 }

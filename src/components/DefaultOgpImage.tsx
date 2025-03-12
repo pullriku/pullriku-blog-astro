@@ -3,9 +3,7 @@ import satori, { type SatoriOptions } from "satori";
 import { Resvg } from "@resvg/resvg-js";
 import "../styles/global.css";
 
-export const ogImageWithTitle = async (text: string): Promise<Buffer> => {
-    const titleFont = fs.readFileSync("src/fonts/NotoSansJP-Bold.otf");
-
+export default async function DefaultOgpImage(): Promise<Buffer> {
     const width = 1200;
     const height = 630;
     const bgImage = fs.readFileSync("src/assets/og_image.jpeg", {
@@ -41,15 +39,15 @@ export const ogImageWithTitle = async (text: string): Promise<Buffer> => {
                     justifyContent: "center",
                     flexDirection: "column",
                     width: "95%",
-                    height: "95%",
+                    height: "30%",
                     backgroundColor: "rgba(255, 255, 255, 0.8)",
                     position: "absolute",
-                    top: "2.5%",
+                    bottom: "2.5%",
                     left: "2.5%",
                     borderRadius: "30px",
                 }}
             >
-                <p
+                {/* <p
                     style={{
                         // position: "absolute",
                         textAlign: "left",
@@ -63,8 +61,7 @@ export const ogImageWithTitle = async (text: string): Promise<Buffer> => {
                         overflow: "hidden",
                     }}
                 >
-                    {text}
-                </p>
+                </p> */}
                 <div
                     style={{
                         display: "flex",
@@ -96,14 +93,15 @@ export const ogImageWithTitle = async (text: string): Promise<Buffer> => {
     const options: SatoriOptions = {
         width,
         height,
-        fonts: [
-            {
-                name: "Noto Sans JP",
-                data: titleFont,
-                weight: 700,
-                style: "normal",
-            },
-        ],
+        // fonts: [
+        //     {
+        //         name: "Noto Sans JP",
+        //         data: titleFont,
+        //         weight: 700,
+        //         style: "normal",
+        //     },
+        // ],
+        fonts: [],
     };
 
     const svg = await satori(imageComponent, options);
@@ -120,4 +118,4 @@ export const ogImageWithTitle = async (text: string): Promise<Buffer> => {
 
     const image = resvg.render();
     return image.asPng();
-};
+}

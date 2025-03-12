@@ -3,6 +3,7 @@ import type { GetStaticPaths } from "astro";
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
 import CollectionDoc from "../../components/CollectionDoc.astro";
+import { render } from "astro:content";
 export const getStaticPaths = (async () => {
     const collection = await getCollection("docs");
 
@@ -19,7 +20,7 @@ export const getStaticPaths = (async () => {
 type Props = CollectionEntry<"docs">;
 const post = Astro.props as Props;
 
-const { Content, headings } = await post.render();
+const { Content, headings } = await render(post);
 ---
 
 <CollectionDoc

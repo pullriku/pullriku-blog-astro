@@ -3,7 +3,7 @@
 import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 import PostPreview from "./PostPreview.astro";
-import { LIGHT_OVERLAY } from "../lib/consts";
+import { DEFAULT_OGP_IMAGE_PATH, LIGHT_OVERLAY } from "../lib/consts";
 import { zennUrl } from "../lib/foreign";
 import zenn from "../assets/zenn.svg";
 import { getCover, getDefaultOgpImage } from "../layouts/BasicLayout.astro";
@@ -13,7 +13,7 @@ type Props = {
 };
 
 const { post } = Astro.props;
-const cover = (await getCover(post.slug)) ?? (await getDefaultOgpImage());
+const cover = await getCover(post.slug);
 const href = post.data.zenn ? zennUrl(post.slug) : `/posts/${post.slug}`;
 ---
 {/* displayがmd未満のときは PostPreview */}
@@ -25,11 +25,21 @@ const href = post.data.zenn ? zennUrl(post.slug) : `/posts/${post.slug}`;
 <article class="justify-center md:flex hidden my-8">
     <a href={href}>
         <div class=`flex h-full gap-4 items-center shadow-2xl dark:shadow-none ${LIGHT_OVERLAY} dark:bg-slate-800 p-8 rounded-lg`>
-            <Image
-                src={cover}
-                alt={`記事「${post.data.title}」のサムネイル`}
-                class="max-h-52 max-w-52 object-contain shadow-md rounded-lg w-fit"
-            />
+            {
+                cover
+                ? <Image
+                    src={cover}
+                    alt={`記事「${post.data.title}」のサムネイル`}
+                    class="max-h-52 max-w-52 object-contain shadow-md rounded-lg w-fit"
+                />
+                : <Image
+                    src={DEFAULT_OGP_IMAGE_PATH}
+                    alt={`記事「${post.data.title}」のサムネイル`}
+                    width={208}
+                    height={208}
+                    class="max-h-52 max-w-52 object-contain shadow-md rounded-lg w-fit"
+                />
+            }
             <div class="flex flex-col h-full ">
                  <div class="my-auto">
                     <h1 class="font-bold text-xl hover:underline">{post.data.title}</h1>

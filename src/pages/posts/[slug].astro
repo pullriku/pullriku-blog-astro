@@ -2,17 +2,18 @@
 import type { GetStaticPaths } from "astro";
 import { type CollectionEntry } from "astro:content";
 import BasicLayout from "../../layouts/BasicLayout.astro";
-import Prose from "../../layouts/Prose.astro";
+import Prose from "../../layouts/Prose";
 import { Image } from "astro:assets";
 
 import { getAllPosts } from "../../lib/util";
-import { DARK_BG, LIGHT_OVERLAY } from "../../lib/consts";
+import { LIGHT_BG, DARK_BG, LIGHT_OVERLAY } from "../../lib/consts";
 import Tag from "../../components/Tag.astro";
 import RoundedBox from "../../layouts/RoundedBox.astro";
 import { zennUrl } from "../../lib/foreign";
 import ServiceIcon from "../../components/ServiceIcon.astro";
 import { ogpImagePath } from "../../lib/ogp";
 import { getCover } from "../../layouts/BasicLayout.astro";
+import { render } from "astro:content";
 
 export const getStaticPaths = (async () => {
     const posts = await getAllPosts();
@@ -30,7 +31,7 @@ export const getStaticPaths = (async () => {
 type Props = CollectionEntry<"posts">;
 const post = Astro.props;
 
-const { Content, headings } = await post.render();
+const { Content, headings } = await render(post);
 const willSubtractDepth = !headings.map((heading) => heading.depth).includes(1);
 if (willSubtractDepth) {
     headings.forEach((heading) => {
@@ -40,7 +41,7 @@ if (willSubtractDepth) {
 
 // const coverImage = (await getCover(post.slug))?.src ?? await ogpImagePath(post.slug);
 const coverImageOpt = await getCover(post.slug);
-const ogpImageUrl = await ogpImagePath(post.slug);
+const ogpImageUrl = ogpImagePath(post.slug);
 ---
 <BasicLayout title={post.data.title} desc={post.data.desc}, canonicalUrl={post.data.zenn ? zennUrl(post.slug) : undefined} slug={post.slug} keywords={post.data.tags}>
     <div class="px-0 md:px-4">
@@ -110,7 +111,9 @@ const ogpImageUrl = await ogpImagePath(post.slug);
                             }
                     </div>
                     <div class="mt-8">
-                        <script src="https://giscus.app/client.js"
+                        <script
+                        is:inline
+                        src="https://giscus.app/client.js"
                         data-repo="pullriku/pullriku-blog-astro"
                         data-repo-id="R_kgDONbFLiw"
                         data-category="Announcements"
@@ -132,14 +135,13 @@ const ogpImageUrl = await ogpImagePath(post.slug);
             <div class={"lg:h-auto lg:w-72 hidden lg:block" + (post.data.zenn ? "hidden" : "")}>
                 <div class="h-16">{/* 空のコンテナ */}</div>
                 { /* 目次 */ }
-                <div class="
+                <div class=`
                     hidden lg:block
                     top-10 p-4
                     break-words overflow-y-scroll
-                    hide-scrollbar
                     max-h-[calc(100vh-5rem)] sticky
-                    border-2 border-gray-400 dark:border-gray-600 rounded-lg dark:bg-slate-800
-                ">
+                    rounded-lg ${LIGHT_OVERLAY} ${DARK_BG}
+                `>
                     <p class="text-center">目次</p>
                     <hr class="m-4 border-cyan-500 dark:border-cyan-800 text-left" />
                         {
