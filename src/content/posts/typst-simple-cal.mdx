@@ -2,11 +2,14 @@
 title: "Typstでシンプルなカレンダーを作った"
 desc: "Typstでシンプルなカレンダーを作ってみました。本記事では、完成品とその仕組みについて紹介します。"
 pubDate: 2025-02-27
+updatedDate: 2025-03-13
 tags: ["Typst", "カレンダー", "just"]
 pub: true
 ---
 
 import Details from "../../layouts/Details.astro";
+// 必ずclientディレクティブを設定する
+import Quiz from "../../components/Quiz";
 
 ## はじめに
 
@@ -490,6 +493,31 @@ Typstのカスタマイズは奥が深そうで、どのへんまで関数の引
 本記事では、Typst を活用して、カレンダーを作成する方法について解説しました。  
 
 文書だけじゃなく、カレンダーも作れるとは思いませんでした。（やってみたらできた）
+
+<Quiz
+  question="TypstのCodeモードにおいて、code blockは{}で表現しますが、content blockは何で表現するでしょう？"
+  answers={["{}", "[]", "()", "<>", "#関数名()[]"]}
+  correctAnswer={["[]"]}
+  client:visible
+>
+Typstの構文解析には3つのモードがあり、それぞれCode、Math、Markupと呼ばれています。最初はドキュメントのためのMarkupから始まり、`#`の出現でCodeに、`$`の出現でMathに切り替わります。Codeモードで`[]`を使うことで、contentを表現できます。
+```typst
+#let my_content = [Hello, world!]
+#let say(content) = {
+  [I say "#content"]
+}
+
+#say(my_content)
+
+```
+出力:
+```txt
+I say "Hello, world!"
+```
+
+参照: https://typst.app/docs/reference/syntax/#modes
+</Quiz>
+
 
 ## 参考
 
