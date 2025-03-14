@@ -10,7 +10,7 @@ export const getStaticPaths = (async () => {
     return (
         collection.map((post) => ({
             params: {
-                slug: post.slug,
+                id: post.id,
             },
             props: post,
         })) ?? []
@@ -26,7 +26,7 @@ const { Content, headings } = await render(post);
 <CollectionDoc
     title={post.data.title}
     desc={post.data.desc}
-    slug={post.slug}
+    slug={post.id}
     pubDate={post.data.pubDate}
     updatedDate={post.data.updatedDate}
     Content={Content}

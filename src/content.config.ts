@@ -1,10 +1,15 @@
+import { glob } from "astro/loaders";
 import { defineCollection, z } from "astro:content";
 
 /**
  * マークダウンのFrontmatterに対応する型定義
  */
-const postsCollection = defineCollection({
-    type: "content",
+const posts = defineCollection({
+    loader: glob({
+        pattern: "**/*.(md|mdx)",
+        base: "./src/content/posts",
+        generateId: ({ entry }) => entry.replace(/\.(md|mdx)$/, ""),
+    }),
     schema: z.object({
         /** 記事のタイトル */
         title: z.string(),
@@ -28,8 +33,12 @@ const postsCollection = defineCollection({
     }),
 });
 
-const documentsCollection = defineCollection({
-    type: "content",
+const docs = defineCollection({
+    loader: glob({
+        pattern: "**/*.(md|mdx)",
+        base: "src/content/docs",
+        generateId: ({ entry }) => entry.replace(/\.(md|mdx)$/, ""),
+    }),
     schema: z.object({
         /** ドキュメントのタイトル */
         title: z.string(),
@@ -42,7 +51,4 @@ const documentsCollection = defineCollection({
     }),
 });
 
-export const collections = {
-    posts: postsCollection,
-    docs: documentsCollection,
-};
+export const collections = { posts, docs };

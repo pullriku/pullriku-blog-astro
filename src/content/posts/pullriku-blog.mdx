@@ -1,0 +1,119 @@
+---
+title: Astroでブログを作成した
+desc: Astroでこのブログを作りました。
+pubDate: 2025-03-14
+tags: ["Astro", "React", "TypeScript", "MDX", "Tailwind CSS", "Tailwind CSS Typography", "just", "pullriku-blog"]
+pub: true
+---
+
+import Details from "../../layouts/Details.astro";
+// 必ずclientディレクティブを設定する
+import Quiz from "../../components/Quiz";
+
+
+## はじめに
+
+この技術ブログについて、思ったことや使用技術を書きます。自分のブログを持ってみたかったのです。
+
+https://github.com/pullriku/pullriku-blog-astro
+
+## 良い点
+このブログを作って良いと感じたことを紹介します。
+まず、Web技術の学習に役立ちます。自分専用のブログであるため、最新のフレームワークが登場しても気軽に試すことができ、使い捨てではなくメンテナンスしやすい設計を意識して作成できる点が魅力です。
+
+また、記事を書くことで考えを整理でき、ポートフォリオとして自分の成果をまとめることができます。Google検索の結果に情報を足すことができます。
+
+さらに、一から作成したため、カスタマイズや機能追加が非常に容易です。細部に至るまで自由に調整できるため、柔軟な拡張が可能です。
+例えば、最近では選択式クイズコンポーネントを実装しました。
+
+<Quiz
+    question="Astro バージョン5で追加されたContent Layer APIでは、どのようなことが可能になったでしょう？"
+    answers={["リモートのデータを読み込む", "コンテンツを仮想化し、ページの読み込み速度を向上させる", "（単に名前が変わっただけで、機能追加はない）", "コレクションのスキーマを定義し、型安全に管理する" ]}
+    correctAnswer={0}
+    client:visible
+>
+Loaderを利用してデータを読み込むようになりました。`fetch`などを使用してリモートデータを取得できます。また、コミュニティによって作成されたLoaderも公開されており、例えば[Notionのデータを取得するLoader](https://astro.build/blog/community-loaders/#notion)が存在します。
+
+また、Integrationsのページに一覧が掲載されています。
+[https://astro.build/integrations/?search=&categories%5B%5D=loaders](https://astro.build/integrations/?search=&categories%5B%5D=loaders)
+
+</Quiz>
+
+## 使用技術・サービス
+
+### フレームワーク: Astro
+
+[Astro](https://astro.build/)を用いてフロントエンドを一から構築しました。Astroでは、クライアントサイドのJavaScriptがデフォルトで取り除かれるため、高速なページを実現できます。JSX風の独自記法により、Reactなど他のUIライブラリと組み合わせることも可能です。また、Markdown記法で記事を書くと自動的にHTMLに変換されます。
+チュートリアルも日本語化されており、非常に丁寧に解説されています。
+
+https://docs.astro.build/ja/tutorial/0-introduction/
+
+これのチュートリアルで入門しました。
+
+### スタイル: Tailwind CSS、Tailwind CSS Typography、remark-link-card
+
+コンポーネント指向の開発手法により、Tailwind CSSとの相性が良いです。一からスタイルを書くのは大変なので、[Tailwind CSS Typography](https://tailwindcss-typography.vercel.app/)を使って、記事のスタイルを整えています。`h`タグを大きくしたり、`code`タグをハイライトしたりして、いい感じに綺麗にしてくれます。
+
+記事内のリンクをカード化するために、[remark-link-card](https://github.com/gladevise/remark-link-card)を使っています。リンク先の情報を取得して、カードにしてくれますが、スタイルは自分で当てる必要があります。
+
+### ホスティング: Cloudflare Pages
+
+ホスティングは[Cloudflare Pages](https://pages.cloudflare.com/)を利用しています。GitHubリポジトリと連携して、GitHub Actionsでビルドとデプロイの自動化を実現しています。無料で利用できます。
+
+ドメインもCloudflareで取りました。
+
+> ドメイン名の原価販売
+
+を行っているそうで、追加料金がないため、安心感があります。
+
+https://www.cloudflare.com/ja-jp/application-services/solutions/low-cost-domain-names/
+
+### 自動化: `just`、GitHub Actions
+
+記事を書く際には、記事のMarkdownファイルの作成や、画像格納用ファイルの作成が必要です。[`just`](https://github.com/casey/just)というコマンドランナーを使って、コマンド一発で記事を作成できるようにしています。
+
+```make
+new-article slug:
+    cp template.mdx src/content/posts/{{slug}}.mdx
+    mkdir -p src/assets/images/posts/{{slug}}
+```
+
+Cloudflare PagesがGitHub Actionsをサポートしており、ビルド・デプロイを自動化しています。記事を書いたら、GitHubにプッシュするだけで、自動的にビルド・デプロイされます。
+
+WranglerというCLIを使うみたいです。
+
+https://developers.cloudflare.com/workers/wrangler/commands/#pages
+
+```yaml
+- name: Deploy to Cloudflare Pages
+    uses: cloudflare/wrangler-action@v3
+    with:
+        accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+        packageManager: yarn
+        command: "pages deploy ./dist --project-name=pullriku-blog-astro"
+```
+
+## 執筆の流れ
+
+1. `just new-article id`で記事`id`のファイルを作成
+1. `yarn dev`コマンドでローカルサーバーを起動
+1. `src/content/posts/id.mdx`に記事を記述
+    [MDX](https://mdxjs.com/)形式で記述することで、HTMLの`details`や自分で作ったコンポーネントを利用できます。
+    画像を挿入する際は`src`以下の適当な場所に保存して保存し、`![alt](/path/to/image)`のように参照します。
+    [MDXについてのドキュメント](https://docs.astro.build/ja/guides/markdown-content/#mdx%E3%81%AE%E3%81%BF%E3%81%A7%E4%BD%BF%E3%81%88%E3%82%8B%E6%A9%9F%E8%83%BD)が参考になります。
+1. コミットしてプッシュ
+
+## おわりに
+
+Astroの導入を検討されている方の参考になれば幸いです。
+
+<Quiz
+    question="Loaderもその一部として提供されている、Astroの追加機能は何と呼ばれているでしょうか？"
+    answers={["extensions", "components", "plugins", "integrations"]}
+    correctAnswer={3}
+    client:visible
+>
+[integrations](https://astro.build/integrations/)です。
+</Quiz>

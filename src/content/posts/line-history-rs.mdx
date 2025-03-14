@@ -598,7 +598,7 @@ with open("history.txt", "w") as f:
 
 今回、.txt形式のLINEチャット履歴を効率的に解析し、日付やキーワード、ランダムに検索できるライブラリをRustで実装しました。  
 
-<Quiz question="「メッセージの送信を取り消しました」などのシステムメッセージは、このライブラリでどのように解析される？" answers={["無視される","エラーとして扱われる", "発言者「」のメッセージとして扱われる", "発言者Noneのメッセージとして扱われる"]} correctAnswer={[3]} client:visible>
+<Quiz question="「メッセージの送信を取り消しました」などのシステムメッセージは、このライブラリでどのように解析されるでしょうか？" answers={["無視される","エラーとして扱われる", "発言者「」のメッセージとして扱われる", "発言者Noneのメッセージとして扱われる"]} correctAnswer={[3]} client:visible>
 発言者を表す`speaker`フィールドが`Option<&'src str>`型であり、システムメッセージの場合は`None`が設定されます。
 </Quiz>
 
@@ -607,7 +607,3 @@ with open("history.txt", "w") as f:
 - [chronoクレート](https://github.com/chronotope/chrono)  
 - [criterionクレート](https://github.com/bheisler/criterion.rs)  
 - [randクレート](https://github.com/rust-random/rand)
-
-
-
-以上、あなたの執筆スタイルに則った推敲例です。全体の構造、コードブロックと解説のバランス、そして親しみやすさを保ちながら、実用的な技術解説となるよう工夫しました。answer

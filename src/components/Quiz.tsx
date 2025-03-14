@@ -1,6 +1,6 @@
 import type { JSX } from "astro/jsx-runtime";
 import { useState } from "react";
-import { DARK_BG, LIGHT_BG } from "../lib/consts";
+import { LIGHT_BG } from "../lib/consts";
 import Prose from "../layouts/Prose";
 
 export interface QuizProps {
@@ -21,6 +21,17 @@ export default function Quiz({
     correctAnswer,
     children,
 }: QuizProps): JSX.Element {
+    if (
+        question === undefined ||
+        answers === undefined ||
+        correctAnswer === undefined ||
+        children === undefined
+    ) {
+        throw new Error(
+            "Expected question, answers, correctAnswer, and children",
+        );
+    }
+
     const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
     const [isCorrect, setIsCorrect] = useState<boolean | null>(false);
 
@@ -31,7 +42,9 @@ export default function Quiz({
         correctAnswerArray = [correctAnswer];
     } else if (Array.isArray(correctAnswer)) {
         if (typeof correctAnswer[0] === "number") {
-            correctAnswerArray = correctAnswer.map((index) => answers[index as number]);
+            correctAnswerArray = correctAnswer.map(
+                (index) => answers[index as number],
+            );
         } else if (typeof correctAnswer[0] === "string") {
             correctAnswerArray = correctAnswer as string[];
         }
@@ -42,7 +55,12 @@ export default function Quiz({
             className={`p-4 my-8 max-w-2xl mx-auto shadow-lg rounded-lg border-2 dark:border-none border-gray-200 ${LIGHT_BG} dark:bg-slate-900`}
             aria-labelledby="quiz-title"
         >
-            <h3 className="not-prose text-xl text-gray-900 dark:text-gray-100 font-bold m-0" id="quiz-title">Q. {question}</h3>
+            <h3
+                className="not-prose text-xl text-gray-900 dark:text-gray-100 font-bold m-0"
+                id="quiz-title"
+            >
+                Q. {question}
+            </h3>
             <ul className="list-none  mx-auto p-0 *:my-4">
                 {answers.map((answer, index) => (
                     <li key={index} className="">
@@ -65,7 +83,9 @@ export default function Quiz({
                         `}
                             onClick={() => {
                                 setSelectedIndex(index);
-                                setIsCorrect(correctAnswerArray.includes(answer));
+                                setIsCorrect(
+                                    correctAnswerArray.includes(answer),
+                                );
                             }}
                             disabled={selectedIndex !== null}
                         >
@@ -75,15 +95,11 @@ export default function Quiz({
                 ))}
             </ul>
 
-            {
-                selectedIndex !== null && (
-                    <div className="text-2xl">
-                        { isCorrect
-                        ? <p>✅</p>
-                        : <p >❌</p>}
-                    </div>
-                )
-            }
+            {selectedIndex !== null && (
+                <div className="text-2xl">
+                    {isCorrect ? <p>✅</p> : <p>❌</p>}
+                </div>
+            )}
 
             {selectedIndex !== null && (
                 <div>

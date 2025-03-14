@@ -6,7 +6,7 @@ import Prose from "../../layouts/Prose";
 import { Image } from "astro:assets";
 
 import { getAllPosts } from "../../lib/util";
-import { LIGHT_BG, DARK_BG, LIGHT_OVERLAY } from "../../lib/consts";
+import { DARK_BG, LIGHT_OVERLAY } from "../../lib/consts";
 import Tag from "../../components/Tag.astro";
 import RoundedBox from "../../layouts/RoundedBox.astro";
 import { zennUrl } from "../../lib/foreign";
@@ -21,7 +21,7 @@ export const getStaticPaths = (async () => {
     return (
         posts.map((post) => ({
             params: {
-                slug: post.slug,
+                id: post.id,
             },
             props: post,
         })) ?? []
@@ -39,29 +39,49 @@ if (willSubtractDepth) {
     });
 }
 
-// const coverImage = (await getCover(post.slug))?.src ?? await ogpImagePath(post.slug);
-const coverImageOpt = await getCover(post.slug);
-const ogpImageUrl = ogpImagePath(post.slug);
+const coverImageOpt = await getCover(post.id);
+const ogpImageUrl = ogpImagePath(post.id);
+const origin = Astro.site?.origin;
+const schema = JSON.stringify({
+    "@type": "Article",
+    "@context": "http://schema.org",
+    mainEntityOfPage: {
+        "@type": "WebPage",
+        "@id": origin,
+    },
+    headline: post.data.title,
+    image: origin + ogpImageUrl,
+    datePublished: post.data.pubDate.toISOString(),
+    dateModified:
+        post.data.updatedDate?.toISOString() ?? post.data.pubDate.toISOString(),
+    author: {
+        "@type": "Person",
+        name: "pullriku",
+    },
+});
 ---
-<BasicLayout title={post.data.title} desc={post.data.desc}, canonicalUrl={post.data.zenn ? zennUrl(post.slug) : undefined} slug={post.slug} keywords={post.data.tags}>
+<BasicLayout title={post.data.title} desc={post.data.desc}, canonicalUrl={post.data.zenn ? zennUrl(post.id) : undefined} slug={post.id} keywords={post.data.tags}>
     <div class="px-0 md:px-4">
         <div class="mx-auto justify-center lg:flex gap-10">
             { /* 記事の列 */ }
             <div class="max-w-4xl min-w-0 flex-1 lg:mx-0 lg:w-fit break-words mx-auto">
                 <div class="relative">
-                    <div class="h-16 px-4 md:px-0 overflow-x-scroll flex flex-row hide-scrollbar">
-                      {
-                        // タグ
-                        (post.data.tags ?? []).map((tag) => (
-                          <RoundedBox key={tag}>
-                            <Tag tag={tag} count={undefined} />
-                          </RoundedBox>
-                        ))
-                      }
+                    <div class="h-16 px-4 md:px-0 pr-12 overflow-x-scroll flex flex-row hide-scrollbar">
+                        <div class="mx-8 inline-flex">
+                            {
+                                // タグ
+                                (post.data.tags ?? []).map((tag) => (
+                                  <RoundedBox key={tag}>
+                                    <Tag tag={tag} count={undefined} />
+                                  </RoundedBox>
+                                ))
+                              }
+                        </div>
                     </div>
                     {/* グラデーションオーバーレイ */}
                     <div class="absolute top-0 right-0 h-full w-12 pointer-events-none bg-gradient-to-l from-slate-100 dark:from-slate-950 to-transparent"></div>
-                  </div>
+                    <div class="absolute top-0 left-0 h-full w-12 pointer-events-none bg-gradient-to-r from-slate-100 dark:from-slate-950 to-transparent"></div>
+                </div>
                   
                   
                 <div class={` p-4 md:p-12 pt-5 mx-auto ${LIGHT_OVERLAY} ${DARK_BG} rounded-lg`}>
@@ -104,8 +124,8 @@ const ogpImageUrl = ogpImagePath(post.slug);
                                 post.data.zenn
                                     ? (
                                         <div class="flex flex-row items-center">
-                                            <ServiceIcon href={zennUrl(post.slug)} name="simple-icons:zenn" width={24} height={24} />
-                                            <a href={zennUrl(post.slug)}><p class="text-gray-500">外部サイト(Zenn)</p></a>
+                                            <ServiceIcon href={zennUrl(post.id)} name="simple-icons:zenn" width={24} height={24} />
+                                            <a href={zennUrl(post.id)}><p class="text-gray-500">外部サイト(Zenn)</p></a>
                                         </div>)
                                     : <Prose><Content /></Prose>
                             }
@@ -183,3 +203,6 @@ const ogpImageUrl = ogpImagePath(post.slug);
         @apply mt-0 rounded-t-none;
     }
 </style>
+
+<script is:inline type="application/ld+json", set:html={schema} />
+

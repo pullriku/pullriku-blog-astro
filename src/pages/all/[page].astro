@@ -17,7 +17,9 @@ export const getStaticPaths = (async ({ paginate }) => {
 }) satisfies GetStaticPaths;
 
 const { page }: { page: Page<CollectionEntry<"posts">> } = Astro.props;
-const data = page.data.sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+const data = page.data.sort(
+    (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
+);
 ---
 <SingleColumnLayout title='すべての記事' desc='@pullrikuによる技術ブログの、すべての記事を見ることができます。' selectedPage={NavigationPage.Posts}>
     <PageTitle>すべての記事</PageTitle>

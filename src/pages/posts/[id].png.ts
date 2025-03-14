@@ -8,15 +8,15 @@ export const getStaticPaths = async () => {
     if (!articles || articles.length <= 0) return;
 
     return articles.map((article) => ({
-        params: { slug: article.slug },
+        params: { id: article.id },
     }));
 };
 
 export const GET = async ({ params }: APIContext) => {
-    if (!params.slug) {
+    if (!params.id) {
         return;
     }
-    const article = await getPostBySlug(params.slug);
+    const article = await getPostBySlug(params.id);
 
     if (!article?.data.title) {
         return;

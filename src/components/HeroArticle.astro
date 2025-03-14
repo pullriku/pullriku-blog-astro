@@ -6,15 +6,15 @@ import PostPreview from "./PostPreview.astro";
 import { DEFAULT_OGP_IMAGE_PATH, LIGHT_OVERLAY } from "../lib/consts";
 import { zennUrl } from "../lib/foreign";
 import zenn from "../assets/zenn.svg";
-import { getCover, getDefaultOgpImage } from "../layouts/BasicLayout.astro";
+import { getCover } from "../layouts/BasicLayout.astro";
 
 type Props = {
     post: CollectionEntry<"posts">;
 };
 
 const { post } = Astro.props;
-const cover = await getCover(post.slug);
-const href = post.data.zenn ? zennUrl(post.slug) : `/posts/${post.slug}`;
+const cover = await getCover(post.id);
+const href = post.data.zenn ? zennUrl(post.id) : `/posts/${post.id}`;
 ---
 {/* displayがmd未満のときは PostPreview */}
 <article class="md:hidden mb-4">
