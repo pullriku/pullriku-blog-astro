@@ -42,21 +42,37 @@ if (willSubtractDepth) {
 const coverImageOpt = await getCover(post.id);
 const ogpImageUrl = ogpImagePath(post.id);
 const origin = Astro.site?.origin;
-const schema = JSON.stringify({
-    "@type": "Article",
+
+let image = [origin + ogpImageUrl];
+if (coverImageOpt) {
+    image.unshift(origin + coverImageOpt.src);
+}
+const schemaArticle = JSON.stringify({
     "@context": "http://schema.org",
+    "@type": "Article",
     mainEntityOfPage: {
         "@type": "WebPage",
         "@id": origin,
     },
     headline: post.data.title,
-    image: origin + ogpImageUrl,
+    description: post.data.desc,
+    image: image,
     datePublished: post.data.pubDate.toISOString(),
     dateModified:
         post.data.updatedDate?.toISOString() ?? post.data.pubDate.toISOString(),
     author: {
         "@type": "Person",
         name: "pullriku",
+        "url": "https://pullriku.net/about/",
+    },
+    publisher: {
+        "@type": "Organization",
+        name: "pullriku-blog",
+        url: "https://pullriku.net/",
+        logo: {
+            "@type": "ImageObject",
+            url: origin + "/og-image.png",
+        },
     },
 });
 ---
@@ -109,7 +125,7 @@ const schema = JSON.stringify({
                             )
                         }
                     </a>
-                    <div>
+                    <article>
                          <div class="py-10">
                             <h1 class="text-4xl font-bold">{post.data.title}</h1>
                             <time datetime={post.data.pubDate.toISOString()} class="text-gray-500 block">公開日: {post.data.pubDate.toISOString().split('T')[0]}</time>
@@ -129,7 +145,7 @@ const schema = JSON.stringify({
                                         </div>)
                                     : <Prose><Content /></Prose>
                             }
-                    </div>
+                    </article>
                     <div class="mt-8">
                         <script
                         is:inline
@@ -204,5 +220,5 @@ const schema = JSON.stringify({
     }
 </style>
 
-<script is:inline type="application/ld+json", set:html={schema} />
+<script is:inline type="application/ld+json", set:html={schemaArticle} />
 
