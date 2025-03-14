@@ -24,10 +24,9 @@ jobs:
      
      
       - name: Publish to Cloudflare Pages
-        uses: cloudflare/pages-action@1
+        uses: cloudflare/wrangler-action@v3
         with:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          projectName: pullriku-blog-astro
-          directory: ./dist
+          workingDirectory: ./dist
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
