@@ -23,36 +23,10 @@ if (others.length > numOthers) {
 
 const schemaWebPage = JSON.stringify({
 	"@context": "http://schema.org/",
-	"@type": "WebPage",
+	"@type": "WebSite",
 	"name": BLOG_NAME,
-	"description": "pullrikuによる技術ブログです。他サービスに投稿した記事もまとめています。",
-	"mainEntryOfPage": {
-		"@type": "WebPage",
-		"@id": `${Astro.site?.origin}/`,
-	},
-	"image": {
-		"@type": "ImageObject",
-		"url": `${Astro.site?.origin}/og-image.png`,
-	},
-	"speakable": {
-		"@type": "SpeakableSpecification",
-		"cssSelector": ["article", "h1", "h2", "h3", "h4", "h5", "h6" ]
-	},
-	"url": "https://pullriku.net/",
-	"author": {
-		"@type": "Person",
-		"name": "pullriku",
-		"url": "https://pullriku.net/about/",
-	},
-	"publisher": {
-		"@type": "Organization",
-		"name": "pullriku-blog",
-		"url": "https://pullriku.net/",
-		"logo": {
-			"@type": "ImageObject",
-			"url": `${Astro.site?.origin}/og-image.png`,
-		},
-	},
+	"url": Astro.site?.origin,
+	
 })
 ---
 
