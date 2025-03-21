@@ -47,7 +47,7 @@ let image = [origin + ogpImageUrl];
 if (coverImageOpt) {
     image.unshift(origin + coverImageOpt.src);
 }
-const schemaArticle = JSON.stringify({
+const schemaArticle = {
     "@context": "http://schema.org",
     "@type": "Article",
     mainEntityOfPage: {
@@ -74,9 +74,9 @@ const schemaArticle = JSON.stringify({
             url: origin + "/og-image.png",
         },
     },
-});
+};
 ---
-<BasicLayout title={post.data.title} desc={post.data.desc}, canonicalUrl={post.data.zenn ? zennUrl(post.id) : undefined} slug={post.id} keywords={post.data.tags}>
+<BasicLayout title={post.data.title} desc={post.data.desc}, canonicalUrl={post.data.zenn ? zennUrl(post.id) : undefined} slug={post.id} keywords={post.data.tags} additionalSchemas={[schemaArticle]} }>
     <div class="px-0 md:px-4">
         <div class="mx-auto justify-center lg:flex gap-10">
             { /* 記事の列 */ }
@@ -219,6 +219,4 @@ const schemaArticle = JSON.stringify({
         @apply mt-0 rounded-t-none;
     }
 </style>
-
-<script is:inline type="application/ld+json", set:html={schemaArticle} />
 

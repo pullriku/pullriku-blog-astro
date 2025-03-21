@@ -5,7 +5,6 @@ import SingleColumnLayout from "../layouts/SingleColumnLayout.astro";
 import { getAllPostsWithHero } from "../lib/util";
 import BlueLink from "../components/BlueLink.astro";
 import { NavigationPage } from "../components/Navigation.astro";
-import { BLOG_NAME } from "../lib/consts";
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
@@ -20,14 +19,6 @@ if (others.length > numOthers) {
     posts = others.slice(0, numOthers);
     omitted = true;
 }
-
-const schemaWebPage = JSON.stringify({
-	"@context": "http://schema.org/",
-	"@type": "WebSite",
-	"name": BLOG_NAME,
-	"url": Astro.site?.origin,
-	
-})
 ---
 
 <SingleColumnLayout desc=`@pullrikuによる技術ブログです。他サービスに投稿した記事もまとめています。` selectedPage={NavigationPage.Home}>
@@ -43,4 +34,5 @@ const schemaWebPage = JSON.stringify({
 		}
 	</div>
 </SingleColumnLayout>
-<script is:inline type="application/ld+json" set:html={schemaWebPage}></script>
+
+

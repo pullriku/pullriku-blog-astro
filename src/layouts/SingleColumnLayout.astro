@@ -8,17 +8,12 @@ type Props = MetaContent &
     };
 
 const {
-    title,
-    desc,
-    slug,
-    keywords,
-    canonicalUrl,
-    selectedPage,
     class: className = "",
+    ...basicLayoutProps
 } = Astro.props;
 ---
 
-<BasicLayout title={title}, desc={desc}, slug={slug}, keywords={keywords}, canonicalUrl={canonicalUrl} selectedPage={selectedPage}>
+<BasicLayout {...basicLayoutProps}>
     <div class={"mx-auto px-4 lg:px-16" + ` ${className} `}>
         <slot />
     </div>
