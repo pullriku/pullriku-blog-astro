@@ -1,10 +1,10 @@
 ---
-import { getTags } from "../../lib/util";
-import Tag from "../../components/Tag.astro";
-import RoundedBox from "../../layouts/RoundedBox.astro";
-import BasicLayout from "../../layouts/BasicLayout.astro";
-import { NavigationPage } from "../../components/Navigation.astro";
-import PageTitle from "../../layouts/PageTitle.astro";
+import { getTags } from "@lib/util";
+import Tag from "@components/Tag.astro";
+import RoundedBox from "@layouts/RoundedBox.astro";
+import BasicLayout from "@layouts/BasicLayout.astro";
+import { NavigationPage } from "@components/Navigation.astro";
+import PageTitle from "@layouts/PageTitle.astro";
 
 const tagInfoList = await getTags();
 const sortedTagInfoList = tagInfoList.sort((a, b) => {

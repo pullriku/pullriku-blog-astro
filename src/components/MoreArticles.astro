@@ -1,7 +1,7 @@
 ---
 // 記事の一覧。渡された記事の一覧を表示する。
 import type { CollectionEntry } from "astro:content";
-import PostPreview from "./PostPreview.astro";
+import PostPreview from "@components/PostPreview.astro";
 
 type Props = {
     posts: CollectionEntry<"posts">[];

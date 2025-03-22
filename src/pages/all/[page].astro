@@ -1,12 +1,12 @@
 ---
 import type { GetStaticPaths, Page } from "astro";
-import { getAllPosts } from "../../lib/util";
-import SingleColumnLayout from "../../layouts/SingleColumnLayout.astro";
-import MoreArticles from "../../components/MoreArticles.astro";
+import { getAllPosts } from "@lib/util";
+import SingleColumnLayout from "@layouts/SingleColumnLayout.astro";
+import MoreArticles from "@components/MoreArticles.astro";
 import type { CollectionEntry } from "astro:content";
-import PageLink from "../../components/PageLink.astro";
-import { NavigationPage } from "../../components/Navigation.astro";
-import PageTitle from "../../layouts/PageTitle.astro";
+import PageLink from "@components/PageLink.astro";
+import { NavigationPage } from "@components/Navigation.astro";
+import PageTitle from "@layouts/PageTitle.astro";
 
 export const pageSize = 30;
 

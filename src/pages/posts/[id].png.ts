@@ -1,5 +1,5 @@
-import { getAllPosts, getPostBySlug } from "../../lib/util";
-import { ogImageWithTitle } from "../../components/OgImage";
+import { getAllPosts, getPostBySlug } from "@lib/util";
+import { ogImageWithTitle } from "@components/OgImage";
 import type { APIContext } from "astro";
 
 export const getStaticPaths = async () => {

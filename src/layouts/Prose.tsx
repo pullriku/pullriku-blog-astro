@@ -1,5 +1,5 @@
 import type { JSX } from "astro/jsx-runtime";
-import "../styles/ProseExt.css";
+import "@styles/ProseExt.css";
 
 export interface ProseProps {
     children: JSX.Element | JSX.Element[];

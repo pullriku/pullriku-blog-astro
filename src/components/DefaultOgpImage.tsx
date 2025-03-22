@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import satori, { type SatoriOptions } from "satori";
 import { Resvg } from "@resvg/resvg-js";
-import "../styles/global.css";
+import "@styles/global.css";
 
 export default async function DefaultOgpImage(): Promise<Buffer> {
     const width = 1200;

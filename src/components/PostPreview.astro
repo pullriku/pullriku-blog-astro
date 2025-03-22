@@ -2,10 +2,10 @@
 // 記事のコンパクトなプレビュー。
 import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
-import { LIGHT_OVERLAY } from "../lib/consts";
-import { getCover, getDefaultOgpImage } from "../layouts/BasicLayout.astro";
-import zenn from "../assets/zenn.svg";
-import { zennUrl } from "../lib/foreign.ts";
+import { LIGHT_OVERLAY } from "@lib/consts";
+import { getCover, getDefaultOgpImage } from "@layouts/BasicLayout.astro";
+import zenn from "@assets/zenn.svg";
+import { zennUrl } from "@lib/foreign.ts";
 
 type Props = {
     post: CollectionEntry<"posts">;
@@ -24,9 +24,9 @@ const href = post.data.zenn ? zennUrl(post.id) : `/posts/${post.id}`;
     <div class=`inline-block p-4 md:p-8 w-full h-full shadow-2xl dark:shadow-none ${LIGHT_OVERLAY} dark:bg-slate-800 rounded-lg flex flex-col break-words`>
         {
             cover ? (
-                <Image src={cover} alt=`記事「${post.data.title}」のサムネイル` width=200 height=200 class=" mb-4 object-cover drop-shadow-md rounded-lg w-full h-36 sm:h-44"/>
+                <Image src={cover} alt=`記事「${post.data.title}」のサムネイル` class=" mb-4 object-cover drop-shadow-md rounded-lg w-full h-36 sm:h-44"/>
             ) : (
-                <Image src={defaultCover} alt=`記事「${post.data.title}」のサムネイル` width=200 height=200 class=" mb-4 object-cover drop-shadow-md rounded-lg w-full h-36 sm:h-44"/>
+                <Image src={defaultCover} alt=`記事「${post.data.title}」のサムネイル` class=" mb-4 object-cover drop-shadow-md rounded-lg w-full h-36 sm:h-44"/>
             )
         }
         <span class="text-xl hover:underline">

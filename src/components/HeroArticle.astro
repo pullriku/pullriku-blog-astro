@@ -2,18 +2,18 @@
 // 大きく表示される記事のプレビュー。md以上の画面幅で表示される。小さい画面では PostPreview を使う。
 import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
-import PostPreview from "./PostPreview.astro";
-import { DEFAULT_OGP_IMAGE_PATH, LIGHT_OVERLAY } from "../lib/consts";
-import { zennUrl } from "../lib/foreign";
-import zenn from "../assets/zenn.svg";
-import { getCover } from "../layouts/BasicLayout.astro";
+import PostPreview from "@components/PostPreview.astro";
+import { DEFAULT_OGP_IMAGE_PATH, LIGHT_OVERLAY } from "@lib/consts";
+import { zennUrl } from "@lib/foreign";
+import zenn from "@assets/zenn.svg";
+import { getCover, getDefaultOgpImage } from "@layouts/BasicLayout.astro";
 
 type Props = {
     post: CollectionEntry<"posts">;
 };
 
 const { post } = Astro.props;
-const cover = await getCover(post.id);
+const cover = (await getCover(post.id)) ?? (await getDefaultOgpImage());
 const href = post.data.zenn ? zennUrl(post.id) : `/posts/${post.id}`;
 ---
 {/* displayがmd未満のときは PostPreview */}

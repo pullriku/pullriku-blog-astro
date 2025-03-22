@@ -1,5 +1,5 @@
 import type { APIContext } from "astro";
-import DefaultOgpImage from "../components/DefaultOgpImage";
+import DefaultOgpImage from "@components/DefaultOgpImage";
 
 export async function GET(_context: APIContext): Promise<Response> {
     const defaultOgpImage = await DefaultOgpImage();

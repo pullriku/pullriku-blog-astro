@@ -2,7 +2,7 @@
 import type { GetStaticPaths } from "astro";
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
-import CollectionDoc from "../../components/CollectionDoc.astro";
+import CollectionDoc from "@components/CollectionDoc.astro";
 import { render } from "astro:content";
 export const getStaticPaths = (async () => {
     const collection = await getCollection("docs");

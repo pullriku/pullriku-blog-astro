@@ -1,16 +1,16 @@
 ---
-import "../styles/global.css";
-import Footer from "../components/Footer.astro";
-import Header from "../components/Header.astro";
+import "@styles/global.css";
+import Footer from "@components/Footer.astro";
+import Header from "@components/Header.astro";
 import {
     BLOG_NAME,
     DARK_BG,
     LIGHT_BG,
     DEFAULT_OGP_IMAGE_PATH,
-} from "../lib/consts";
-import type { NavigationProps } from "../components/Navigation.astro";
+} from "@lib/consts";
+import type { NavigationProps } from "@components/Navigation.astro";
 import type { ImageMetadata } from "astro";
-import { ogpImagePath } from "../lib/ogp";
+import { ogpImagePath } from "@lib/ogp";
 
 export interface MetaContent {
     title?: string;
@@ -38,10 +38,10 @@ const ogImagePath = slug ? ogpImagePath(slug) : DEFAULT_OGP_IMAGE_PATH;
 export const headerPadding = "7";
 
 const schemaWebSite = {
-	"@context": "https://schema.org/",
-	"@type": "WebSite",
-	"name": BLOG_NAME,
-	"url": Astro.site?.origin,
+    "@context": "https://schema.org/",
+    "@type": "WebSite",
+    name: BLOG_NAME,
+    url: Astro.site?.origin,
 };
 
 export async function getDefaultOgpImage(): Promise<ImageMetadata> {

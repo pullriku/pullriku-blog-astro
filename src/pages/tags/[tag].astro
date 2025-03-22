@@ -1,9 +1,9 @@
 ---
 import type { GetStaticPaths } from "astro";
-import { getAllPosts, getPostsByTag } from "../../lib/util";
-import SingleColumnLayout from "../../layouts/SingleColumnLayout.astro";
-import MoreArticles from "../../components/MoreArticles.astro";
-import PageTitle from "../../layouts/PageTitle.astro";
+import { getAllPosts, getPostsByTag } from "@lib/util";
+import SingleColumnLayout from "@layouts/SingleColumnLayout.astro";
+import MoreArticles from "@components/MoreArticles.astro";
+import PageTitle from "@layouts/PageTitle.astro";
 
 export const getStaticPaths = (async () => {
     const allPosts = await getAllPosts();

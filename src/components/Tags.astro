@@ -1,0 +1,28 @@
+---
+import RoundedBox from "@layouts/RoundedBox.astro";
+import Tag from "./Tag.astro";
+
+type Props = {
+    tags: string[];
+};
+
+const { tags } = Astro.props;
+---
+
+<div class="relative">
+    <div class="h-16 px-4 md:px-0 pr-12 overflow-x-scroll flex flex-row hide-scrollbar">
+        <div class="mx-8 inline-flex">
+            {
+                // タグ
+                (tags).map((tag) => (
+                  <RoundedBox key={tag}>
+                    <Tag tag={tag} count={undefined} />
+                  </RoundedBox>
+                ))
+              }
+        </div>
+    </div>
+    {/* グラデーションオーバーレイ */}
+    <div class="absolute top-0 right-0 h-full w-12 pointer-events-none bg-gradient-to-l from-slate-100 dark:from-slate-950 to-transparent"></div>
+    <div class="absolute top-0 left-0 h-full w-12 pointer-events-none bg-gradient-to-r from-slate-100 dark:from-slate-950 to-transparent"></div>
+</div>

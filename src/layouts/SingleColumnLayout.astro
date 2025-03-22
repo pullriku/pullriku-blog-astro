@@ -1,16 +1,13 @@
 ---
-import type { NavigationProps } from "../components/Navigation.astro";
-import BasicLayout, { type MetaContent } from "./BasicLayout.astro";
+import type { NavigationProps } from "@components/Navigation.astro";
+import BasicLayout, { type MetaContent } from "@layouts/BasicLayout.astro";
 
 type Props = MetaContent &
     NavigationProps & {
         class?: string;
     };
 
-const {
-    class: className = "",
-    ...basicLayoutProps
-} = Astro.props;
+const { class: className = "", ...basicLayoutProps } = Astro.props;
 ---
 
 <BasicLayout {...basicLayoutProps}>

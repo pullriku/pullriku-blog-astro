@@ -6,7 +6,7 @@ tags: ["Raspberry Pi", "Astro", "Axum", "Rust", "ドジョウ", "カメラ"]
 pub: true
 ---
 
-import Details from "../../layouts/Details.astro";
+import Details from "@layouts/Details.astro";
 
 Raspberry Pi とカメラを活用した水槽監視システムを構築しました。水槽の前に立たなくても、Webブラウザから水槽の様子を確認できます。
 
@@ -289,8 +289,8 @@ async fn image_names() -> Json<Vec<String>> {
 
 ```astro:index.astro
 ---
-import Information from "../layouts/Information.astro";
-import PaddingLayout from "../layouts/PaddingLayout.astro";
+import Information from "@layouts/Information.astro";
+import PaddingLayout from "@layouts/PaddingLayout.astro";
 
 ---
 
@@ -349,7 +349,7 @@ import PaddingLayout from "../layouts/PaddingLayout.astro";
 
 ```astro
 ---
-import Layout from "../layouts/Layout.astro";
+import Layout from "@layouts/Layout.astro";
 ---
 
 <Layout>

@@ -1,8 +1,8 @@
 ---
 // 必要なレイアウトやコンポーネントのインポート
-import BasicLayout from "../layouts/BasicLayout.astro";
-import Prose from "../layouts/Prose";
-import { DARK_BG, LIGHT_OVERLAY } from "../lib/consts";
+import BasicLayout from "@layouts/BasicLayout.astro";
+import Prose from "@layouts/Prose";
+import { DARK_BG, LIGHT_OVERLAY } from "@lib/consts";
 
 // 見出しの型定義
 type Heading = {
@@ -65,7 +65,7 @@ if (willSubtractDepth) {
           hidden lg:block
           top-10 p-4
           break-words overflow-scroll
-          max-h-80-lvh sticky
+          max-h-[calc(100vh-5rem)] sticky
           border-2 border-gray-400 dark:border-gray-600 rounded-lg dark:bg-slate-800
         ">
           <p class="text-center">目次</p>
@@ -97,10 +97,6 @@ if (willSubtractDepth) {
   @import "tailwindcss";
   @plugin "@tailwindcss/typography";
   @config "../../tailwind.config.mjs";
-
-  .max-h-80-lvh {
-    max-height: 80vh;
-  }
 
   .remark-code-title {
     @apply text-base pl-3 rounded-t-lg font-bold bg-slate-600 text-white;

@@ -1,7 +1,7 @@
 import type { JSX } from "astro/jsx-runtime";
 import { useState } from "react";
-import { LIGHT_BG } from "../lib/consts";
-import Prose from "../layouts/Prose";
+import { LIGHT_BG } from "@lib/consts";
+import Prose from "@layouts/Prose";
 
 export interface QuizProps {
     question: string;
@@ -52,7 +52,7 @@ export default function Quiz({
 
     return (
         <section
-            className={`p-4 my-8 max-w-2xl mx-auto shadow-lg rounded-lg border-2 dark:border-none border-gray-200 ${LIGHT_BG} dark:bg-slate-900`}
+            className={`quiz p-4 my-8 max-w-2xl mx-auto shadow-lg rounded-lg border-2 dark:border-none border-gray-200 ${LIGHT_BG} dark:bg-slate-900`}
             aria-labelledby="quiz-title"
         >
             <h3
