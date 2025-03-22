@@ -1,4 +1,5 @@
 {
+    "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
     "formatter": {
         "enabled": true,
         "formatWithErrors": false,
@@ -8,6 +9,10 @@
         "indentWidth": 4,
         "lineEnding": "lf",
         "lineWidth": 80
+    },
+    "linter": {
+        "enabled": true,
+        "ignore": ["**/node_modules/**", ".astro"]
     },
     "javascript": {
         "globals": ["Astro"],
