@@ -1,19 +1,19 @@
 ---
-import type { GetStaticPaths } from "astro";
-import { type CollectionEntry } from "astro:content";
-import BasicLayout from "../../layouts/BasicLayout.astro";
-import Prose from "../../layouts/Prose";
 import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+import Giscus from "@giscus/react";
+import BasicLayout from "@layouts/BasicLayout.astro";
+import Prose from "@layouts/Prose";
+import type { GetStaticPaths } from "astro";
 
-import { getAllPosts } from "../../lib/util";
-import { DARK_BG, LIGHT_OVERLAY } from "../../lib/consts";
-import Tag from "../../components/Tag.astro";
-import RoundedBox from "../../layouts/RoundedBox.astro";
-import { zennUrl } from "../../lib/foreign";
-import ServiceIcon from "../../components/ServiceIcon.astro";
-import { ogpImagePath } from "../../lib/ogp";
-import { getCover } from "../../layouts/BasicLayout.astro";
 import { render } from "astro:content";
+import ServiceIcon from "@components/ServiceIcon.astro";
+import Tags from "@components/Tags.astro";
+import { getCover } from "@layouts/BasicLayout.astro";
+import { DARK_BG, LIGHT_OVERLAY } from "@lib/consts";
+import { zennUrl } from "@lib/foreign";
+import { ogpImagePath } from "@lib/ogp";
+import { getAllPosts } from "@lib/util";
 
 export const getStaticPaths = (async () => {
     const posts = await getAllPosts();
@@ -34,16 +34,16 @@ const post = Astro.props;
 const { Content, headings } = await render(post);
 const willSubtractDepth = !headings.map((heading) => heading.depth).includes(1);
 if (willSubtractDepth) {
-    headings.forEach((heading) => {
+    for (const heading of headings) {
         heading.depth -= 1;
-    });
+    }
 }
 
 const coverImageOpt = await getCover(post.id);
 const ogpImageUrl = ogpImagePath(post.id);
 const origin = Astro.site?.origin;
 
-let image = [origin + ogpImageUrl];
+const image = [origin + ogpImageUrl];
 if (coverImageOpt) {
     image.unshift(origin + coverImageOpt.src);
 }
@@ -63,7 +63,7 @@ const schemaArticle = {
     author: {
         "@type": "Person",
         name: "pullriku",
-        "url": "https://pullriku.net/about/",
+        url: "https://pullriku.net/about/",
     },
     publisher: {
         "@type": "Organization",
@@ -71,69 +71,38 @@ const schemaArticle = {
         url: "https://pullriku.net/",
         logo: {
             "@type": "ImageObject",
-            url: origin + "/og-image.png",
+            url: `${origin}/og-image.png`,
         },
     },
 };
 ---
 <BasicLayout title={post.data.title} desc={post.data.desc}, canonicalUrl={post.data.zenn ? zennUrl(post.id) : undefined} slug={post.id} keywords={post.data.tags} additionalSchemas={[schemaArticle]} }>
     <div class="px-0 md:px-4">
-        <div class="mx-auto justify-center lg:flex gap-10">
+        <Tags tags={post.data.tags ?? []} />
+        <div class="mx-auto justify-center lg:flex  gap-10">
             { /* 記事の列 */ }
             <div class="max-w-4xl min-w-0 flex-1 lg:mx-0 lg:w-fit break-words mx-auto">
-                <div class="relative">
-                    <div class="h-16 px-4 md:px-0 pr-12 overflow-x-scroll flex flex-row hide-scrollbar">
-                        <div class="mx-8 inline-flex">
-                            {
-                                // タグ
-                                (post.data.tags ?? []).map((tag) => (
-                                  <RoundedBox key={tag}>
-                                    <Tag tag={tag} count={undefined} />
-                                  </RoundedBox>
-                                ))
-                              }
-                        </div>
-                    </div>
-                    {/* グラデーションオーバーレイ */}
-                    <div class="absolute top-0 right-0 h-full w-12 pointer-events-none bg-gradient-to-l from-slate-100 dark:from-slate-950 to-transparent"></div>
-                    <div class="absolute top-0 left-0 h-full w-12 pointer-events-none bg-gradient-to-r from-slate-100 dark:from-slate-950 to-transparent"></div>
-                </div>
-                  
-                  
                 <div class={` p-4 md:p-12 pt-5 mx-auto ${LIGHT_OVERLAY} ${DARK_BG} rounded-lg`}>
-                    <a href={coverImageOpt?.src ?? ogpImageUrl} target="_blank" class="block w-fit mx-auto">
-                        {
-                            coverImageOpt && (
-                                <Image
-                                    src={coverImageOpt}
-                                    alt={`記事「${post.data.title}」のサムネイル`}
-                                    width={208}
-                                    height={208}
-                                    class="drop-shadow-md rounded-lg hover:scale-110 transition"
-                                />
-                            )
-                        }
-                        {
-                            !coverImageOpt && (
-                                <Image 
-                                    src={ogpImageUrl}
-                                    alt={`記事「${post.data.title}」のサムネイル`}
-                                    width={208}
-                                    height={208}
-                                    class="drop-shadow-md rounded-lg hover:scale-110 transition" 
-                                />
-                            )
-                        }
-                    </a>
+                    {
+                        coverImageOpt && (
+                            <Image
+                                src={coverImageOpt}
+                                alt={`記事「${post.data.title}」のサムネイル`}
+                                class="drop-shadow-md rounded-xl mx-auto object-contain max-h-[30rem] my-0 w-fit mb-10"
+                            />
+                        )
+                    }
                     <article>
-                         <div class="py-10">
+                         <div class="py-10 md:py-0 md:pb-10">
                             <h1 class="text-4xl font-bold">{post.data.title}</h1>
-                            <time datetime={post.data.pubDate.toISOString()} class="text-gray-500 block">公開日: {post.data.pubDate.toISOString().split('T')[0]}</time>
-                            {
-                                post.data.updatedDate ? (
-                                    <time datetime={post.data.updatedDate.toISOString()} class="text-gray-500 block">更新日: {post.data.updatedDate.toISOString().split("T")[0]}</time>
-                                ) : null
-                            }
+                            <div class="py-2">
+                                <time datetime={post.data.pubDate.toISOString()} class="text-gray-500 block">公開日: {post.data.pubDate.toISOString().split('T')[0]}</time>
+                                {
+                                    post.data.updatedDate ? (
+                                        <time datetime={post.data.updatedDate.toISOString()} class="text-gray-500 block">更新日: {post.data.updatedDate.toISOString().split("T")[0]}</time>
+                                    ) : null
+                                }
+                            </div>
                          </div>
                         
                             {
@@ -147,29 +116,26 @@ const schemaArticle = {
                             }
                     </article>
                     <div class="mt-8">
-                        <script
-                        is:inline
-                        src="https://giscus.app/client.js"
-                        data-repo="pullriku/pullriku-blog-astro"
-                        data-repo-id="R_kgDONbFLiw"
-                        data-category="Announcements"
-                        data-category-id="DIC_kwDONbFLi84Cm5cH"
-                        data-mapping="og:title"
-                        data-strict="0"
-                        data-reactions-enabled="0"
-                        data-emit-metadata="0"
-                        data-input-position="top"
-                        data-theme="preferred_color_scheme"
-                        data-lang="ja"
-                        data-loading="lazy"
-                        crossorigin="anonymous"
-                        async />
+                    <Giscus
+                        client:load
+                        repo="pullriku/pullriku-blog-astro"
+                        repoId="R_kgDONbFLiw"
+                        category="Announcements"
+                        categoryId="DIC_kwDONbFLi84Cm5cH"
+                        mapping="og:title"
+                        reactionsEnabled="0"
+                        emitMetadata="0"
+                        theme="preferred_color_scheme"
+                        lang="ja"
+                        loading="lazy"
+                        inputPosition="top"
+                        strict="1"
+                    />
                     </div>
                 </div>
             </div>
             { /* 目次の列（スクロールのためのコンテナ） */ }
             <div class={"lg:h-auto lg:w-72 hidden lg:block" + (post.data.zenn ? "hidden" : "")}>
-                <div class="h-16">{/* 空のコンテナ */}</div>
                 { /* 目次 */ }
                 <div class=`
                     hidden lg:block
@@ -207,10 +173,6 @@ const schemaArticle = {
     @import "tailwindcss";
     @plugin "@tailwindcss/typography";
     @config "../../../tailwind.config.mjs";
-
-    .max-h-80-lvh {
-        max-height: 80vh;
-    }
 
     .remark-code-title {
         @apply text-base pl-3 rounded-t-lg font-bold bg-slate-600 text-white
