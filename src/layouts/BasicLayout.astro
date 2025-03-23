@@ -2,15 +2,15 @@
 import "@styles/global.css";
 import Footer from "@components/Footer.astro";
 import Header from "@components/Header.astro";
+import type { NavigationProps } from "@components/Navigation.astro";
 import {
     BLOG_NAME,
     DARK_BG,
-    LIGHT_BG,
     DEFAULT_OGP_IMAGE_PATH,
+    LIGHT_BG,
 } from "@lib/consts";
-import type { NavigationProps } from "@components/Navigation.astro";
-import type { ImageMetadata } from "astro";
 import { ogpImagePath } from "@lib/ogp";
+import type { ImageMetadata } from "astro";
 
 export interface MetaContent {
     title?: string;
@@ -18,10 +18,12 @@ export interface MetaContent {
     slug?: string;
     keywords?: string[];
     canonicalUrl?: string;
-    additionalSchemas?: any[];
+    additionalSchemas?: object[];
 }
 
-type Props = MetaContent & NavigationProps;
+export type BasicLayoutProps = MetaContent & NavigationProps;
+
+type Props = BasicLayoutProps;
 
 const {
     title,
@@ -59,23 +61,9 @@ export async function getCover(
     );
     const pngs = Object.entries(pngsRecord);
 
-    for (let [key, image] of pngs) {
+    for (const [key, image] of pngs) {
         if (key.split("/").pop()?.split(".")[0] === slug) {
             return (await image()).default;
-        }
-    }
-    return undefined;
-}
-
-export async function getCoverPath(slug: string): Promise<string | undefined> {
-    const pngsRecord = import.meta.glob<{ default: ImageMetadata }>(
-        "/src/assets/covers/*.{png,jpg,jpeg}",
-    );
-    const pngs = Object.entries(pngsRecord);
-
-    for (let [key, _image] of pngs) {
-        if (key.split("/").pop()?.split(".")[0] === slug) {
-            return key.replace("/public", "");
         }
     }
     return undefined;

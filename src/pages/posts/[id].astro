@@ -1,19 +1,21 @@
 ---
-import { Image } from "astro:assets";
-import type { CollectionEntry } from "astro:content";
-import Giscus from "@giscus/react";
-import BasicLayout from "@layouts/BasicLayout.astro";
-import Prose from "@layouts/Prose";
-import type { GetStaticPaths } from "astro";
 
+import type { CollectionEntry } from "astro:content";
 import { render } from "astro:content";
-import ServiceIcon from "@components/ServiceIcon.astro";
+import PostContent from "@layouts/PostContent.astro";
+
 import Tags from "@components/Tags.astro";
+
+import BasicLayout from "@layouts/BasicLayout.astro";
 import { getCover } from "@layouts/BasicLayout.astro";
-import { DARK_BG, LIGHT_OVERLAY } from "@lib/consts";
+
+import Article from "@components/Article.astro";
+import Discussion from "@components/Discussion.astro";
+import TableOfContents from "@components/TableOfContents.astro";
 import { zennUrl } from "@lib/foreign";
 import { ogpImagePath } from "@lib/ogp";
 import { getAllPosts } from "@lib/util";
+import type { GetStaticPaths } from "astro";
 
 export const getStaticPaths = (async () => {
     const posts = await getAllPosts();
@@ -31,7 +33,7 @@ export const getStaticPaths = (async () => {
 type Props = CollectionEntry<"posts">;
 const post = Astro.props;
 
-const { Content, headings } = await render(post);
+const { headings } = await render(post);
 const willSubtractDepth = !headings.map((heading) => heading.depth).includes(1);
 if (willSubtractDepth) {
     for (const heading of headings) {
@@ -80,105 +82,17 @@ const schemaArticle = {
     <div class="px-0 md:px-4">
         <Tags tags={post.data.tags ?? []} />
         <div class="mx-auto justify-center lg:flex  gap-10">
-            { /* 記事の列 */ }
-            <div class="max-w-4xl min-w-0 flex-1 lg:mx-0 lg:w-fit break-words mx-auto">
-                <div class={` p-4 md:p-12 pt-5 mx-auto ${LIGHT_OVERLAY} ${DARK_BG} rounded-lg`}>
-                    {
-                        coverImageOpt && (
-                            <Image
-                                src={coverImageOpt}
-                                alt={`記事「${post.data.title}」のサムネイル`}
-                                class="drop-shadow-md rounded-xl mx-auto object-contain max-h-[30rem] my-0 w-fit mb-10"
-                            />
-                        )
-                    }
-                    <article>
-                         <div class="py-10 md:py-0 md:pb-10">
-                            <h1 class="text-4xl font-bold">{post.data.title}</h1>
-                            <div class="py-2">
-                                <time datetime={post.data.pubDate.toISOString()} class="text-gray-500 block">公開日: {post.data.pubDate.toISOString().split('T')[0]}</time>
-                                {
-                                    post.data.updatedDate ? (
-                                        <time datetime={post.data.updatedDate.toISOString()} class="text-gray-500 block">更新日: {post.data.updatedDate.toISOString().split("T")[0]}</time>
-                                    ) : null
-                                }
-                            </div>
-                         </div>
-                        
-                            {
-                                post.data.zenn
-                                    ? (
-                                        <div class="flex flex-row items-center">
-                                            <ServiceIcon href={zennUrl(post.id)} name="simple-icons:zenn" width={24} height={24} />
-                                            <a href={zennUrl(post.id)}><p class="text-gray-500">外部サイト(Zenn)</p></a>
-                                        </div>)
-                                    : <Prose><Content /></Prose>
-                            }
-                    </article>
-                    <div class="mt-8">
-                    <Giscus
-                        client:load
-                        repo="pullriku/pullriku-blog-astro"
-                        repoId="R_kgDONbFLiw"
-                        category="Announcements"
-                        categoryId="DIC_kwDONbFLi84Cm5cH"
-                        mapping="og:title"
-                        reactionsEnabled="0"
-                        emitMetadata="0"
-                        theme="preferred_color_scheme"
-                        lang="ja"
-                        loading="lazy"
-                        inputPosition="top"
-                        strict="1"
-                    />
-                    </div>
+            <PostContent post={post} coverImage={coverImageOpt}>
+                <Article post={post} />
+                <div class="mt-8">
+                    <Discussion />
                 </div>
-            </div>
+            </PostContent>
             { /* 目次の列（スクロールのためのコンテナ） */ }
             <div class={"lg:h-auto lg:w-72 hidden lg:block" + (post.data.zenn ? "hidden" : "")}>
-                { /* 目次 */ }
-                <div class=`
-                    hidden lg:block
-                    top-10 p-4
-                    break-words overflow-y-scroll
-                    max-h-[calc(100vh-5rem)] sticky
-                    rounded-lg ${LIGHT_OVERLAY} ${DARK_BG}
-                `>
-                    <p class="text-center">目次</p>
-                    <hr class="m-4 border-cyan-500 dark:border-cyan-800 text-left" />
-                        {
-                            headings.map((heading) => (
-                                <a href={`#${heading.slug}`} class="block hover:underline text-sm *:py-1">
-                                    {
-                                        // 見出しレベルに応じたインデント
-                                        heading.depth === 1
-                                            ? <span class="block font-semibold">{heading.text}</span>
-                                            : heading.depth === 2
-                                                ? <span class="block indent-4">{heading.text}</span>
-                                                : heading.depth === 3
-                                                    ? <span class="block indent-8">{heading.text}</span>
-                                                    : heading.depth === 4
-                                                        ? <span class="block indent-12">{heading.text}</span>
-                                                        : <span class="block indent-12">{heading.text}</span>
-                                    }
-                                </a>
-                            ))
-                        }
-                </div>
+                <TableOfContents headings={headings} />
             </div>
         </div>
     </div>
 </BasicLayout>
-<style is:global>
-    @import "tailwindcss";
-    @plugin "@tailwindcss/typography";
-    @config "../../../tailwind.config.mjs";
-
-    .remark-code-title {
-        @apply text-base pl-3 rounded-t-lg font-bold bg-slate-600 text-white
-    }
-    .remark-code-title+pre {
-        @apply mt-0 rounded-t-none;
-    }
-</style>
 

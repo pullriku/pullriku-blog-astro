@@ -1,32 +1,20 @@
 ---
+import type { CollectionEntry } from "astro:content";
+import { render } from "astro:content";
+import Article from "@components/Article.astro";
+import TableOfContents from "@components/TableOfContents.astro";
 // 必要なレイアウトやコンポーネントのインポート
 import BasicLayout from "@layouts/BasicLayout.astro";
-import Prose from "@layouts/Prose";
-import { DARK_BG, LIGHT_OVERLAY } from "@lib/consts";
-import type { JSX } from "astro/jsx-runtime";
-
-// 見出しの型定義
-type Heading = {
-    depth: number;
-    text: string;
-    slug: string;
-};
+import PostContent from "@layouts/PostContent.astro";
 
 // コンポーネントの Props 型定義（CollectionEntry は使用しない）
 type Props = {
-    title: string;
-    desc?: string;
-    slug: string;
-    pubDate: Date;
-    updatedDate?: Date;
-    // Markdown 渡されたコンテンツ（コンポーネントとして渡す想定）
-    Content: JSX.Element;
-    // Markdown 内で生成された目次情報
-    headings: Heading[];
+    post: CollectionEntry<"docs">;
 };
 
-const { title, desc, slug, pubDate, updatedDate, Content, headings } =
-    Astro.props as Props;
+const { post } = Astro.props;
+
+const { headings } = await render(post);
 
 // 見出しの深さ調整（最上位が depth 1 でない場合、全体を 1 減算する）
 const willSubtractDepth = !headings.map((heading) => heading.depth).includes(1);
@@ -36,62 +24,18 @@ if (willSubtractDepth) {
     }
 }
 ---
-<BasicLayout title={title} desc={desc} slug={slug}>
+<BasicLayout title={post.data.title} desc={post.data.desc} slug={post.id}>
   <div class="px-0 md:px-4">
-    <div class="mx-auto justify-center lg:flex gap-10">
-      { /* 本文表示の列 */ }
-      <div class="max-w-4xl min-w-0 flex-1 lg:mx-0 lg:w-fit break-words mx-auto">
-        <div class="h-16 hidden lg:block"></div>
-        <div class={`p-4 md:p-12 pt-5 mx-auto ${LIGHT_OVERLAY} ${DARK_BG} rounded-lg`}>
-          <div class="py-10">
-            <h1 class="text-4xl font-bold">{title}</h1>
-            <time datetime={pubDate.toISOString()} class="text-gray-500 block">
-              公開日: {pubDate.toISOString().split('T')[0]}
-            </time>
-            { updatedDate ? (
-              <time datetime={updatedDate.toISOString()} class="text-gray-500 block">
-                更新日: {updatedDate.toISOString().split('T')[0]}
-              </time>
-            ) : null }
-          </div>
-          <Prose>
-            <Content />
-          </Prose>
-        </div>
+    <div class="mx-auto justify-center lg:flex  gap-10">
+      { /* 記事の列 */ }
+      <PostContent post={post}>
+        <Article post={post} />
+      </PostContent>
+      { /* 目次の列（スクロールのためのコンテナ） */ }
+      <div class={"lg:h-auto lg:w-72 hidden lg:block"}>
+          <TableOfContents headings={headings} />
       </div>
-      { /* 目次（TOC）表示の列 */ }
-      <div class="lg:h-auto lg:w-72 hidden lg:block">
-        <div class="h-16"></div>
-        <div class="
-          hidden lg:block
-          top-10 p-4
-          break-words overflow-scroll
-          max-h-[calc(100vh-5rem)] sticky
-          border-2 border-gray-400 dark:border-gray-600 rounded-lg dark:bg-slate-800
-        ">
-          <p class="text-center">目次</p>
-          <hr class="m-4 border-cyan-500 dark:border-cyan-800 text-left" />
-          {
-            headings.map((heading) => (
-              <a href={`#${heading.slug}`} class="block hover:underline">
-                {
-                  // 見出しレベルに応じたインデント調整
-                  heading.depth === 1
-                    ? <span class="block text-base font-bold">{heading.text}</span>
-                    : heading.depth === 2
-                      ? <span class="block text-base indent-4">{heading.text}</span>
-                      : heading.depth === 3
-                        ? <span class="block text-base indent-8">{heading.text}</span>
-                        : heading.depth === 4
-                          ? <span class="block text-base indent-12">{heading.text}</span>
-                          : <span class="block text-base indent-12">{heading.text}</span>
-                }
-              </a>
-            ))
-          }
-        </div>
-      </div>
-    </div>
+  </div>
   </div>
 </BasicLayout>
 <style is:global>

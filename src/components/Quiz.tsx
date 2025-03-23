@@ -1,7 +1,7 @@
+import Prose from "@layouts/Prose";
+import { LIGHT_BG } from "@lib/consts";
 import type { JSX } from "astro/jsx-runtime";
 import { useState } from "react";
-import { LIGHT_BG } from "@lib/consts";
-import Prose from "@layouts/Prose";
 
 export interface QuizProps {
     question: string;
@@ -63,8 +63,10 @@ export default function Quiz({
             </h3>
             <ul className="list-none  mx-auto p-0 *:my-4">
                 {answers.map((answer, index) => (
+                    // biome-ignore lint:インデックスをキーとして使用する
                     <li key={index} className="">
                         <button
+                            type="button"
                             className={`p-2 shadow-md rounded-lg text-gray-900 dark:text-gray-100 block w-full font-black border-2
                             ${
                                 selectedIndex === index

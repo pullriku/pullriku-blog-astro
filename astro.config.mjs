@@ -1,19 +1,19 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 
-import tailwind from "@tailwindcss/vite";
 import mdx from "@astrojs/mdx";
-import remarkCodeTiles from "remark-flexible-code-titles";
-import remarkBreaks from "remark-breaks";
-// @ts-ignore
-import remarkLinkCard from "remark-link-card";
+import tailwind from "@tailwindcss/vite";
+import rehypeExternalLinks from "rehype-external-links";
 // @ts-ignore
 import rehypeFigure from "rehype-figure";
 import rehypeRaw from "rehype-raw";
-import rehypeExternalLinks from "rehype-external-links";
+import remarkBreaks from "remark-breaks";
+import remarkCodeTiles from "remark-flexible-code-titles";
+// @ts-ignore
+import remarkLinkCard from "remark-link-card";
 
-import react from "@astrojs/react";
 import partytown from "@astrojs/partytown";
+import react from "@astrojs/react";
 
 // https://astro.build/config
 export default defineConfig({
@@ -40,7 +40,7 @@ export default defineConfig({
             [
                 remarkLinkCard,
                 // { shortenUrl: true },
-                { cache: true, shortenUrl: true },
+                { cache: false, shortenUrl: true },
             ],
         ],
         rehypePlugins: [

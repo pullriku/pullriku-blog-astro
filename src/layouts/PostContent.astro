@@ -1,0 +1,26 @@
+---
+import { Image } from "astro:assets";
+import { DARK_BG, LIGHT_OVERLAY } from "@lib/consts";
+import type { Document } from "@lib/types";
+
+type Props<D extends Document> = {
+    post: { data: D };
+    coverImage?: ImageMetadata;
+};
+
+const { post, coverImage } = Astro.props as Props<Document>;
+---
+<div class="max-w-4xl min-w-0 flex-1 lg:mx-0 lg:w-fit break-words mx-auto">
+    <div class={` p-4 md:p-12 pt-5 mx-auto ${LIGHT_OVERLAY} ${DARK_BG} rounded-lg`}>
+        {
+            coverImage && (
+                <Image
+                    src={coverImage}
+                    alt={`記事「${post.data.title}」のサムネイル`}
+                    class="drop-shadow-md rounded-xl mx-auto object-contain max-h-[30rem] my-0 w-fit mb-10"
+                />
+            )
+        }
+        <slot />
+    </div>
+</div>

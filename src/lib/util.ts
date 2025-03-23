@@ -1,4 +1,4 @@
-import { getCollection, getEntry, type CollectionEntry } from "astro:content";
+import { type CollectionEntry, getCollection, getEntry } from "astro:content";
 
 /**
  * すべての公開の投稿を取得する。
@@ -14,7 +14,10 @@ export async function getAllPosts(): Promise<CollectionEntry<"posts">[]> {
     return result;
 }
 
-export async function getAllPostsWithHero() {
+export async function getAllPostsWithHero(): Promise<{
+    hero: CollectionEntry<"posts">;
+    others: CollectionEntry<"posts">[];
+}> {
     const allPosts = (await getAllPosts()).sort((a, b) => {
         return b.data.pubDate.getTime() - a.data.pubDate.getTime();
     });
@@ -24,14 +27,14 @@ export async function getAllPostsWithHero() {
             hero: allPosts.slice(0)[0],
             others: allPosts.slice(1, allPosts.length),
         };
-    } else if (allPosts.length === 1) {
+    }
+    if (allPosts.length === 1) {
         return {
             hero: allPosts[0],
             others: [],
         };
-    } else {
-        throw new Error("No posts found");
     }
+    throw new Error("No posts found");
 }
 
 export async function getPostBySlug(slug: string) {

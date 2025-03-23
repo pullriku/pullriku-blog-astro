@@ -1,14 +1,14 @@
 ---
+import Navigation, { type NavigationProps } from "@components/Navigation.astro";
 //ヘッダー。ブログ名とナビゲーションを表示する。
 import { BLOG_NAME, LIGHT_OVERLAY, N_CHARS_STRONG_TITLE } from "@lib/consts";
-import Navigation, { type NavigationProps } from "@components/Navigation.astro";
 const titleStrong = BLOG_NAME.slice(0, N_CHARS_STRONG_TITLE);
 const titleNormalColor = BLOG_NAME.slice(N_CHARS_STRONG_TITLE);
 
 type Props = NavigationProps;
 const { selectedPage } = Astro.props;
 ---
-<header class=`p-4 mb-4 shadow-lg dark:shadow-none ${LIGHT_OVERLAY} dark:bg-gray-800 flex flex-col md:flex-row items-center gap-4 md:gap-8`>
+<header class=`p-4 lg:px-16 mb-4 shadow-lg dark:shadow-none ${LIGHT_OVERLAY} dark:bg-gray-800 flex flex-col md:flex-row items-center gap-4 md:gap-8`>
     <a href="/">
         <div class="logo text-3xl font-bold">
             <span class="text-blue-600 dark:text-blue-400">{titleStrong}</span>{titleNormalColor}

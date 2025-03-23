@@ -3,7 +3,7 @@
     "formatter": {
         "enabled": true,
         "formatWithErrors": false,
-        "ignore": ["**/node_modules/**", ".astro"],
+        "ignore": ["**/node_modules/**", ".astro", "dist"],
         "attributePosition": "auto",
         "indentStyle": "space",
         "indentWidth": 4,
@@ -12,7 +12,7 @@
     },
     "linter": {
         "enabled": true,
-        "ignore": ["**/node_modules/**", ".astro"]
+        "ignore": ["**/node_modules/**", ".astro", "dist"]
     },
     "javascript": {
         "globals": ["Astro"],

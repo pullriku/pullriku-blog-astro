@@ -1,8 +1,8 @@
+import { defaultOgpImageBuffer } from "@lib/ogpImage";
 import type { APIContext } from "astro";
-import DefaultOgpImage from "@components/DefaultOgpImage";
 
 export async function GET(_context: APIContext): Promise<Response> {
-    const defaultOgpImage = await DefaultOgpImage();
+    const defaultOgpImage = await defaultOgpImageBuffer();
     return new Response(defaultOgpImage, {
         headers: {
             "Content-Type": "image/png",

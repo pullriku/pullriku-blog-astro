@@ -1,0 +1,38 @@
+---
+import type { DataEntryMap } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import { render } from "astro:content";
+import Prose from "@layouts/Prose";
+import { zennUrl } from "@lib/foreign";
+import ServiceIcon from "./ServiceIcon.astro";
+
+type Props<T extends keyof DataEntryMap> = {
+    post: CollectionEntry<T>;
+};
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+<article>
+    <div class="py-10 md:py-0 md:pb-10">
+       <h1 class="text-4xl font-bold">{post.data.title}</h1>
+       <div class="py-2">
+           <time datetime={post.data.pubDate.toISOString()} class="text-gray-500 block">公開日: {post.data.pubDate.toISOString().split('T')[0]}</time>
+           {
+               post.data.updatedDate ? (
+                   <time datetime={post.data.updatedDate.toISOString()} class="text-gray-500 block">更新日: {post.data.updatedDate.toISOString().split("T")[0]}</time>
+               ) : null
+           }
+       </div>
+    </div>
+   
+       {
+           post.data.zenn
+               ? (
+                   <div class="flex flex-row items-center">
+                       <ServiceIcon href={zennUrl(post.id)} name="simple-icons:zenn" width={24} height={24} />
+                       <a href={zennUrl(post.id)}><p class="text-gray-500">外部サイト(Zenn)</p></a>
+                   </div>)
+               : <Prose><Content /></Prose>
+       }
+</article>
