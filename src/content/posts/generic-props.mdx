@@ -124,6 +124,8 @@ const { post } = Astro.props as Props<Document>;
 
 これで、このコンポーネント内で`Document`を満たす型を受け取ることができます。型が一致しない場合はエラーが出ます。`as Props<Document>`をつけることでエディタの補完が効きます。
 
+![補完](@assets/images/posts/generic-props/autocomplete.png)
+
 これだけでも動きますが、`ZodObject`の定義時に型チェックをする方法があります。`satisfies`演算子を使います。
 
 ```ts:content.config.ts
