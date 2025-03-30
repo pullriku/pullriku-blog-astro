@@ -31,7 +31,7 @@ const { Content } = await render(post);
                ? (
                    <div class="flex flex-row items-center">
                        <ServiceIcon href={zennUrl(post.id)} name="simple-icons:zenn" width={24} height={24} />
-                       <a href={zennUrl(post.id)}><p class="text-gray-500">外部サイト(Zenn)</p></a>
+                       <a target="_blank" href={zennUrl(post.id)}><p class="text-gray-500">外部サイト(Zenn)</p></a>
                    </div>)
                : <Prose><Content /></Prose>
        }
