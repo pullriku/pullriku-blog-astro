@@ -5,6 +5,7 @@
     "type": "module",
     "scripts": {
         "astro": "astro",
+        "check": "astro check",
         "build": "astro check && astro build",
         "dev": "astro dev",
         "fmt": "biome format --write . && sort-package-json",

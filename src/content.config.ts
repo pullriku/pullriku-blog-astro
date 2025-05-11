@@ -28,7 +28,7 @@ const postsSchema = z.object({
 const posts = defineCollection({
     loader: glob({
         pattern: "**/*.(md|mdx)",
-        base: "./src/content/posts",
+        base: "./src/contents/posts",
         generateId: ({ entry }) => entry.replace(/\.(md|mdx)$/, ""),
     }),
     schema: postsSchema,
@@ -47,7 +47,7 @@ const docsSchema = z.object({
 const docs = defineCollection({
     loader: glob({
         pattern: "**/*.(md|mdx)",
-        base: "src/content/docs",
+        base: "src/contents/docs",
         generateId: ({ entry }) => entry.replace(/\.(md|mdx)$/, ""),
     }),
     schema: docsSchema,
