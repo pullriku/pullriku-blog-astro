@@ -31,10 +31,10 @@ export default defineConfig({
         plugins: [tailwind()],
     },
     integrations: [
-      mdx(),
-      react(),
-      partytown({ config: { forward: ["dataLayer.push"] } }),
-      icon(),
+        mdx(),
+        react(),
+        partytown({ config: { forward: ["dataLayer.push"] } }),
+        icon(),
     ],
     markdown: {
         remarkPlugins: [
