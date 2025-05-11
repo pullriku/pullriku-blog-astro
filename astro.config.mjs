@@ -15,6 +15,8 @@ import remarkLinkCard from "remark-link-card";
 import partytown from "@astrojs/partytown";
 import react from "@astrojs/react";
 
+import icon from "astro-icon";
+
 // https://astro.build/config
 export default defineConfig({
     site: "https://pullriku.net",
@@ -29,9 +31,10 @@ export default defineConfig({
         plugins: [tailwind()],
     },
     integrations: [
-        mdx(),
-        react(),
-        partytown({ config: { forward: ["dataLayer.push"] } }),
+      mdx(),
+      react(),
+      partytown({ config: { forward: ["dataLayer.push"] } }),
+      icon(),
     ],
     markdown: {
         remarkPlugins: [
