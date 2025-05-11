@@ -18,9 +18,9 @@ jobs:
       - name: enable corepack
         run: corepack enable
       - name: Install dependencies
-        run: yarn install
+        run: pnpm install
       - name: Build
-        run: yarn astro build
+        run: pnpm astro build
      
      
       - name: Publish to Cloudflare Pages
@@ -29,5 +29,5 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          packageManager: yarn
+          packageManager: pnpm
           command: "pages deploy ./dist --project-name=pullriku-blog-astro"
