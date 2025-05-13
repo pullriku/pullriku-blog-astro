@@ -1,0 +1,265 @@
+{
+  "main": {
+    "id": "d11413d96c81b9b4",
+    "type": "split",
+    "children": [
+      {
+        "id": "9abcc1aed1aac273",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "0c7ff20adfda6be4",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "templates/remove-article.md",
+                "mode": "source",
+                "source": true
+              },
+              "icon": "lucide-file",
+              "title": "remove-article"
+            }
+          },
+          {
+            "id": "fd96b92d86039a65",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "templates/new-article.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "new-article"
+            }
+          },
+          {
+            "id": "d985e5818611062d",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "templates/new-article.md",
+                "mode": "source",
+                "source": true
+              },
+              "icon": "lucide-file",
+              "title": "new-article"
+            }
+          },
+          {
+            "id": "4756d69718d0f831",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "templates/new-article.md",
+                "mode": "preview",
+                "source": true
+              },
+              "icon": "lucide-file",
+              "title": "new-article"
+            }
+          },
+          {
+            "id": "71868ab7dc3e16f1",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "templates/new-article.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "new-article"
+            }
+          }
+        ],
+        "currentTab": 2
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "857a4e0492c2361b",
+    "type": "split",
+    "children": [
+      {
+        "id": "c57f5797c6f8a7f6",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "9ee3642f3d8404d4",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "ファイルエクスプローラ"
+            }
+          },
+          {
+            "id": "9263e47ec0551abb",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "検索"
+            }
+          },
+          {
+            "id": "abcc3060d941f38f",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "ブックマーク"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "b1b69fe27e3739d4",
+    "type": "split",
+    "children": [
+      {
+        "id": "c57d4d36b4fc03e3",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "c5e0777941ade1d8",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "posts/brainfuck-llvm.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "brainfuck-llvmへのバックリンク"
+            }
+          },
+          {
+            "id": "254e667b788256d8",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "posts/brainfuck-llvm.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "brainfuck-llvmからのアウトゴーイングリンク"
+            }
+          },
+          {
+            "id": "feee5d8153e510d3",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "タグ"
+            }
+          },
+          {
+            "id": "bd9ed66b29b71fcf",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "posts/brainfuck-llvm.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "brainfuck-llvmのアウトライン"
+            }
+          },
+          {
+            "id": "e8c87e7a652bddaa",
+            "type": "leaf",
+            "state": {
+              "type": "git-view",
+              "state": {},
+              "icon": "git-pull-request",
+              "title": "Source Control"
+            }
+          }
+        ],
+        "currentTab": 4
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:クイックスイッチャーを開く": false,
+      "graph:グラフビューを開く": false,
+      "canvas:新規キャンバスを作成": false,
+      "daily-notes:今日のデイリーノートを開く": false,
+      "templates:テンプレートを挿入": false,
+      "command-palette:コマンドパレットを開く": false,
+      "obsidian-git:Open Git source control": false,
+      "templater-obsidian:Templater": false
+    }
+  },
+  "active": "d985e5818611062d",
+  "lastOpenFiles": [
+    "執筆方法.md",
+    "posts/astro-obsidian-env.mdx",
+    "posts/Untitled.mdx",
+    "templates/remove-article.md",
+    "posts/a.md",
+    "posts/a.mdx",
+    "templates/new-article.md",
+    "images/posts/a",
+    "無題のフォルダ",
+    "AB45318B-DA90-4533-BC27-FC3234AF3E8B_1_105_c.jpeg",
+    "images/posts/{{title}}",
+    "a",
+    "posts/brainfuck-llvm.md",
+    "posts/Untitled.md",
+    "images/posts/{{title}}/AB45318B-DA90-4533-BC27-FC3234AF3E8B_1_105_c.jpeg",
+    "posts/typst-simple-cal.mdx",
+    "EAB38379-6900-4307-AD15-4B888D3E1B29_1_105_c.jpeg",
+    "images/posts/{{title",
+    "astro-env.md",
+    "posts/_astro-obsidian-env.md",
+    "a.md",
+    "templates"
+  ]
+}
