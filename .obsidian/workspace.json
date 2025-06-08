@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "templates/new-article.md",
+                "file": "posts/astro-obsidian-env.mdx",
                 "mode": "source",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "new-article"
+              "title": "astro-obsidian-env"
             }
           },
           {
@@ -239,13 +239,13 @@
   },
   "active": "d985e5818611062d",
   "lastOpenFiles": [
+    "templates/new-article.md",
     "執筆方法.md",
     "posts/astro-obsidian-env.mdx",
     "posts/Untitled.mdx",
     "templates/remove-article.md",
     "posts/a.md",
     "posts/a.mdx",
-    "templates/new-article.md",
     "images/posts/a",
     "無題のフォルダ",
     "AB45318B-DA90-4533-BC27-FC3234AF3E8B_1_105_c.jpeg",
