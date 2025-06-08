@@ -238,7 +238,9 @@
     }
   },
   "active": "d985e5818611062d",
+  "active": "d985e5818611062d",
   "lastOpenFiles": [
+    "justfile",
     "templates/new-article.md",
     "執筆方法.md",
     "posts/astro-obsidian-env.mdx",

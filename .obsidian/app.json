@@ -8,6 +8,8 @@
   "mobileToolbarCommands": [
     "editor:indent-list",
     "editor:unindent-list",
+    "editor:insert-link",
+    "editor:paste",
     "editor:attach-file",
     "editor:insert-wikilink",
     "editor:toggle-code",
@@ -19,7 +21,6 @@
     "editor:toggle-strikethrough",
     "editor:toggle-highlight",
     "editor:toggle-blockquote",
-    "editor:insert-link",
     "editor:toggle-bullet-list",
     "editor:toggle-numbered-list",
     "editor:toggle-checklist-status",
