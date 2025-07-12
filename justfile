@@ -14,16 +14,21 @@ help:
 
 # 新しい記事を作成する
 new-article slug:
-    just _check-is-draft-branch
+    # just _check-is-draft-branch
     cp ./template.mdx src/contents/posts/{{slug}}.mdx
     mkdir -p src/contents/images/posts/{{slug}}
 
 # 記事を削除する
 remove-article slug:
-    just _check-is-draft-branch
+    # just _check-is-draft-branch
     rm src/contents/posts/{{slug}}.mdx
     rm -rf src/contents/images/posts/{{slug}}
 
-# 現在のブランチがdraftかを確認する
-_check-is-draft-branch:
-    sh scripts/check_is_draft_br.sh
+# 記事の一覧を表示する
+list:
+    ls src/contents/posts/*.{md,mdx}
+
+
+# # 現在のブランチがdraftかを確認する
+# _check-is-draft-branch:
+#     sh scripts/check_is_draft_br.sh
