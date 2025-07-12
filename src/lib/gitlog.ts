@@ -33,7 +33,7 @@ export function get_post_history(id: string, isMdx = true): PostHistory[] {
             const index = subject.indexOf(":");
             return {
                 date: Temporal.Instant.from(new Date(log.date).toISOString()),
-                subject: index !== -1 ? subject.slice(index + 1) : subject,
+                subject: index !== -1 ? subject.slice(index + 1).trim() : subject.trim(),
             };
         })
         .filter((log) => !log.subject.startsWith("Merge"));
