@@ -23,19 +23,20 @@ export type PostHistory = {
     subject: string;
 };
 
-export function get_post_history(
-    id: string,
-    isMdx = true,
-): PostHistory[] {
+export function get_post_history(id: string, isMdx = true): PostHistory[] {
     const path = `src/contents/posts/${id}.${isMdx ? "mdx" : "md"}`;
 
     const result = git_log(path)
         [Symbol.iterator]()
-        .map((log) => ({
-            date: Temporal.Instant.from(new Date(log.date).toISOString()),
-            subject: log.subject,
-        }))
+        .map((log) => {
+            const subject = log.subject;
+            const index = subject.indexOf(":");
+            return {
+                date: Temporal.Instant.from(new Date(log.date).toISOString()),
+                subject: index !== -1 ? subject.slice(index + 1) : subject,
+            };
+        })
         .filter((log) => !log.subject.startsWith("Merge"));
-    
+
     return Array.from(result).reverse();
 }
