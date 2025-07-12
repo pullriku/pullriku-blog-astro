@@ -11,11 +11,14 @@ import { getCover } from "@layouts/BasicLayout.astro";
 
 import Article from "@components/Article.astro";
 import Discussion from "@components/Discussion.astro";
+import PostHistory from "@components/PostHistory.astro";
 import TableOfContents from "@components/TableOfContents.astro";
+import Prose from "@layouts/Prose";
 import { zennUrl } from "@lib/foreign";
 import { ogpImagePath } from "@lib/ogp";
 import { getAllPosts } from "@lib/util";
 import type { GetStaticPaths } from "astro";
+
 
 export const getStaticPaths = (async () => {
     const posts = await getAllPosts();
@@ -83,7 +86,10 @@ const schemaArticle = {
         <Tags tags={post.data.tags ?? []} />
         <div class="mx-auto justify-center lg:flex  gap-10">
             <PostContent post={post} coverImage={coverImageOpt}>
-                <Article post={post} />
+                <Prose>
+                    <Article post={post} />
+                    <PostHistory post={post} />
+                </Prose>
                 <div class="mt-8">
                     <Discussion />
                 </div>

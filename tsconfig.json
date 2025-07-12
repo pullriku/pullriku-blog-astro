@@ -12,7 +12,7 @@
             "@assets/*": ["src/assets/*"],
             "@styles/*": ["src/styles/*"],
             "@lib/*": ["src/lib/*"],
-            "@contents/*": ["src/contents/*"],
+            "@contents/*": ["src/contents/*"]
         }
     }
 }

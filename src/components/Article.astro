@@ -6,6 +6,7 @@ import Prose from "@layouts/Prose";
 import { zennUrl } from "@lib/foreign";
 import ServiceIcon from "./ServiceIcon.astro";
 
+
 type Props<T extends keyof DataEntryMap> = {
     post: CollectionEntry<T>;
 };
@@ -14,7 +15,7 @@ const { post } = Astro.props;
 const { Content } = await render(post);
 ---
 <article>
-    <div class="py-10 md:py-0 md:pb-10">
+    <div>
        <h1 class="text-4xl font-bold">{post.data.title}</h1>
        <div class="py-2">
            <time datetime={post.data.pubDate.toISOString()} class="text-gray-500 block">公開日: {post.data.pubDate.toISOString().split('T')[0]}</time>
@@ -33,6 +34,6 @@ const { Content } = await render(post);
                        <ServiceIcon href={zennUrl(post.id)} name="simple-icons:zenn" width={24} height={24} />
                        <a target="_blank" href={zennUrl(post.id)}><p class="text-gray-500">外部サイト(Zenn)</p></a>
                    </div>)
-               : <Prose><Content /></Prose>
+               : <Content />
        }
 </article>

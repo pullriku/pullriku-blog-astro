@@ -56,14 +56,13 @@ export async function getDefaultOgpImage(): Promise<ImageMetadata> {
 export async function getCover(
     slug: string,
 ): Promise<ImageMetadata | undefined> {
-
     const image = import.meta.glob<{ default: ImageMetadata }>(
         "/src/contents/images/posts/*/*.{png,jpg,jpeg,wep}",
     );
 
     for (const path in image) {
-        const fileName = (path.split("/").pop())?.split("?")[0];
-        const isTarget =  fileName?.split(".")[0] === slug;
+        const fileName = path.split("/").pop()?.split("?")[0];
+        const isTarget = fileName?.split(".")[0] === slug;
         if (isTarget) {
             return (await image[path]()).default;
         }
