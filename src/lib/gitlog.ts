@@ -1,5 +1,5 @@
 import { execSync } from "node:child_process";
-import { Temporal } from "@js-temporal/polyfill";
+import dayjs from "dayjs";
 
 export type GitLog = {
     hash: string;
@@ -19,7 +19,7 @@ export function git_log(filepath: string): GitLog[] {
 }
 
 export type PostHistory = {
-    date: Temporal.Instant;
+    date: dayjs.Dayjs;
     subject: string;
 };
 
@@ -32,7 +32,7 @@ export function get_post_history(id: string, isMdx = true): PostHistory[] {
             const subject = log.subject;
             const index = subject.indexOf(":");
             return {
-                date: Temporal.Instant.from(new Date(log.date).toISOString()),
+                date: dayjs(log.date),
                 subject: index !== -1 ? subject.slice(index + 1).trim() : subject.trim(),
             };
         })

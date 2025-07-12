@@ -1,6 +1,12 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import { type PostHistory, get_post_history } from "@lib/gitlog";
+import dayjs from "dayjs";
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 type Props = {
     post: CollectionEntry<"posts">;
@@ -11,6 +17,8 @@ const isMdx = (post.filePath ?? "").endsWith(".mdx");
 
 // @ts-ignore
 const logs: PostHistory[] = Array.from(get_post_history(post.id, isMdx));
+
+// const timeStr
 ---
 {
     logs.length !== 0 && (
@@ -25,7 +33,7 @@ const logs: PostHistory[] = Array.from(get_post_history(post.id, isMdx));
                     <tr>
                         <td>
                             <time datetime={log.date.toString()}>
-                                {log.date.toLocaleString("ja-JP")}
+                                {log.date.tz("Asia/Tokyo").format("YYYY-MM-DD HH:mm:ss Z")}
                             </time>
                         </td>
                         <td>{log.subject}</td>
