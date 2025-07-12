@@ -2,15 +2,15 @@
 help:
     just --list
 
-# Git Subtreeの内容をpullする
-pull-subtree:
-    just _check-is-draft-branch
-    git subtree pull --prefix=src/contents https://github.com/pullriku/pullriku-blog-contents.git main --squash
+# # Git Subtreeの内容をpullする
+# pull-subtree:
+#     just _check-is-draft-branch
+#     git subtree pull --prefix=src/contents https://github.com/pullriku/pullriku-blog-contents.git main --squash
 
-# Git Subtreeの内容をpushする
-push-subtree:
-    just _check-is-draft-branch
-    git subtree push --prefix=src/contents https://github.com/pullriku/pullriku-blog-contents.git main
+# # Git Subtreeの内容をpushする
+# push-subtree:
+#     just _check-is-draft-branch
+#     git subtree push --prefix=src/contents https://github.com/pullriku/pullriku-blog-contents.git main
 
 # 新しい記事を作成する
 new-article slug:
