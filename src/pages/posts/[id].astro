@@ -19,7 +19,6 @@ import { ogpImagePath } from "@lib/ogp";
 import { getAllPosts } from "@lib/util";
 import type { GetStaticPaths } from "astro";
 
-
 export const getStaticPaths = (async () => {
     const posts = await getAllPosts();
 

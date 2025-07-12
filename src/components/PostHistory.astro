@@ -1,12 +1,12 @@
 ---
-import type { CollectionEntry } from 'astro:content';
-import { type PostHistory, get_post_history } from '@lib/gitlog';
+import type { CollectionEntry } from "astro:content";
+import { type PostHistory, get_post_history } from "@lib/gitlog";
 
 type Props = {
     post: CollectionEntry<"posts">;
 };
 
-const {post} = Astro.props;
+const { post } = Astro.props;
 const isMdx = (post.filePath ?? "").endsWith(".mdx");
 
 // @ts-ignore
