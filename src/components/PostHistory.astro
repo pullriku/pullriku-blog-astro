@@ -1,0 +1,37 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { type PostHistory, get_post_history } from '@lib/gitlog';
+
+type Props = {
+    post: CollectionEntry<"posts">;
+};
+
+const {post} = Astro.props;
+const isMdx = (post.filePath ?? "").endsWith(".mdx");
+
+// @ts-ignore
+const logs: PostHistory[] = Array.from(get_post_history(post.id, isMdx));
+---
+{
+    logs.length !== 0 && (
+        <h2>変更履歴</h2>
+        <table>
+            <tr>
+                <th>日付</th>
+                <th>内容</th>
+            </tr>
+            {
+                logs.map((log) => (
+                    <tr>
+                        <td>
+                            <time datetime={log.date.toString()}>
+                                {log.date.toLocaleString("ja-JP")}
+                            </time>
+                        </td>
+                        <td>{log.subject}</td>
+                    </tr>
+                ))
+            }
+        </table>
+    )
+}
