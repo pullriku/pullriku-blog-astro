@@ -1,0 +1,29 @@
+---
+type Props = {
+    url: string;
+};
+
+type EmbedData = {
+    url: string;
+    author_name: string;
+    author_url: string;
+    html: string;
+    width: number;
+    height: number | null;
+    type: "rich";
+    cache_age: string;
+    provider_name: string;
+    provider_url: string;
+    version: string;
+};
+
+const { url } = Astro.props;
+
+const embedUrl = new URL("https://publish.twitter.com/oembed");
+embedUrl.searchParams.set("url", url);
+
+const res = await fetch(embedUrl);
+const data: EmbedData = await res.json();
+---
+
+<div set:html={data.html} class="w-full"></div>
