@@ -9,7 +9,8 @@
         "build": "astro check && astro build",
         "dev": "astro dev",
         "fmt": "biome format --write . && sort-package-json",
-        "preview": "astro preview"
+        "preview": "astro preview",
+        "test": "vitest"
     },
     "dependencies": {
         "@astrojs/check": "^0.9.4",
