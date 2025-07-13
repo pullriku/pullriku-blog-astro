@@ -26,7 +26,7 @@ export type PostHistory = {
 export function getPostHistory(id: string, isMdx: boolean): PostHistory[] {
     const path = `src/contents/posts/${id}.${isMdx ? "mdx" : "md"}`;
 
-    const result = gitLog(path)
+    const iter = gitLog(path)
         [Symbol.iterator]()
         .map((log) => {
             const subject = log.subject;
@@ -41,5 +41,15 @@ export function getPostHistory(id: string, isMdx: boolean): PostHistory[] {
         })
         .filter((log) => !log.subject.startsWith("Merge"));
 
-    return Array.from(result).reverse();
+    const sorted =  Array.from(iter).reverse();
+
+    const pubIndex = sorted.findIndex((log) => log.subject.startsWith("公開"));
+    let result: PostHistory[];
+    if (pubIndex) {
+        result = sorted.slice(pubIndex);
+    } else {
+        result = sorted;
+    }
+
+    return result;
 }
