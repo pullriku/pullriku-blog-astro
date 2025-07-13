@@ -8,7 +8,7 @@ export type GitLog = {
     subject: string;
 };
 
-export function git_log(filepath: string): GitLog[] {
+export function gitLog(filepath: string): GitLog[] {
     const output = execSync(
         `git log --pretty=format:'{"hash":"%H","author":"%an","date":"%ad","subject":"%s"},' -- ${filepath}`,
     ).toString();
@@ -23,17 +23,20 @@ export type PostHistory = {
     subject: string;
 };
 
-export function get_post_history(id: string, isMdx = true): PostHistory[] {
+export function getPostHistory(id: string, isMdx: boolean): PostHistory[] {
     const path = `src/contents/posts/${id}.${isMdx ? "mdx" : "md"}`;
 
-    const result = git_log(path)
+    const result = gitLog(path)
         [Symbol.iterator]()
         .map((log) => {
             const subject = log.subject;
             const index = subject.indexOf(":");
             return {
                 date: dayjs(log.date),
-                subject: index !== -1 ? subject.slice(index + 1).trim() : subject.trim(),
+                subject:
+                    index !== -1
+                        ? subject.slice(index + 1).trim()
+                        : subject.trim(),
             };
         })
         .filter((log) => !log.subject.startsWith("Merge"));
