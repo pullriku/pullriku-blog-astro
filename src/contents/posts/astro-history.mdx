@@ -1,0 +1,167 @@
+---
+title: Astroブログで記事の変更履歴を載せる
+desc: Astro製のこのブログで、記事の変更履歴を掲載した。git log を参照している。
+pubDate: 2025-07-13
+tags: ["Astro", "Git"]
+pub: false
+---
+
+import Details from "@layouts/Details.astro";
+import X from "@components/XEmbed.astro";
+// 必ずclientディレクティブを設定する
+import Quiz from "@components/Quiz";
+
+記事ごとの更新履歴を自動で取得し、ページに掲載する仕組みを作った。`git log`コマンドを活用し、いつどんな変更をしたかを自動で出力する。
+
+## 背景
+
+かねてから、記事の変更履歴をどのように掲載するかを考えていた。技術記事は内容を更新することが多いため、「どこがいつ変わったか」を公開すれば、誤解を減らし、信頼性を高められる。手動で書くのは忘れそうなため、Gitのログの情報を使うことにした。
+
+このブログのコード全体は以下のリポジトリから閲覧できる。
+
+https://github.com/pullriku/pullriku-blog-astro
+
+<Details title="環境">
+- Node.js 24.3.0
+- Astro 5.7.12
+- Git 2.50.1
+</Details>
+
+## `git log`で履歴を取得する
+
+`git log -- ファイル名`で指定したファイルに関する変更履歴を取得できる。これに加え、JSON形式で取得するように`--pretty=format:`を指定する。
+
+```sh
+git log --pretty=format:'{"hash":"%H","author":"%an","date":"%ad","subject":"%s"},' -- ファイル名
+```
+
+ビルド時にこのコマンドを実行し、得た情報を記事の最後に記載する。
+
+## 実装
+
+ファイル名を引数に取り、ログを返す関数を作る。Node.jsの`execSync`でコマンドを実行できる。
+
+https://nodejs.org/api/child_process.html#child_processexecsynccommand-options
+
+```ts:lib/gitlog.ts
+import { execSync } from "node:child_process";
+
+export type GitLog = {
+    hash: string;
+    author: string;
+    date: string;
+    subject: string;
+};
+
+export function gitLog(filepath: string): GitLog[] {
+    const output = execSync(
+        `git log --pretty=format:'{"hash":"%H","author":"%an","date":"%ad","subject":"%s"},' -- ${filepath}`,
+    ).toString();
+
+    const json = `[${output.trim().replace(/},$/, "}")}]`;
+
+    return JSON.parse(json);
+}
+```
+
+これだけだと記事ごとにファイルパスを毎回指定する必要があって不便。そこで、記事IDからパスを解決し、履歴を加工して返すラッパー関数を作る。加工は以下の処理を行っている。
+- 日付を日付型に変換する
+- コミット名の`:`以降を取り出す
+- Mergeは除外する
+- 「公開」の前の履歴を消す
+
+また、マークダウンとMDXのどちらも受け付けられるように、`isMdx`を引数に取るようにした。
+
+```ts:lib/gitlog.ts(追加)
+import dayjs from "dayjs";
+
+export type PostHistory = {
+    date: dayjs.Dayjs;
+    subject: string;
+};
+
+export function getPostHistory(id: string, isMdx: boolean): PostHistory[] {
+    const path = `src/contents/posts/${id}.${isMdx ? "mdx" : "md"}`;
+
+    const iter = gitLog(path)
+        [Symbol.iterator]()
+        .map((log) => {
+            const subject = log.subject;
+            const index = subject.indexOf(":");
+            return {
+                date: dayjs(log.date),
+                subject:
+                    index !== -1
+                        ? subject.slice(index + 1).trim()
+                        : subject.trim(),
+            };
+        })
+        .filter((log) => !log.subject.startsWith("Merge"));
+
+    const sorted =  Array.from(iter).reverse();
+
+    const pubIndex = sorted.findIndex((log) => log.subject.startsWith("公開"));
+    let result: PostHistory[];
+    if (pubIndex) {
+        result = sorted.slice(pubIndex);
+    } else {
+        result = sorted;
+    }
+
+    return result;
+}
+
+```
+
+これで記事の変更履歴を取得できるようになった。変更履歴を表すコンポーネントを作り、この関数を呼び出すようにする。
+
+```astro:components/PostHistory.astro
+---
+import type { CollectionEntry } from "astro:content";
+import { type PostHistory, getPostHistory } from "@lib/gitlog";
+import dayjs from "dayjs";
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+type Props = {
+    post: CollectionEntry<"posts">;
+};
+
+const { post } = Astro.props;
+const isMdx = (post.filePath ?? "").endsWith(".mdx");
+
+const logs: PostHistory[] = Array.from(getPostHistory(post.id, isMdx));
+---
+{
+    logs.length !== 0 && (
+        <h2>変更履歴</h2>
+        <table>
+            <tr>
+                <th>日時</th>
+                <th>内容</th>
+            </tr>
+            {
+                logs.map((log) => (
+                    <tr>
+                        <td>
+                            <time datetime={log.date.toString()}>
+                                {log.date.tz("Asia/Tokyo").format("YYYY-MM-DD HH:mm:ss Z")}
+                            </time>
+                        </td>
+                        <td>{log.subject}</td>
+                    </tr>
+                ))
+            }
+        </table>
+    )
+}
+```
+
+この`PostHistory`コンポーネントを記事のページ（私の場合は`pages/posts/[id].astro`）から呼び出せば完成だ。
+
+## まとめ
+
+ビルド時に`git log`で記事ごとの履歴を取って、Astroコンポーネントで表示できるようにした。
