@@ -1,9 +1,9 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import { type PostHistory, get_post_history } from "@lib/gitlog";
+import { type PostHistory, getPostHistory } from "@lib/gitlog";
 import dayjs from "dayjs";
-import timezone from 'dayjs/plugin/timezone';
-import utc from 'dayjs/plugin/utc';
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -15,10 +15,7 @@ type Props = {
 const { post } = Astro.props;
 const isMdx = (post.filePath ?? "").endsWith(".mdx");
 
-// @ts-ignore
-const logs: PostHistory[] = Array.from(get_post_history(post.id, isMdx));
-
-// const timeStr
+const logs: PostHistory[] = Array.from(getPostHistory(post.id, isMdx));
 ---
 {
     logs.length !== 0 && (
