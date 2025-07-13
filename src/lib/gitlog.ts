@@ -41,7 +41,7 @@ export function getPostHistory(id: string, isMdx: boolean): PostHistory[] {
         })
         .filter((log) => !log.subject.startsWith("Merge"));
 
-    const sorted =  Array.from(iter).reverse();
+    const sorted = Array.from(iter).reverse();
 
     const pubIndex = sorted.findIndex((log) => log.subject.startsWith("公開"));
     let result: PostHistory[];
