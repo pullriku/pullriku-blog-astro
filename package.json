@@ -51,6 +51,10 @@
     "packageManager": "pnpm@10.13.1",
     "devDependencies": {
         "dompurify": "^3.2.6",
+        "textlint": "^15.2.0",
+        "textlint-plugin-mdx": "^1.0.2",
+        "textlint-rule-no-dropping-the-ra": "^3.0.0",
+        "textlint-rule-preset-ja-technical-writing": "^12.0.2",
         "vitest": "^3.2.4"
     }
 }
