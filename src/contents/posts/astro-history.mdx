@@ -76,7 +76,7 @@ export function gitLog(filepath: string): GitLog[] {
 - Mergeは除外する
 - 「公開」の前の履歴を消す
 
-また、マークダウンと[MDX](https://mdxjs.com/)のどちらも受け付けられるように、`isMdx`を引数に取るようにした。
+また、マークダウンと[MDX](https://mdxjs.com/)のどちらも受け付けられるように、`isMdx`を引数として取るようにした。
 
 ```ts:lib/gitlog.ts(追加)
 import dayjs from "dayjs";
