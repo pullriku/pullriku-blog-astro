@@ -71,79 +71,106 @@ export async function getCover(
     return undefined;
 }
 ---
+
 <!doctype html>
 <html lang="ja" class={`${LIGHT_BG} ${DARK_BG} dark:text-white`}>
     <head prefix="og: https://ogp.me/ns#">
-        <script is:inline type="text/partytown" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5060147093371864" crossorigin="anonymous" />
+        <script
+            is:inline
+            type="text/partytown"
+            async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5060147093371864"
+            crossorigin="anonymous"></script>
         {
-            import.meta.env.PROD &&
-            (
-            <script is:inline type="text/partytown" async src="https://www.googletagmanager.com/gtag/js?id=G-WHKGHT54BS"></script>
-            <script is:inline type="text/partytown">
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-
-                gtag('config', 'G-WHKGHT54BS');
-            </script>
+            import.meta.env.PROD && (
+                <>
+                    <script
+                        is:inline
+                        type="text/partytown"
+                        async
+                        src="https://www.googletagmanager.com/gtag/js?id=G-WHKGHT54BS"
+                    ></script>
+                    <script is:inline type="text/partytown">
+                        window.dataLayer = window.dataLayer || [];
+                        function gtag() {
+                            dataLayer.push(arguments);
+                        }
+                        gtag('js', new Date()); gtag('config', 'G-WHKGHT54BS');
+                    </script>
+                </>
             )
         }
 
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <meta name="description" content={desc}>
+        <meta name="description" content={desc} />
 
         {
             Astro.url.pathname === "/" && (
-                <script is:inline type="application/ld+json" set:html={JSON.stringify(schemaWebSite)}></script>
+                <script
+                    is:inline
+                    type="application/ld+json"
+                    set:html={JSON.stringify(schemaWebSite)}
+                />
             )
         }
 
         {
             additionalSchemas.map((schema) => (
-                <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)}></script>
+                <script
+                    is:inline
+                    type="application/ld+json"
+                    set:html={JSON.stringify(schema)}
+                />
             ))
         }
 
-        {
-            canonicalUrl && (
-                <link rel="canonical" href={canonicalUrl}>
-            )
-        }
+        {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
 
-        {
-            keywords && (
-                <meta name="keywords" content={keywords.join(",")}>
-            )
-        }
+        {keywords && <meta name="keywords" content={keywords.join(",")} />}
 
         {/* favicon */}
-        <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
+        <link
+            rel="icon"
+            type="image/png"
+            href="/favicon/favicon-96x96.png"
+            sizes="96x96"
+        />
         <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
         <link rel="shortcut icon" href="/favicon/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+        <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="/favicon/apple-touch-icon.png"
+        />
         <meta name="apple-mobile-web-app-title" content="pullriku" />
         <link rel="manifest" href="/favicon/site.webmanifest" />
 
         {/* OGPの設定 */}
-        <meta property="og:title" content={title}>
-        <meta property="og:type" content={slug ? "article" : "blog"}>
-        <meta property="og:url" content={Astro.url}>
-        <meta property="og:image" content={`${Astro.url.protocol}//${Astro.url.host}${ogImagePath}`}>
-        <meta property="og:site_name" content={BLOG_NAME}>
-        <meta property="og:description" content={desc ?? "pullrikuによる技術ブログです。"}>
-        <meta property="og:locale" content="ja_JP">
-        <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:site" content="@pullriku">
+        <meta property="og:title" content={title} />
+        <meta property="og:type" content={slug ? "article" : "blog"} />
+        <meta property="og:url" content={Astro.url} />
+        <meta
+            property="og:image"
+            content={`${Astro.url.protocol}//${Astro.url.host}${ogImagePath}`}
+        />
+        <meta property="og:site_name" content={BLOG_NAME} />
+        <meta
+            property="og:description"
+            content={desc ?? "pullrikuによる技術ブログです。"}
+        />
+        <meta property="og:locale" content="ja_JP" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@pullriku" />
 
         <title>{titleWithBlogName}</title>
     </head>
-    <body>
+    <body class="flex min-h-screen flex-col">
         <Header selectedPage={selectedPage} />
-        <div class="py-2">
+        <main class="mx-auto w-full max-w-7xl flex-1 px-4 sm:px-6">
             <slot />
-        </div>
+        </main>
         <Footer />
     </body>
 </html>

@@ -1,3 +1,3 @@
 export function ogpImagePath(slug: string): string {
-    return `/posts/${slug}.png`;
+  return `/posts/${slug}.png`;
 }

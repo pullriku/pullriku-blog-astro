@@ -3,17 +3,17 @@
 @config "../../tailwind.config.mjs";
 
 .hide-scrollbar {
-    @apply [-ms-overflow-style:none] [scrollbar-width:none];
+  @apply [-ms-overflow-style:none] [scrollbar-width:none];
 }
 
 .hide-scrollbar::-webkit-scrollbar {
-    @apply hidden;
+  @apply hidden;
 }
 
 .remark-code-title {
-    @apply text-base pl-3 rounded-t-lg font-bold bg-slate-600 text-white;
+  @apply rounded-t-lg bg-slate-600 pl-3 text-base font-bold text-white;
 }
 
 .remark-code-title + pre {
-    @apply mt-0 rounded-t-none;
+  @apply mt-0 rounded-t-none;
 }

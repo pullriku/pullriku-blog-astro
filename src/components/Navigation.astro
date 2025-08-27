@@ -4,6 +4,7 @@ import NavigationEntry from "@components/NavigationEntry.astro";
 export enum NavigationPage {
     Home = "/",
     Posts = "/all/1",
+    Series = "/series",
     Tags = "/tags",
     About = "/about",
 }
@@ -17,9 +18,31 @@ type Props = NavigationProps;
 const { selectedPage } = Astro.props;
 // ナビゲーションバー。
 ---
-<div class="flex gap-8 h-full">
-    <NavigationEntry href="/" title="Home" selected={selectedPage === NavigationPage.Home} />
-    <NavigationEntry href="/all/1" title="Articles" selected={selectedPage === NavigationPage.Posts} />
-    <NavigationEntry href="/tags" title="Tags" selected={selectedPage === NavigationPage.Tags} />
-    <NavigationEntry href="/about" title="About" selected={selectedPage === NavigationPage.About} />
+
+<div class="flex h-full flex-wrap justify-center gap-8">
+    <NavigationEntry
+        href="/"
+        title="Home"
+        selected={selectedPage === NavigationPage.Home}
+    />
+    <NavigationEntry
+        href="/all/1"
+        title="Articles"
+        selected={selectedPage === NavigationPage.Posts}
+    />
+    <NavigationEntry
+        href="/series"
+        title="Series"
+        selected={selectedPage === NavigationPage.Series}
+    />
+    <NavigationEntry
+        href="/tags"
+        title="Tags"
+        selected={selectedPage === NavigationPage.Tags}
+    />
+    <NavigationEntry
+        href="/about"
+        title="About"
+        selected={selectedPage === NavigationPage.About}
+    />
 </div>

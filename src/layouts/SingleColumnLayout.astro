@@ -9,7 +9,7 @@ const { class: className = "", ...basicLayoutProps } = Astro.props;
 ---
 
 <BasicLayout {...basicLayoutProps}>
-    <div class={"mx-auto px-4 lg:px-16" + ` ${className} `}>
+    <div class={"mx-auto lg:px-16" + ` ${className} `}>
         <slot />
     </div>
 </BasicLayout>

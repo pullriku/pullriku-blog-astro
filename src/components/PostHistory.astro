@@ -1,6 +1,6 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import { type PostHistory, getPostHistory } from "@lib/gitlog";
+import { getPostHistory, type PostHistory } from "@lib/gitlog";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
@@ -17,26 +17,29 @@ const isMdx = (post.filePath ?? "").endsWith(".mdx");
 
 const logs: PostHistory[] = Array.from(getPostHistory(post.id, isMdx));
 ---
+
 {
     logs.length !== 0 && (
-        <h2>変更履歴</h2>
-        <table>
-            <tr>
-                <th>日時</th>
-                <th>内容</th>
-            </tr>
-            {
-                logs.map((log) => (
+        <div>
+            <h2>変更履歴</h2>
+            <table>
+                <tr>
+                    <th>日時</th>
+                    <th>内容</th>
+                </tr>
+                {logs.map((log) => (
                     <tr>
                         <td>
                             <time datetime={log.date.toString()}>
-                                {log.date.tz("Asia/Tokyo").format("YYYY-MM-DD HH:mm:ss Z")}
+                                {log.date
+                                    .tz("Asia/Tokyo")
+                                    .format("YYYY-MM-DD HH:mm:ss Z")}
                             </time>
                         </td>
                         <td>{log.subject}</td>
                     </tr>
-                ))
-            }
-        </table>
+                ))}
+            </table>
+        </div>
     )
 }

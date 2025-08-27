@@ -1,38 +1,39 @@
 ---
+import { Image } from "astro:assets";
 import BlueLink from "@components/BlueLink.astro";
 import HeroArticle from "@components/HeroArticle.astro";
 import MoreArticles from "@components/MoreArticles.astro";
 import { NavigationPage } from "@components/Navigation.astro";
+import { Button } from "@components/ui/button";
+import PageTitle from "@layouts/PageTitle.astro";
 import SingleColumnLayout from "@layouts/SingleColumnLayout.astro";
-import { getAllPostsWithHero } from "@lib/util";
+import { DARK_BG, LIGHT_BG } from "@lib/consts";
+import { getAllPosts, getAllPostsWithHero } from "@lib/post";
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 
-const { hero, others } = await getAllPostsWithHero();
+let posts = await getAllPosts();
 
 const numOthers = 30;
 
-let posts = others;
 let omitted = false;
-if (others.length > numOthers) {
-    posts = others.slice(0, numOthers);
+if (posts.length > numOthers) {
+    posts = posts.slice(0, numOthers);
     omitted = true;
 }
 ---
 
-<SingleColumnLayout desc=`@pullrikuによる技術ブログです。他サービスに投稿した記事もまとめています。` selectedPage={NavigationPage.Home}>
-	<div class="max-w-4xl mx-auto">
-		<HeroArticle post={hero}/>
-	</div>
-	<MoreArticles posts={posts} />
-	<div class="flex justify-center">
-		{
-			omitted ?? (
-				<BlueLink text="もっと見る" href="/all/1" />
-			)
-		}
-	</div>
+<SingleColumnLayout
+    desc={`@pullrikuによる技術ブログです。他サービスに投稿した記事もまとめています。`}
+    selectedPage={NavigationPage.Home}
+>
+    <div class="mb-4 p-4 text-center">
+        <h1 class="p-4 text-4xl font-black">pullriku-blog</h1>
+        <p class="p-4">Rikuが学んだ技術や制作物を記録するブログ</p>
+    </div>
+    <MoreArticles posts={posts} />
+    <div class="flex justify-center">
+        {omitted && <BlueLink text="もっと見る" href="/all/1" />}
+    </div>
 </SingleColumnLayout>
-
-

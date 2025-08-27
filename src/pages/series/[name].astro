@@ -1,0 +1,45 @@
+---
+import type { CollectionEntry } from "astro:content";
+import MoreArticles from "@components/MoreArticles.astro";
+import PageTitle from "@layouts/PageTitle.astro";
+import SingleColumnLayout from "@layouts/SingleColumnLayout.astro";
+import { getAllSeries, getPostsBySeries, getSeries } from "@lib/post";
+import type { GetStaticPaths } from "astro";
+import { Icon } from "astro-icon/components";
+
+export const getStaticPaths = (async () => {
+  const allSeries = await getAllSeries();
+
+  return allSeries.map((series) => ({
+    params: { name: series.id },
+  }));
+}) satisfies GetStaticPaths;
+
+type Props = {
+  name: string;
+};
+
+const { name } = Astro.params;
+const posts = await getPostsBySeries(name);
+const series = await getSeries(name);
+---
+
+<SingleColumnLayout
+  title={`連載: ${name}`}
+  desc={`本ブログの連載「${name}」についての記事を見ることができます。`}
+>
+  <PageTitle>
+    <div class="flex items-center gap-2">
+      <Icon name="ic:baseline-library-books" width="1em" height="1em" />
+      連載: {name}
+    </div>
+  </PageTitle>
+  {
+    series.data.desc && (
+      <div class="mb-4 py-6">
+        <p>{series.data.desc}</p>
+      </div>
+    )
+  }
+  <MoreArticles posts={posts} />
+</SingleColumnLayout>

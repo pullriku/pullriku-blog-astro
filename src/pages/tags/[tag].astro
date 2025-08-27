@@ -1,9 +1,10 @@
 ---
-import type { GetStaticPaths } from "astro";
-import { getAllPosts, getPostsByTag } from "@lib/util";
-import SingleColumnLayout from "@layouts/SingleColumnLayout.astro";
 import MoreArticles from "@components/MoreArticles.astro";
 import PageTitle from "@layouts/PageTitle.astro";
+import SingleColumnLayout from "@layouts/SingleColumnLayout.astro";
+import { getAllPosts, getPostsByTag } from "@lib/post";
+import type { GetStaticPaths } from "astro";
+import { Icon } from "astro-icon/components";
 
 export const getStaticPaths = (async () => {
     const allPosts = await getAllPosts();
@@ -18,7 +19,15 @@ export const getStaticPaths = (async () => {
 const { tag } = Astro.params;
 const posts = await getPostsByTag(tag);
 ---
-<SingleColumnLayout title={tag} desc=`本ブログのタグ「${tag}」についての記事を見ることができます。`>
-    <PageTitle>タグ: {tag}</PageTitle>
+
+<SingleColumnLayout
+    title={tag}
+    desc={`本ブログのタグ「${tag}」についての記事を見ることができます。`}
+>
+    <PageTitle>
+        <div class="flex items-center gap-2">
+            <Icon name="mdi:tag" width="1em" height="1em" />タグ: {tag}
+        </div>
+    </PageTitle>
     <MoreArticles posts={posts} />
 </SingleColumnLayout>

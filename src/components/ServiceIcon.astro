@@ -12,6 +12,7 @@ type Props = {
 
 const { href, name, width = 24, height = 24, class_ = "" } = Astro.props;
 ---
+
 {
     href == undefined ? (
         <Icon name={name} width={width} height={height} class={class_} />
@@ -21,4 +22,3 @@ const { href, name, width = 24, height = 24, class_ = "" } = Astro.props;
         </a>
     )
 }
-
