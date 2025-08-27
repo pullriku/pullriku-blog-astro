@@ -24,7 +24,7 @@ export const GET = async ({ params }: APIContext) => {
 
   const ogImage = await ogImageWithTitle(article.data.title);
 
-  return new Response(ogImage, {
+  return new Response(new  Uint8Array(ogImage), {
     headers: {
       "Content-Type": "image/png",
     },
