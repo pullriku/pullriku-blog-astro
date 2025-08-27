@@ -23,8 +23,6 @@ importers:
       '@astrojs/rss':
         specifier: ^4.0.12
         version: 4.0.12
-        specifier: ^4.0.12
-        version: 4.0.12
       '@biomejs/biome':
         specifier: ^2.2.2
         version: 2.2.2
@@ -208,13 +206,7 @@ packages:
   '@astrojs/prism@3.3.0':
     resolution: {integrity: sha512-q8VwfU/fDZNoDOf+r7jUnMC2//H2l0TuQ6FkGJL8vD8nw/q5KiL3DS1KKBI3QhI9UQhpJ5dc7AtqfbXWuOgLCQ==}
     engines: {node: 18.20.8 || ^20.3.0 || >=22.0.0}
-  '@astrojs/prism@3.3.0':
-    resolution: {integrity: sha512-q8VwfU/fDZNoDOf+r7jUnMC2//H2l0TuQ6FkGJL8vD8nw/q5KiL3DS1KKBI3QhI9UQhpJ5dc7AtqfbXWuOgLCQ==}
-    engines: {node: 18.20.8 || ^20.3.0 || >=22.0.0}
 
-  '@astrojs/react@4.3.0':
-    resolution: {integrity: sha512-N02aj52Iezn69qHyx5+XvPqgsPMEnel9mI5JMbGiRMTzzLMuNaxRVoQTaq2024Dpr7BLsxCjqMkNvelqMDhaHA==}
-    engines: {node: 18.20.8 || ^20.3.0 || >=22.0.0}
   '@astrojs/react@4.3.0':
     resolution: {integrity: sha512-N02aj52Iezn69qHyx5+XvPqgsPMEnel9mI5JMbGiRMTzzLMuNaxRVoQTaq2024Dpr7BLsxCjqMkNvelqMDhaHA==}
     engines: {node: 18.20.8 || ^20.3.0 || >=22.0.0}
@@ -226,12 +218,7 @@ packages:
 
   '@astrojs/rss@4.0.12':
     resolution: {integrity: sha512-O5yyxHuDVb6DQ6VLOrbUVFSm+NpObulPxjs6XT9q3tC+RoKbN4HXMZLpv0LvXd1qdAjzVgJ1NFD+zKHJNDXikw==}
-  '@astrojs/rss@4.0.12':
-    resolution: {integrity: sha512-O5yyxHuDVb6DQ6VLOrbUVFSm+NpObulPxjs6XT9q3tC+RoKbN4HXMZLpv0LvXd1qdAjzVgJ1NFD+zKHJNDXikw==}
 
-  '@astrojs/telemetry@3.3.0':
-    resolution: {integrity: sha512-UFBgfeldP06qu6khs/yY+q1cDAaArM2/7AEIqQ9Cuvf7B1hNLq0xDrZkct+QoIGyjq56y8IaE2I3CTvG99mlhQ==}
-    engines: {node: 18.20.8 || ^20.3.0 || >=22.0.0}
   '@astrojs/telemetry@3.3.0':
     resolution: {integrity: sha512-UFBgfeldP06qu6khs/yY+q1cDAaArM2/7AEIqQ9Cuvf7B1hNLq0xDrZkct+QoIGyjq56y8IaE2I3CTvG99mlhQ==}
     engines: {node: 18.20.8 || ^20.3.0 || >=22.0.0}
@@ -2530,8 +2517,6 @@ packages:
 
   fast-xml-parser@5.2.5:
     resolution: {integrity: sha512-pfX9uG9Ki0yekDHx2SiuRIyFdyAr1kMIMitPvb0YBo8SUfKvia7w7FIyd/l6av85pFYRhZscS75MwMnbvY+hcQ==}
-  fast-xml-parser@5.2.5:
-    resolution: {integrity: sha512-pfX9uG9Ki0yekDHx2SiuRIyFdyAr1kMIMitPvb0YBo8SUfKvia7w7FIyd/l6av85pFYRhZscS75MwMnbvY+hcQ==}
     hasBin: true
 
   fastq@1.19.1:
@@ -4427,8 +4412,6 @@ packages:
 
   strnum@2.1.1:
     resolution: {integrity: sha512-7ZvoFTiCnGxBtDqJ//Cu6fWtZtc7Y3x+QOirG15wztbdngGSkht27o2pyGWrVy0b4WAy3jbKmnoK6g5VlVNUUw==}
-  strnum@2.1.1:
-    resolution: {integrity: sha512-7ZvoFTiCnGxBtDqJ//Cu6fWtZtc7Y3x+QOirG15wztbdngGSkht27o2pyGWrVy0b4WAy3jbKmnoK6g5VlVNUUw==}
 
   structured-source@4.0.0:
     resolution: {integrity: sha512-qGzRFNJDjFieQkl/sVOI2dUjHKRyL9dAJi2gCPGJLbJHBIkyOHxjuocpIEfbLioX+qSJpvbYdT49/YCdMznKxA==}
@@ -5421,7 +5404,6 @@ snapshots:
       mrmime: 2.0.1
 
   '@astrojs/prism@3.3.0':
-  '@astrojs/prism@3.3.0':
     dependencies:
       prismjs: 1.30.0
 
@@ -5449,13 +5431,10 @@ snapshots:
       - yaml
 
   '@astrojs/rss@4.0.12':
-  '@astrojs/rss@4.0.12':
     dependencies:
-      fast-xml-parser: 5.2.5
       fast-xml-parser: 5.2.5
       kleur: 4.1.5
 
-  '@astrojs/telemetry@3.3.0':
   '@astrojs/telemetry@3.3.0':
     dependencies:
       ci-info: 4.3.0
@@ -5499,7 +5478,6 @@ snapshots:
       '@babel/traverse': 7.28.3
       '@babel/types': 7.28.2
       convert-source-map: 2.0.0
-      debug: 4.4.1
       debug: 4.4.1
       gensync: 1.0.0-beta.2
       json5: 2.2.3
@@ -7033,7 +7011,6 @@ snapshots:
       cookie: 1.0.2
       cssesc: 3.0.0
       debug: 4.4.1
-      debug: 4.4.1
       deterministic-object-hash: 2.0.2
       devalue: 5.3.2
       diff: 5.2.0
@@ -7047,7 +7024,6 @@ snapshots:
       github-slugger: 2.0.0
       html-escaper: 3.0.3
       http-cache-semantics: 4.2.0
-      import-meta-resolve: 4.1.0
       import-meta-resolve: 4.1.0
       js-yaml: 4.1.0
       kleur: 4.1.5
@@ -7938,9 +7914,7 @@ snapshots:
   fast-uri@3.1.0: {}
 
   fast-xml-parser@5.2.5:
-  fast-xml-parser@5.2.5:
     dependencies:
-      strnum: 2.1.1
       strnum: 2.1.1
 
   fastq@1.19.1:
@@ -10482,7 +10456,6 @@ snapshots:
     dependencies:
       js-tokens: 9.0.1
 
-  strnum@2.1.1: {}
   strnum@2.1.1: {}
 
   structured-source@4.0.0:
