@@ -1,0 +1,103 @@
+---
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+import defaultCover from "@assets/ocean.jpeg";
+import zenn from "@assets/zenn.svg";
+import { getCover } from "@layouts/BasicLayout.astro";
+import {
+    DARK_BORDER,
+    DARK_OVERLAY,
+    LIGHT_BORDER,
+    LIGHT_OVERLAY,
+} from "@lib/consts";
+import { zennUrl } from "@lib/foreign.ts";
+import { Icon } from "astro-icon/components";
+import IssueBadge from "./IssueBadge.astro";
+import MiniTag from "./MiniTag.astro";
+import SeriesName from "./SeriesName.astro";
+import { Button } from "./ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+
+type Props = {
+    post: CollectionEntry<"posts">;
+};
+
+const { post } = Astro.props;
+
+const cover = await getCover(post.id);
+const time = post.data.pubDate.toISOString().split("T")[0];
+
+const href = post.data.zenn ? zennUrl(post.id) : `/posts/${post.id}`;
+---
+
+<a
+    href={href}
+    class={`block ${LIGHT_OVERLAY} ${DARK_OVERLAY} shadow h-full border ${LIGHT_BORDER} ${DARK_BORDER} rounded-lg p-4 flex gap-4 hover:shadow-lg transition-shadow overflow-hidden`}
+>
+    <div class="">
+        {
+            cover ? (
+                <Image
+                    src={cover}
+                    alt={`記事「${post.data.title}」のサムネイル`}
+                    class="h-20 w-20 rounded-lg object-cover drop-shadow-md"
+                />
+            ) : (
+                <Image
+                    src={defaultCover}
+                    alt={`記事「${post.data.title}」のサムネイル`}
+                    class="aspect-square h-20 w-20 rounded-lg object-cover drop-shadow-md"
+                />
+            )
+        }
+    </div>
+
+    <div class="flex flex-1 flex-col">
+        {
+            post.data.series && post.data.part && (
+                <div class="mb-2 flex items-center gap-2">
+                    <div class="shrink-0">
+                        <IssueBadge number={post.data.part} />
+                    </div>
+                    <SeriesName name={post.data.series} />
+                </div>
+            )
+        }
+        <h3
+            class="mb-4 line-clamp-2 text-lg font-black wrap-anywhere hover:underline"
+        >
+            {post.data.title}
+        </h3>
+
+        <p class="line-clamp-3 flex-1 wrap-anywhere">
+            {post.data.desc}
+        </p>
+
+        <div class="flex justify-between">
+            {
+                post.data.zenn ? (
+                    <div class="mt-2 flex flex-row items-center text-sm">
+                        <Image
+                            src={zenn}
+                            alt="Zennのロゴ"
+                            width="20"
+                            height="20"
+                            class="mr-2 h-4 w-4"
+                        />
+                        <p class="text-gray-500">外部サイト(Zenn)</p>
+                    </div>
+                ) : (
+                    <div />
+                )
+            }
+            <div class="mt-auto flex shrink-0 items-center">
+                <div
+                    class="ml-auto flex items-center justify-center gap-1 text-right text-sm text-gray-500"
+                >
+                    <Icon name={"mdi:calendar"} height={"1em"} width={"1em"} />
+                    <time datetime={time}>{time}</time>
+                </div>
+            </div>
+        </div>
+    </div>
+</a>

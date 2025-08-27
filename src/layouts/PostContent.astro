@@ -2,25 +2,27 @@
 import { Image } from "astro:assets";
 import { DARK_BG, LIGHT_OVERLAY } from "@lib/consts";
 import type { Document } from "@lib/types";
+import ContentArea from "./ContentArea.astro";
 
 type Props<D extends Document> = {
     post: { data: D };
-    coverImage?: ImageMetadata;
+    coverImageOpt?: ImageMetadata;
 };
 
-const { post, coverImage } = Astro.props as Props<Document>;
+const { post, coverImageOpt: coverImage } = Astro.props as Props<Document>;
 ---
-<div class="max-w-4xl min-w-0 flex-1 lg:mx-0 lg:w-fit break-words mx-auto">
-    <div class={` p-4 md:p-12 pt-5 mx-auto ${LIGHT_OVERLAY} ${DARK_BG} rounded-lg`}>
+
+<div class="min-h-1 max-w-4xl min-w-0 flex-1 break-words lg:mx-0 lg:w-full">
+    <ContentArea>
         {
             coverImage && (
                 <Image
                     src={coverImage}
                     alt={`記事「${post.data.title}」のサムネイル`}
-                    class="drop-shadow-md rounded-xl mx-auto object-contain w-auto h-auto max-h-60 my-0 mb-10"
+                    class="mx-auto my-0 mb-10 h-auto max-h-60 w-auto rounded-xl object-contain drop-shadow-md"
                 />
             )
         }
         <slot />
-    </div>
+    </ContentArea>
 </div>

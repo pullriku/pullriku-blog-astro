@@ -6,6 +6,7 @@ import TableOfContents from "@components/TableOfContents.astro";
 // 必要なレイアウトやコンポーネントのインポート
 import BasicLayout from "@layouts/BasicLayout.astro";
 import PostContent from "@layouts/PostContent.astro";
+import Prose from "@layouts/Prose";
 
 // コンポーネントの Props 型定義（CollectionEntry は使用しない）
 type Props = {
@@ -24,29 +25,32 @@ if (willSubtractDepth) {
     }
 }
 ---
+
 <BasicLayout title={post.data.title} desc={post.data.desc} slug={post.id}>
-  <div class="px-0 md:px-4">
-    <div class="mx-auto justify-center lg:flex  gap-10">
-      { /* 記事の列 */ }
-      <PostContent post={post}>
-        <Article post={post} />
-      </PostContent>
-      { /* 目次の列（スクロールのためのコンテナ） */ }
-      <div class={"lg:h-auto lg:w-72 hidden lg:block"}>
-          <TableOfContents headings={headings} />
-      </div>
-  </div>
-  </div>
+    <div class="px-0 md:px-4">
+        <div class="mx-auto justify-center gap-10 lg:flex">
+            {/* 記事の列 */}
+            <PostContent post={post}>
+                <Prose>
+                    <Article post={post} />
+                </Prose>
+            </PostContent>
+            {/* 目次の列（スクロールのためのコンテナ） */}
+            <div class={"lg:h-auto lg:w-72 hidden lg:block"}>
+                <TableOfContents headings={headings} />
+            </div>
+        </div>
+    </div>
 </BasicLayout>
 <style is:global>
-  @import "tailwindcss";
-  @plugin "@tailwindcss/typography";
-  @config "../../tailwind.config.mjs";
+    @import "tailwindcss";
+    @plugin "@tailwindcss/typography";
+    @config "../../tailwind.config.mjs";
 
-  .remark-code-title {
-    @apply text-base pl-3 rounded-t-lg font-bold bg-slate-600 text-white;
-  }
-  .remark-code-title+pre {
-    @apply mt-0 rounded-t-none;
-  }
+    .remark-code-title {
+        @apply rounded-t-lg bg-slate-600 pl-3 text-base font-bold text-white;
+    }
+    .remark-code-title + pre {
+        @apply mt-0 rounded-t-none;
+    }
 </style>

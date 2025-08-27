@@ -1,0 +1,14 @@
+---
+import { Icon } from "astro-icon/components";
+
+type Props = {
+    tag: string;
+};
+
+const { tag } = Astro.props as Props;
+---
+
+<div class="flex shrink-0 items-center justify-center text-sm text-gray-500">
+    <Icon name="mdi:tag" width="1em" height="1em" />
+    {tag}
+</div>

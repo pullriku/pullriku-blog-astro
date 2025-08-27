@@ -1,4 +1,6 @@
 ---
+import { Icon } from "astro-icon/components";
+
 // 記事のタグ。タグの出現回数に応じてフォントサイズを変更する。
 type Props = {
     tag: string;
@@ -36,10 +38,13 @@ switch (fontSize) {
 }
 fontSizeClass = ` ${fontSizeClass} `;
 ---
-<div class="inline-block object-contain">
-    <a href={`/tags/${tag}`} class=
-        {"block text-gray-600 dark:text-gray-300 hover:underline p-2 overflow-ellipsis whitespace-nowrap" + fontSizeClass}
+
+<span class="inline-block object-contain">
+    <span
+        class={"flex items-center justify-center gap-1 text-gray-600 dark:text-gray-300 hover:underline p-2 overflow-ellipsis whitespace-nowrap" +
+            fontSizeClass}
     >
-        #{tag}{ count ? `(${count})` : '' }
-    </a>
-</div>
+        <Icon name="mdi:tag" width="1em" height="1em" />
+        {tag}{count ? `(${count})` : ""}
+    </span>
+</span>

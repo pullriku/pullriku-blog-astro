@@ -1,8 +1,10 @@
 // @ts-check
-import { defineConfig } from "astro/config";
-
 import mdx from "@astrojs/mdx";
+import partytown from "@astrojs/partytown";
+import react from "@astrojs/react";
 import tailwind from "@tailwindcss/vite";
+import { defineConfig } from "astro/config";
+import icon from "astro-icon";
 import rehypeExternalLinks from "rehype-external-links";
 // @ts-ignore
 import rehypeFigure from "rehype-figure";
@@ -12,55 +14,50 @@ import remarkCodeTiles from "remark-flexible-code-titles";
 // @ts-ignore
 import remarkLinkCard from "remark-link-card";
 
-import partytown from "@astrojs/partytown";
-import react from "@astrojs/react";
-
-import icon from "astro-icon";
-
 // https://astro.build/config
 export default defineConfig({
-    site: "https://pullriku.net",
-    base: "/",
-    vite: {
-        optimizeDeps: {
-            exclude: ["@resvg/resvg-js"],
-        },
-        ssr: {
-            external: ["@resvg/resvg-js"],
-        },
-        plugins: [tailwind()],
+  site: "https://pullriku.net",
+  base: "/",
+  vite: {
+    optimizeDeps: {
+      exclude: ["@resvg/resvg-js"],
     },
-    integrations: [
-        mdx(),
-        react(),
-        partytown({ config: { forward: ["dataLayer.push"] } }),
-        icon(),
+    ssr: {
+      external: ["@resvg/resvg-js"],
+    },
+    plugins: [tailwind()],
+  },
+  integrations: [
+    mdx(),
+    react(),
+    partytown({ config: { forward: ["dataLayer.push"] } }),
+    icon(),
+  ],
+  markdown: {
+    remarkPlugins: [
+      remarkCodeTiles,
+      remarkBreaks,
+      [
+        remarkLinkCard,
+        // { shortenUrl: true },
+        { cache: false, shortenUrl: true },
+      ],
     ],
-    markdown: {
-        remarkPlugins: [
-            remarkCodeTiles,
-            remarkBreaks,
-            [
-                remarkLinkCard,
-                // { shortenUrl: true },
-                { cache: false, shortenUrl: true },
-            ],
-        ],
-        rehypePlugins: [
-            rehypeRaw,
-            [
-                rehypeExternalLinks,
-                { target: "_blank", rel: ["noopener", "noreferrer"] },
-            ],
-            rehypeFigure,
-        ],
-        remarkRehype: {
-            footnoteLabel: "脚注",
-            footnoteBackContent: "↩",
-            footnoteLabelTagName: "hr",
-        },
-        shikiConfig: {
-            // theme: "dark-plus",
-        },
+    rehypePlugins: [
+      rehypeRaw,
+      [
+        rehypeExternalLinks,
+        { target: "_blank", rel: ["noopener", "noreferrer"] },
+      ],
+      rehypeFigure,
+    ],
+    remarkRehype: {
+      footnoteLabel: "脚注",
+      footnoteBackContent: "↩",
+      footnoteLabelTagName: "hr",
     },
+    shikiConfig: {
+      // theme: "dark-plus",
+    },
+  },
 });

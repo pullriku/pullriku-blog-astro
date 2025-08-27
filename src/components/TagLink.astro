@@ -1,0 +1,15 @@
+---
+import Tag from "./Tag.astro";
+
+// 記事のタグ。タグの出現回数に応じてフォントサイズを変更する。
+type Props = {
+    tag: string;
+    count?: number;
+};
+
+const { tag, count = 0 } = Astro.props;
+---
+
+<a href={`/tags/${tag}`}>
+    <Tag tag={tag} count={count} />
+</a>

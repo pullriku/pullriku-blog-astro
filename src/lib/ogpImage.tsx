@@ -4,50 +4,50 @@ import satori, { type SatoriOptions } from "satori";
 import "@styles/global.css";
 
 export async function defaultOgpImageBuffer(): Promise<Buffer> {
-    const width = 1200;
-    const height = 630;
-    const bgImage = fs.readFileSync("src/assets/og_image.jpeg", {
-        encoding: "base64",
-    });
-    const logoImage = fs.readFileSync("src/assets/rikusblog_light.png", {
-        encoding: "base64",
-    });
+  const width = 1200;
+  const height = 630;
+  const bgImage = fs.readFileSync("src/assets/ocean.jpeg", {
+    encoding: "base64",
+  });
+  const logoImage = fs.readFileSync("src/assets/rikusblog_light.png", {
+    encoding: "base64",
+  });
 
-    const imageComponent = (
-        <main
-            style={{
-                height: "100%",
-                width: "100%",
-                position: "relative",
-                fontFamily:
-                    "ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
-            }}
-        >
-            <img
-                src={`data:image/jpeg;base64,${bgImage}`}
-                alt="og_image"
-                style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    position: "absolute",
-                }}
-            />
-            <div
-                style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    flexDirection: "column",
-                    width: "95%",
-                    height: "30%",
-                    backgroundColor: "rgba(255, 255, 255, 0.8)",
-                    position: "absolute",
-                    bottom: "2.5%",
-                    left: "2.5%",
-                    borderRadius: "30px",
-                }}
-            >
-                {/* <p
+  const imageComponent = (
+    <main
+      style={{
+        height: "100%",
+        width: "100%",
+        position: "relative",
+        fontFamily:
+          "ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      }}
+    >
+      <img
+        src={`data:image/jpeg;base64,${bgImage}`}
+        alt="og_image"
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          position: "absolute",
+        }}
+      />
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          flexDirection: "column",
+          width: "95%",
+          height: "30%",
+          backgroundColor: "rgba(255, 255, 255, 0.8)",
+          position: "absolute",
+          bottom: "2.5%",
+          left: "2.5%",
+          borderRadius: "30px",
+        }}
+      >
+        {/* <p
                     style={{
                         // position: "absolute",
                         textAlign: "left",
@@ -62,181 +62,181 @@ export async function defaultOgpImageBuffer(): Promise<Buffer> {
                     }}
                 >
                 </p> */}
-                <div
-                    style={{
-                        display: "flex",
-                        margin: "0 auto",
-                        // position: "absolute",
-                        width: "90%",
-                        height: "25%",
-                        // bottom: "1%",
-                        marginBottom: "2.5%",
-                        // backgroundColor: "green",
-                        alignItems: "center",
-                    }}
-                >
-                    <img
-                        src={`data:image/png;base64,${logoImage}`}
-                        alt=""
-                        style={{
-                            position: "absolute",
-                            //aspect
+        <div
+          style={{
+            display: "flex",
+            margin: "0 auto",
+            // position: "absolute",
+            width: "90%",
+            height: "25%",
+            // bottom: "1%",
+            marginBottom: "2.5%",
+            // backgroundColor: "green",
+            alignItems: "center",
+          }}
+        >
+          <img
+            src={`data:image/png;base64,${logoImage}`}
+            alt=""
+            style={{
+              position: "absolute",
+              //aspect
 
-                            objectFit: "cover",
-                            alignItems: "center",
-                        }}
-                    />
-                </div>
-            </div>
-        </main>
-    );
+              objectFit: "cover",
+              alignItems: "center",
+            }}
+          />
+        </div>
+      </div>
+    </main>
+  );
 
-    const options: SatoriOptions = {
-        width,
-        height,
-        // fonts: [
-        //     {
-        //         name: "Noto Sans JP",
-        //         data: titleFont,
-        //         weight: 700,
-        //         style: "normal",
-        //     },
-        // ],
-        fonts: [],
-    };
+  const options: SatoriOptions = {
+    width,
+    height,
+    // fonts: [
+    //     {
+    //         name: "Noto Sans JP",
+    //         data: titleFont,
+    //         weight: 700,
+    //         style: "normal",
+    //     },
+    // ],
+    fonts: [],
+  };
 
-    const svg = await satori(imageComponent, options);
+  const svg = await satori(imageComponent, options);
 
-    const resvg = new Resvg(svg, {
-        font: {
-            loadSystemFonts: false,
-        },
-        fitTo: {
-            mode: "width",
-            value: width,
-        },
-    });
+  const resvg = new Resvg(svg, {
+    font: {
+      loadSystemFonts: false,
+    },
+    fitTo: {
+      mode: "width",
+      value: width,
+    },
+  });
 
-    const image = resvg.render();
-    return image.asPng();
+  const image = resvg.render();
+  return image.asPng();
 }
 
 export const ogImageWithTitle = async (text: string): Promise<Buffer> => {
-    const titleFont = fs.readFileSync("src/fonts/NotoSansJP-Bold.otf");
+  const titleFont = fs.readFileSync("src/fonts/NotoSansJP-Bold.otf");
 
-    const width = 1200;
-    const height = 630;
-    const bgImage = fs.readFileSync("src/assets/og_image.jpeg", {
-        encoding: "base64",
-    });
-    const logoImage = fs.readFileSync("src/assets/rikusblog_light.png", {
-        encoding: "base64",
-    });
+  const width = 1200;
+  const height = 630;
+  const bgImage = fs.readFileSync("src/assets/ocean.jpeg", {
+    encoding: "base64",
+  });
+  const logoImage = fs.readFileSync("src/assets/rikusblog_light.png", {
+    encoding: "base64",
+  });
 
-    const imageComponent = (
-        <main
-            style={{
-                height: "100%",
-                width: "100%",
-                position: "relative",
-                fontFamily:
-                    "ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
-            }}
+  const imageComponent = (
+    <main
+      style={{
+        height: "100%",
+        width: "100%",
+        position: "relative",
+        fontFamily:
+          "ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      }}
+    >
+      <img
+        src={`data:image/jpeg;base64,${bgImage}`}
+        alt="og_image"
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          position: "absolute",
+        }}
+      />
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          flexDirection: "column",
+          width: "95%",
+          height: "95%",
+          backgroundColor: "rgba(255, 255, 255, 0.8)",
+          position: "absolute",
+          top: "2.5%",
+          left: "2.5%",
+          borderRadius: "30px",
+        }}
+      >
+        <p
+          style={{
+            // position: "absolute",
+            textAlign: "left",
+            // top: "2.5%",
+            // left: "2.5%",
+            margin: "2.5%",
+            height: "70%",
+            width: "95%",
+            // backgroundColor: "red",
+            fontSize: "4rem",
+            overflow: "hidden",
+          }}
         >
-            <img
-                src={`data:image/jpeg;base64,${bgImage}`}
-                alt="og_image"
-                style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    position: "absolute",
-                }}
-            />
-            <div
-                style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    flexDirection: "column",
-                    width: "95%",
-                    height: "95%",
-                    backgroundColor: "rgba(255, 255, 255, 0.8)",
-                    position: "absolute",
-                    top: "2.5%",
-                    left: "2.5%",
-                    borderRadius: "30px",
-                }}
-            >
-                <p
-                    style={{
-                        // position: "absolute",
-                        textAlign: "left",
-                        // top: "2.5%",
-                        // left: "2.5%",
-                        margin: "2.5%",
-                        height: "70%",
-                        width: "95%",
-                        // backgroundColor: "red",
-                        fontSize: "4rem",
-                        overflow: "hidden",
-                    }}
-                >
-                    {text}
-                </p>
-                <div
-                    style={{
-                        display: "flex",
-                        margin: "0 auto",
-                        // position: "absolute",
-                        width: "90%",
-                        height: "25%",
-                        // bottom: "1%",
-                        marginBottom: "2.5%",
-                        // backgroundColor: "green",
-                        alignItems: "center",
-                    }}
-                >
-                    <img
-                        src={`data:image/png;base64,${logoImage}`}
-                        alt="logo"
-                        style={{
-                            position: "absolute",
-                            //aspect
+          {text}
+        </p>
+        <div
+          style={{
+            display: "flex",
+            margin: "0 auto",
+            // position: "absolute",
+            width: "90%",
+            height: "25%",
+            // bottom: "1%",
+            marginBottom: "2.5%",
+            // backgroundColor: "green",
+            alignItems: "center",
+          }}
+        >
+          <img
+            src={`data:image/png;base64,${logoImage}`}
+            alt="logo"
+            style={{
+              position: "absolute",
+              //aspect
 
-                            objectFit: "cover",
-                            alignItems: "center",
-                        }}
-                    />
-                </div>
-            </div>
-        </main>
-    );
+              objectFit: "cover",
+              alignItems: "center",
+            }}
+          />
+        </div>
+      </div>
+    </main>
+  );
 
-    const options: SatoriOptions = {
-        width,
-        height,
-        fonts: [
-            {
-                name: "Noto Sans JP",
-                data: titleFont,
-                weight: 700,
-                style: "normal",
-            },
-        ],
-    };
+  const options: SatoriOptions = {
+    width,
+    height,
+    fonts: [
+      {
+        name: "Noto Sans JP",
+        data: titleFont,
+        weight: 700,
+        style: "normal",
+      },
+    ],
+  };
 
-    const svg = await satori(imageComponent, options);
+  const svg = await satori(imageComponent, options);
 
-    const resvg = new Resvg(svg, {
-        font: {
-            loadSystemFonts: false,
-        },
-        fitTo: {
-            mode: "width",
-            value: width,
-        },
-    });
+  const resvg = new Resvg(svg, {
+    font: {
+      loadSystemFonts: false,
+    },
+    fitTo: {
+      mode: "width",
+      value: width,
+    },
+  });
 
-    const image = resvg.render();
-    return image.asPng();
+  const image = resvg.render();
+  return image.asPng();
 };

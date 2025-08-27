@@ -36,6 +36,7 @@ https://www.amazon.co.jp/dp/B0CD7KPH3K
 フロントエンドには[Astro](https://astro.build/)を使用し、バックエンドには[Rust](https://www.rust-lang.org/)言語のWebフレームワーク[Axum](https://github.com/tokio-rs/axum)を使用しています。
 
 ## 実装
+
 ### WebSocketサーバー
 
 Webサーバーでは、現在接続中のクライアント数と、HLSストリームを配信するためのプロセスを管理します。
@@ -51,6 +52,7 @@ static USERS: AtomicU32 = AtomicU32::new(0);
 ```
 
 まず、WebSocketサーバーを起動し、接続数を追跡します。新しい接続があると、`USERS`をインクリメントし、HLSプロセスがまだ実行されていない場合は開始します。
+
 ```rust:main.rs
 std::env::set_var("RUST_LOG", "info");
     env_logger::Builder::from_env("RUST_LOG")
@@ -69,6 +71,7 @@ std::env::set_var("RUST_LOG", "info");
 
     tokio::spawn(websocket_server());
 ```
+
 ```rust:main.rs
 async fn websocket_server() {
     info!("websocket server started");
@@ -120,8 +123,10 @@ async fn websocket_server() {
 ```
 
 ### HLSストリームの生成
+
 `start_hls`関数は、`rpicam-vid`と`ffmpeg`のプロセスを開始し、それらの`Child`を返します。コメントアウトしている場所は色々と試した跡です。`rpicam-vid`では、`--exposure`を指定して明るい映像を取得するようにしています。
 `ffmpeg`で`-v:c copy`を指定すると、`rpicam-vid`の映像をそのまま流すようになりますが、通信負荷が高くなるため、エンコードの品質として`-preset medium` を指定し、ファイルサイズを抑えるようにしています。
+
 ```rust:main.rs
 fn start_hls() -> (std::process::Child, std::process::Child) {
     let mut rpicam_vid = std::process::Command::new("rpicam-vid")
@@ -179,8 +184,11 @@ fn start_hls() -> (std::process::Child, std::process::Child) {
     (rpicam_vid, ffmpeg)
 }
 ```
+
 ### ユーザーの切断処理
+
 `on_disconnected`関数は、ユーザーが切断されたときに呼び出されます。ユーザーがいなくなった場合、HLSプロセスを停止します。`wait`を呼び出さないと、プロセスがゾンビプロセスとして残ります。詳細は[`std`のドキュメント](https://doc.rust-lang.org/std/process/struct.Child.html)に記述があります。
+
 ```rust:main.rs
 async fn on_disconnected(addr: std::net::SocketAddr) {
     USERS.fetch_sub(1, std::sync::atomic::Ordering::SeqCst);
@@ -209,6 +217,7 @@ async fn on_disconnected(addr: std::net::SocketAddr) {
 ```
 
 ### HTTPサーバー
+
 main関数の続きです。配信するディレクトリを設定します。`dist`にはAstroでビルドしたフロントエンドの成果物（HTMLなど）が入っています。`/tmp/dojocam`にはHLSストリームの成果物が入っています。`images`にはスナップショットが保存されます。
 
 ```rust:main.rs
@@ -230,7 +239,9 @@ axum::serve(listener, app).await.unwrap();
 ```
 
 ### スナップショットの撮影
+
 スナップショットの撮影は、cronを使って1時間ごとに行います。まず撮影のためのスクリプトを作成します。`imagesディレクトリのパス`はimagesディレクトリの絶対パスです。何もしないと写真が無限に溜まり続けるため、手動で削除する必要があります。約1か月運用して123MBで、そこまで急速にストレージを圧迫するわけではないようです。
+
 ```sh
 $ ls -l images/ | wc --lines
 929
@@ -243,15 +254,19 @@ rpicam-jpeg -o /tmp/dojocam/image.jpeg --nopreview --width 800 --height 600 \
 && convert /tmp/dojocam/image.jpeg "imagesディレクトリのパス`date +%Y-%m-%dT%H:%M:%S`.webp" \
 && rm /tmp/dojocam/image.jpeg
 ```
+
 `crontab`コマンドを使って、以下の設定を追加します。`スクリプトへのパス`はスクリプトの絶対パスです。この設定により、１時間毎に自動でスクリプトが実行され、新しい写真が撮影されます。ただし、カメラが使用中のときは撮影できません。
 
 `crontab -e`として書き込むか、テキストファイルに書き込み、`crontab`コマンドで指定します。これはRaspberry Pi上で行います。
+
 ```sh
 0 * * * * sh スクリプトへのパス
 ```
 
 ### スナップショットの配信
+
 `image_names`関数は、`images`ディレクトリ内のファイル名を取得します。クライアントはこのエンドポイントを使用して、スナップショットのリストを取得できます。
+
 ```rust:main.rs
 async fn image_names() -> Json<Vec<String>> {
     let mut names = std::fs::read_dir("images").unwrap().collect::<Vec<_>>();
@@ -285,6 +300,7 @@ async fn image_names() -> Json<Vec<String>> {
 ### フロントエンド
 
 #### ライブカメラのページ
+
 ライブストリーミングを行うページです。このページではWebsocketパイプを繋ぎます。`Information`や`PaddingLayout`は別で定義してあるAstroのコンポーネントです。`hls.js`を使ってHLSストリームを再生します。サーバーの準備ができたら`OK`が送られてくるので、その後にHLSストリームを再生します。
 
 ```astro:index.astro
@@ -345,6 +361,7 @@ import PaddingLayout from "@layouts/PaddingLayout.astro";
 ```
 
 #### 写真のページ
+
 定期的に撮影している写真を表示するページです。`Layout`は別で定義してあるAstroのコンポーネントです。`image-container`に写真を表示します。`/api/images`から写真のリストを取得し、それを元に写真を表示します。
 
 ```astro
@@ -376,12 +393,12 @@ import Layout from "@layouts/Layout.astro";
                 img.onclick = () => window.open(`/images/${name}`);
                 img.classList.add('rounded-lg', 'm-2', "hover:scale-105", "transition-transform");
                 imageContainer.appendChild(img);
-                
+
                 const imageName = document.createElement('p');
                 const [date, time_ext] = name.split('T');
                 const time = time_ext.split('.')[0];
                 imageName.textContent = `${date} ${time}`;
-                
+
                 div.appendChild(img);
                 div.appendChild(imageName);
                 imageContainer.appendChild(div);
@@ -394,6 +411,7 @@ import Layout from "@layouts/Layout.astro";
 ## デプロイ
 
 デプロイ用のシェルスクリプトを作ります。
+
 ```sh:deploy.sh
 rm -f dist.zip
 zip dist.zip -r ./target/armv7-unknown-linux-musleabihf/release/dojocam-backend ./dist ./shot_image.sh
@@ -401,6 +419,7 @@ scp dist.zip RaspberryPi:~/projects/dojocam
 ```
 
 `package.json`にビルド用・デプロイ用のコマンドを追加します。[`cargo-zigbuild`](https://github.com/rust-cross/cargo-zigbuild)は手軽にクロスコンパイルを行えて便利です。Zig言語のコンパイラを使ってコンパイルを行うようです。
+
 ```
 "scripts": {
     "dev": "astro dev",
@@ -416,6 +435,7 @@ scp dist.zip RaspberryPi:~/projects/dojocam
 デプロイをおわらせた後にRaspberry PiへSSHでログインし、プロジェクトに`cd`して、`./target/armv7-unknown-linux-musleabihf/release/dojocam-backend`を実行すれば、サーバーが起動します。初回のみ`crontab`の設定が必要です。
 
 ## まとめ
+
 このシステムでは、Raspberry Piによる水槽の監視を実現できました。WebサーバーはRust言語とAxum、フロントエンド側はAstroを使用しています。WebサーバーでHLSストリームを配信して、フロントエンドで再生することができます。WebSocketを使って、接続されているのかを把握しています。また、1時間ごとにcronでスナップショットを撮影し、その写真を配信しています。
 
 ## 写真を見ると……

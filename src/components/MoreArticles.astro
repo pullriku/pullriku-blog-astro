@@ -1,7 +1,7 @@
 ---
 // 記事の一覧。渡された記事の一覧を表示する。
 import type { CollectionEntry } from "astro:content";
-import PostPreview from "@components/PostPreview.astro";
+import PostCard from "@components/PostCard.astro";
 
 type Props = {
     posts: CollectionEntry<"posts">[];
@@ -10,11 +10,11 @@ type Props = {
 const { posts } = Astro.props;
 ---
 
-<ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
+<ul class="grid grid-cols-1 gap-4 md:grid-cols-2">
     {
         posts.map((post) => (
             <li>
-                <PostPreview post={post} />
+                <PostCard post={post} />
             </li>
         ))
     }
