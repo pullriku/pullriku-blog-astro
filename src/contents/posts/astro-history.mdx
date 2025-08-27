@@ -25,11 +25,7 @@ ChatGPTに相談しながら実施した。
 
 https://chatgpt.com/share/68732443-c3f0-8011-b367-8a0e82fecd6c
 
-<Details title="環境">
-- Node.js 24.3.0
-- Astro 5.7.12
-- Git 2.50.1
-</Details>
+<Details title="環境">- Node.js 24.3.0 - Astro 5.7.12 - Git 2.50.1</Details>
 
 ## `git log`で履歴を取得する
 
@@ -71,6 +67,7 @@ export function gitLog(filepath: string): GitLog[] {
 ```
 
 これだけだと記事ごとにファイルパスを毎回指定する必要があって不便。そこで、記事IDからパスを解決し、履歴を加工して返すラッパー関数を作る。加工は以下の処理を行っている。
+
 - 日付を日付型に変換する
 - コミット名の`:`以降を取り出す
 - Mergeは除外する

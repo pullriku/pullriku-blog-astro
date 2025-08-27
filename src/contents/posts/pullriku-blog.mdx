@@ -2,14 +2,23 @@
 title: Astroでブログを作成した
 desc: Astroでこのブログを作りました。
 pubDate: 2025-03-14
-tags: ["Astro", "React", "TypeScript", "MDX", "Tailwind CSS", "Tailwind CSS Typography", "just", "pullriku-blog"]
+tags:
+  [
+    "Astro",
+    "React",
+    "TypeScript",
+    "MDX",
+    "Tailwind CSS",
+    "Tailwind CSS Typography",
+    "just",
+    "pullriku-blog",
+  ]
 pub: false
 ---
 
 import Details from "@layouts/Details.astro";
 // 必ずclientディレクティブを設定する
 import Quiz from "@components/Quiz";
-
 
 ## はじめに
 
@@ -18,6 +27,7 @@ import Quiz from "@components/Quiz";
 https://github.com/pullriku/pullriku-blog-astro
 
 ## 良い点
+
 このブログを作って良いと感じたことを紹介します。
 まず、Web技術の学習に役立ちます。自分専用のブログであるため、最新のフレームワークが登場しても気軽に試すことができ、使い捨てではなくメンテナンスしやすい設計を意識して作成できる点が魅力です。
 
@@ -100,9 +110,9 @@ https://developers.cloudflare.com/workers/wrangler/commands/#pages
 1. `just new-article id`で記事`id`のファイルを作成
 1. `yarn dev`コマンドでローカルサーバーを起動
 1. `src/content/posts/id.mdx`に記事を記述
-    [MDX](https://mdxjs.com/)形式で記述することで、HTMLの`details`や自分で作ったコンポーネントを利用できます。
-    画像を挿入する際は`src`以下の適当な場所に保存して保存し、`![alt](/path/to/image)`のように参照します。
-    [MDXについてのドキュメント](https://docs.astro.build/ja/guides/markdown-content/#mdx%E3%81%AE%E3%81%BF%E3%81%A7%E4%BD%BF%E3%81%88%E3%82%8B%E6%A9%9F%E8%83%BD)が参考になります。
+   [MDX](https://mdxjs.com/)形式で記述することで、HTMLの`details`や自分で作ったコンポーネントを利用できます。
+   画像を挿入する際は`src`以下の適当な場所に保存して保存し、`![alt](/path/to/image)`のように参照します。
+   [MDXについてのドキュメント](https://docs.astro.build/ja/guides/markdown-content/#mdx%E3%81%AE%E3%81%BF%E3%81%A7%E4%BD%BF%E3%81%88%E3%82%8B%E6%A9%9F%E8%83%BD)が参考になります。
 1. コミットしてプッシュ
 
 ## おわりに
@@ -110,10 +120,10 @@ https://developers.cloudflare.com/workers/wrangler/commands/#pages
 Astroの導入を検討されている方の参考になれば幸いです。
 
 <Quiz
-    question="Loaderもその一部として提供されている、Astroの追加機能は何と呼ばれているでしょうか？"
-    answers={["extensions", "components", "plugins", "integrations"]}
-    correctAnswer={3}
-    client:visible
+  question="Loaderもその一部として提供されている、Astroの追加機能は何と呼ばれているでしょうか？"
+  answers={["extensions", "components", "plugins", "integrations"]}
+  correctAnswer={3}
+  client:visible
 >
-[integrations](https://astro.build/integrations/)です。
+  [integrations](https://astro.build/integrations/)です。
 </Quiz>

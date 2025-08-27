@@ -30,14 +30,14 @@ const { post } = Astro.props as Props<keyof DataEntryMap>;
 
 ```typescript
 type Document = {
-    title: string;
-    desc: string;
-    pubDate: Date;
-    updatedDate?: Date;
+  title: string;
+  desc: string;
+  pubDate: Date;
+  updatedDate?: Date;
 };
 
 type Props<D extends Document> = {
-    post: { data: D };
+  post: { data: D };
 };
 
 const { post } = Astro.props;
@@ -96,6 +96,7 @@ type Props<D extends keyof DataEntryMap> = {
 
 const { post } = Astro.props as Props<keyof DataEntryMap>;
 ```
+
 `extends keyof DataEntryMap`を指定しないとエラーになります。
 `as Props<keyof DataEntryMap>`をつけることで、エディタの補完が効きます。`post.data.`と入力すると、存在するコレクションの共通するフィールドが候補として表示されます。よって、一部のコレクションにしか存在しないフィールドは補完に出ません。
 
