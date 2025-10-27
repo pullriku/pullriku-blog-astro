@@ -2,6 +2,7 @@
 import mdx from "@astrojs/mdx";
 import partytown from "@astrojs/partytown";
 import react from "@astrojs/react";
+import sitemap from "@astrojs/sitemap";
 import tailwind from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 import icon from "astro-icon";
@@ -16,7 +17,7 @@ import remarkLinkCard from "remark-link-card";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://pullriku.net",
+  site: "https://blog.pullriku.net",
   base: "/",
   vite: {
     optimizeDeps: {
@@ -28,6 +29,7 @@ export default defineConfig({
     plugins: [tailwind()],
   },
   integrations: [
+    sitemap(),
     mdx(),
     react(),
     partytown({ config: { forward: ["dataLayer.push"] } }),
