@@ -1,11 +1,10 @@
 ---
-// IssueBadge.astro
-interface Props {
-    number: number;
-}
-const { number } = Astro.props;
+    // IssueBadge.astro
+    interface Props {
+        number: number;
+    }
+    const { number } = Astro.props;
 ---
-
 <div class="w-fit rounded-md bg-gray-300 px-2 text-sm font-medium text-black">
     # {number}
 </div>

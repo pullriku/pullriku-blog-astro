@@ -1,23 +1,22 @@
 ---
-import type { CollectionEntry } from "astro:content";
-import { getPostHistory, type PostHistory } from "@lib/gitlog";
-import dayjs from "dayjs";
-import timezone from "dayjs/plugin/timezone";
-import utc from "dayjs/plugin/utc";
+    import type { CollectionEntry } from "astro:content";
+    import { getPostHistory, type PostHistory } from "@lib/gitlog";
+    import dayjs from "dayjs";
+    import timezone from "dayjs/plugin/timezone";
+    import utc from "dayjs/plugin/utc";
 
-dayjs.extend(utc);
-dayjs.extend(timezone);
+    dayjs.extend(utc);
+    dayjs.extend(timezone);
 
-type Props = {
-    post: CollectionEntry<"posts">;
-};
+    type Props = {
+        post: CollectionEntry<"posts">;
+    };
 
-const { post } = Astro.props;
-const isMdx = (post.filePath ?? "").endsWith(".mdx");
+    const { post } = Astro.props;
+    const isMdx = (post.filePath ?? "").endsWith(".mdx");
 
-const logs: PostHistory[] = Array.from(getPostHistory(post.id, isMdx));
+    const logs: PostHistory[] = Array.from(getPostHistory(post.id, isMdx));
 ---
-
 {
     logs.length !== 0 && (
         <div>
@@ -30,16 +29,8 @@ const logs: PostHistory[] = Array.from(getPostHistory(post.id, isMdx));
                 {logs.map((log) => (
                     <tr>
                         <td>
-                            <time datetime={log.date.toString()}>
-                                {log.date
+                            <time datetime={log.date.toString()}
+>
+{log.date
                                     .tz("Asia/Tokyo")
                                     .format("YYYY-MM-DD HH:mm:ss Z")}
-                            </time>
-                        </td>
-                        <td>{log.subject}</td>
-                    </tr>
-                ))}
-            </table>
-        </div>
-    )
-}

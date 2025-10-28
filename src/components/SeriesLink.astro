@@ -1,16 +1,16 @@
 ---
-import Series from "./Series.astro";
+    import Series from "./Series.astro";
 
-type Props = {
-    name: string;
-};
+    type Props = {
+        name: string;
+    };
 
-const { name } = Astro.props as Props;
+    const { name } = Astro.props as Props;
 ---
-
 <a
-    href={`/series/${name}`}
+    href={`/series/${name}
+    `}
     class="inline-block rounded bg-orange-100 px-2 text-orange-700 hover:underline dark:bg-orange-700 dark:text-orange-100"
 >
-    <Series name={name} />
+    <Series name={name}/>
 </a>

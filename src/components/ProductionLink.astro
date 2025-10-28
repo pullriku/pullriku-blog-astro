@@ -4,21 +4,21 @@ import OverlayBox from "@layouts/OverlayBox.astro";
 import { ICON_GITHUB } from "@lib/consts";
 
 type Props = {
-  href: string;
-  title: string;
-  desc: string;
-  iconName?: string;
-  iconDesc?: string;
-  keywords?: string[];
+    href: string;
+    title: string;
+    desc: string;
+    iconName?: string;
+    iconDesc?: string;
+    keywords?: string[];
 };
 
 const {
-  href,
-  title,
-  desc,
-  iconName = ICON_GITHUB,
-  iconDesc = "GitHub",
-  keywords = [],
+    href,
+    title,
+    desc,
+    iconName = ICON_GITHUB,
+    iconDesc = "GitHub",
+    keywords = [],
 } = Astro.props;
 ---
 

@@ -1,11 +1,10 @@
 ---
-type Props = {
-    datetime: Date;
-};
-const { datetime } = Astro.props;
-const isoString = datetime.toISOString();
+    type Props = {
+        datetime: Date;
+    };
+    const { datetime } = Astro.props;
+    const isoString = datetime.toISOString();
 ---
-
 <div class="ml-auto text-right text-sm text-gray-500">
     <time datetime={isoString}>{isoString.split("T")[0]}</time>
 </div>

@@ -1,9 +1,10 @@
 ---
-import { DARK_BG, LIGHT_OVERLAY } from "@lib/consts";
+    import { DARK_BG, LIGHT_OVERLAY } from "@lib/consts";
 ---
-
 <div
-    class={`w-full p-4 md:p-12 pt-5 mx-auto  ${LIGHT_OVERLAY} ${DARK_BG} rounded-lg`}
+    class={`w-full p-4 md:p-12 pt-5 mx-auto  ${LIGHT_OVERLAY}
+    ${DARK_BG}
+    rounded-lg`}
 >
-    <slot />
+    <slot/>
 </div>

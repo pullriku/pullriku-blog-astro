@@ -1,50 +1,50 @@
 ---
-import { Icon } from "astro-icon/components";
+    import { Icon } from "astro-icon/components";
 
-// 記事のタグ。タグの出現回数に応じてフォントサイズを変更する。
-type Props = {
-    tag: string;
-    count?: number;
-};
+    // 記事のタグ。タグの出現回数に応じてフォントサイズを変更する。
+    type Props = {
+        tag: string;
+        count?: number;
+    };
 
-const { tag, count = 0 } = Astro.props;
+    const { tag, count = 0 } = Astro.props;
 
-const fontRatio = 1 + Math.log10(count + 1) * 3;
-const fontSize = Math.floor(fontRatio);
+    const fontRatio = 1 + Math.log10(count + 1) * 3;
+    const fontSize = Math.floor(fontRatio);
 
-let fontSizeClass: string;
-switch (fontSize) {
-    case 1:
-        fontSizeClass = "text-md";
-        break;
-    case 2:
-        fontSizeClass = "text-xl";
-        break;
-    case 3:
-        fontSizeClass = "text-3xl";
-        break;
-    case 4:
-        fontSizeClass = "text-4xl";
-        break;
-    case 5:
-        fontSizeClass = "text-5xl";
-        break;
-    case 6:
-        fontSizeClass = "text-6xl";
-        break;
-    default:
-        fontSizeClass = "text-6xl";
-        break;
-}
-fontSizeClass = ` ${fontSizeClass} `;
+    let fontSizeClass: string;
+    switch (fontSize) {
+        case 1:
+            fontSizeClass = "text-md";
+            break;
+        case 2:
+            fontSizeClass = "text-xl";
+            break;
+        case 3:
+            fontSizeClass = "text-3xl";
+            break;
+        case 4:
+            fontSizeClass = "text-4xl";
+            break;
+        case 5:
+            fontSizeClass = "text-5xl";
+            break;
+        case 6:
+            fontSizeClass = "text-6xl";
+            break;
+        default:
+            fontSizeClass = "text-6xl";
+            break;
+    }
+    fontSizeClass = ` ${fontSizeClass} `;
 ---
-
 <span class="inline-block object-contain">
     <span
         class={"flex items-center justify-center gap-1 text-gray-600 dark:text-gray-300 hover:underline p-2 overflow-ellipsis whitespace-nowrap" +
             fontSizeClass}
     >
-        <Icon name="mdi:tag" width="1em" height="1em" />
-        {tag}{count ? `(${count})` : ""}
+        <Icon name="mdi:tag" width="1em" height="1em"/>
+        {tag}
+        {count ? `(${count})` : ""}
     </span>
 </span>

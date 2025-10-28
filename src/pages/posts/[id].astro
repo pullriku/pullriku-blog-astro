@@ -16,16 +16,16 @@ import { getAllPosts } from "@lib/post";
 import type { GetStaticPaths } from "astro";
 
 export const getStaticPaths = (async () => {
-  const posts = await getAllPosts();
+    const posts = await getAllPosts();
 
-  return (
-    posts.map((post) => ({
-      params: {
-        id: post.id,
-      },
-      props: post,
-    })) ?? []
-  );
+    return (
+        posts.map((post) => ({
+            params: {
+                id: post.id,
+            },
+            props: post,
+        })) ?? []
+    );
 }) satisfies GetStaticPaths;
 
 type Props = CollectionEntry<"posts">;
@@ -34,9 +34,9 @@ const post = Astro.props;
 const { headings } = await render(post);
 const willSubtractDepth = !headings.map((heading) => heading.depth).includes(1);
 if (willSubtractDepth) {
-  for (const heading of headings) {
-    heading.depth -= 1;
-  }
+    for (const heading of headings) {
+        heading.depth -= 1;
+    }
 }
 
 const coverImageOpt = await getCover(post.id);
@@ -45,35 +45,35 @@ const origin = Astro.site?.origin;
 
 const image = [origin + ogpImageUrl];
 if (coverImageOpt) {
-  image.unshift(origin + coverImageOpt.src);
+    image.unshift(origin + coverImageOpt.src);
 }
 const schemaArticle = {
-  "@context": "http://schema.org",
-  "@type": "Article",
-  mainEntityOfPage: {
-    "@type": "WebPage",
-    "@id": origin,
-  },
-  headline: post.data.title,
-  description: post.data.desc,
-  image: image,
-  datePublished: post.data.pubDate.toISOString(),
-  dateModified:
-    post.data.updatedDate?.toISOString() ?? post.data.pubDate.toISOString(),
-  author: {
-    "@type": "Person",
-    name: "pullriku",
-    url: "https://blog.pullriku.net/about/",
-  },
-  publisher: {
-    "@type": "Organization",
-    name: "pullriku-blog",
-    url: "https://blog.pullriku.net/",
-    logo: {
-      "@type": "ImageObject",
-      url: `${origin}/og-image.png`,
+    "@context": "http://schema.org",
+    "@type": "Article",
+    mainEntityOfPage: {
+        "@type": "WebPage",
+        "@id": origin,
     },
-  },
+    headline: post.data.title,
+    description: post.data.desc,
+    image: image,
+    datePublished: post.data.pubDate.toISOString(),
+    dateModified:
+        post.data.updatedDate?.toISOString() ?? post.data.pubDate.toISOString(),
+    author: {
+        "@type": "Person",
+        name: "pullriku",
+        url: "https://blog.pullriku.net/about/",
+    },
+    publisher: {
+        "@type": "Organization",
+        name: "pullriku-blog",
+        url: "https://blog.pullriku.net/",
+        logo: {
+            "@type": "ImageObject",
+            url: `${origin}/og-image.png`,
+        },
+    },
 };
 ---
 

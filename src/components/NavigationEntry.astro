@@ -1,15 +1,14 @@
 ---
-type Props = {
-    href: string;
-    title: string;
-    selected?: boolean;
-};
+    type Props = {
+        href: string;
+        title: string;
+        selected?: boolean;
+    };
 
-const { href, title, selected } = Astro.props;
+    const { href, title, selected } = Astro.props;
 
-const selectingClass = selected ? " font-bold " : "";
+    const selectingClass = selected ? " font-bold " : "";
 ---
-
 <div class="relative flex h-full flex-col items-center">
     <a href={href} class={"hover:underline" + selectingClass}>{title}</a>
     {
@@ -19,7 +18,5 @@ const selectingClass = selected ? " font-bold " : "";
                 class={
                     "absolute -bottom-2 h-2 w-2 rounded-full bg-blue-600 dark:bg-blue-400"
                 }
-            />
-        )
-    }
+    /> ) }
 </div>

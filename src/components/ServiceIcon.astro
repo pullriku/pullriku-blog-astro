@@ -1,24 +1,22 @@
 ---
-// SNSなどのアイコン。アイコンの名前とリンク先を指定すると、アイコンを表示する。名前はiconifyを参照する。
-import { Icon } from "astro-icon/components";
+    // SNSなどのアイコン。アイコンの名前とリンク先を指定すると、アイコンを表示する。名前はiconifyを参照する。
+    import { Icon } from "astro-icon/components";
 
-type Props = {
-    href?: string;
-    name: string;
-    width?: number;
-    height?: number;
-    class_?: string;
-};
+    type Props = {
+        href?: string;
+        name: string;
+        width?: number;
+        height?: number;
+        class_?: string;
+    };
 
-const { href, name, width = 24, height = 24, class_ = "" } = Astro.props;
+    const { href, name, width = 24, height = 24, class_ = "" } = Astro.props;
 ---
-
 {
     href == undefined ? (
-        <Icon name={name} width={width} height={height} class={class_} />
-    ) : (
-        <a href={href}>
-            <Icon name={name} width={width} height={height} class={class_} />
-        </a>
-    )
-}
+        <Icon name={name}
+width={width}height={height}class={class_}/> ) : (
+<a href={href}>
+    <Icon name={name} width={width} height={height} class={class_}/>
+</a>
+) }

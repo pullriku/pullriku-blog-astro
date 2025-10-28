@@ -1,13 +1,12 @@
 ---
-import { Icon } from "astro-icon/components";
+    import { Icon } from "astro-icon/components";
 
-type Props = {
-    name: string;
-};
+    type Props = {
+        name: string;
+    };
 
-const { name } = Astro.props as Props;
+    const { name } = Astro.props as Props;
 ---
-
 <span class="line-clamp-1 flex items-center gap-1 wrap-anywhere">
     <Icon
         name="ic:baseline-library-books"

@@ -8,15 +8,15 @@ import type { GetStaticPaths } from "astro";
 import { Icon } from "astro-icon/components";
 
 export const getStaticPaths = (async () => {
-  const allSeries = await getAllSeries();
+    const allSeries = await getAllSeries();
 
-  return allSeries.map((series) => ({
-    params: { name: series.id },
-  }));
+    return allSeries.map((series) => ({
+        params: { name: series.id },
+    }));
 }) satisfies GetStaticPaths;
 
 type Props = {
-  name: string;
+    name: string;
 };
 
 const { name } = Astro.params;
