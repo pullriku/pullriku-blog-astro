@@ -19,7 +19,7 @@
     "@astrojs/react": "4.3.0",
     "@astrojs/rss": "^4.0.12",
     "@astrojs/sitemap": "^3.6.0",
-    "@biomejs/biome": "^2.2.2",
+    "@biomejs/biome": "^2.3.1",
     "@giscus/react": "^3.1.0",
     "@iconify-json/ic": "^1.2.4",
     "@iconify-json/mdi": "^1.2.3",

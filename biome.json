@@ -1,50 +1,48 @@
 {
-  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "formatter": {
-    "enabled": true,
-    "formatWithErrors": false,
-    "includes": ["src/**/*.{js,jsx,ts,tsx,astro,json,md,mdx}"],
-    "attributePosition": "auto",
-    "indentStyle": "space",
-    "indentWidth": 4,
-    "lineEnding": "lf",
-    "lineWidth": 80
-  },
-  "linter": {
-    "enabled": true
-  },
-  "javascript": {
-    "globals": ["Astro"],
+    "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
     "formatter": {
-      "arrowParentheses": "always",
-      "bracketSameLine": false,
-      "bracketSpacing": true,
-      "jsxQuoteStyle": "double",
-      "quoteProperties": "asNeeded",
-      "semicolons": "always",
-      "trailingCommas": "all"
-    }
-  },
-  "json": {
-    "formatter": {
-      "trailingCommas": "none"
-    }
-  },
-  "overrides": [
-    {
-      "includes": ["**/*.svelte", "**/*.astro", "**/*.vue"],
-      "linter": {
-        "rules": {
-          "style": {
-            "useConst": "off",
-            "useImportType": "off"
-          },
-          "correctness": {
-            "noUnusedVariables": "off",
-            "noUnusedImports": "off"
-          }
+        "enabled": true,
+        "formatWithErrors": false,
+        "includes": ["src/**/*.{js,jsx,ts,tsx,astro,json,md,mdx}"],
+        "attributePosition": "auto",
+        "indentStyle": "space",
+        "indentWidth": 4,
+        "lineEnding": "lf",
+        "lineWidth": 80
+    },
+    "linter": {
+        "enabled": true
+    },
+    "javascript": {
+        "formatter": {
+            "enabled": true,
+            "arrowParentheses": "always",
+            "bracketSameLine": false,
+            "bracketSpacing": true,
+            "jsxQuoteStyle": "double",
+            "quoteProperties": "asNeeded",
+            "semicolons": "always",
+            "trailingCommas": "all"
         }
-      }
+    },
+    "json": {
+        "formatter": {
+            "trailingCommas": "none"
+        }
+    },
+    "html": {
+        "experimentalFullSupportEnabled": true,
+        "formatter": {
+            "enabled": true,
+            "indentScriptAndStyle": true
+        }
+    },
+    "css": {
+        "formatter": {
+            "enabled": true
+        },
+        "parser": {
+            "tailwindDirectives": true
+        }
     }
-  ]
 }

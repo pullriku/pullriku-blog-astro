@@ -7,7 +7,7 @@
   },
   "[astro]": {
     "editor.formatOnSave": true,
-    "editor.defaultFormatter": "astro-build.astro-vscode"
+    "editor.defaultFormatter": "biomejs.biome"
   },
   "search.exclude": {
     "**/.yarn": true,
