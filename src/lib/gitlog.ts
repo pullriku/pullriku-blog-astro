@@ -43,7 +43,7 @@ export function getPostHistory(id: string, isMdx: boolean): PostHistory[] {
 
   const pubIndex = sorted.findIndex((log) => log.subject.startsWith("公開"));
   let result: PostHistory[];
-  if (pubIndex) {
+  if (pubIndex >= 0) {
     result = sorted.slice(pubIndex);
   } else {
     result = sorted;
