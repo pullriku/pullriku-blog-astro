@@ -1,26 +1,27 @@
 ---
-    import type { CollectionEntry } from "astro:content";
-    import MoreArticles from "@components/MoreArticles.astro";
-    import { NavigationPage } from "@components/Navigation.astro";
-    import PageLink from "@components/PageLink.astro";
-    import PageTitle from "@layouts/PageTitle.astro";
-    import SingleColumnLayout from "@layouts/SingleColumnLayout.astro";
-    import { getAllPosts } from "@lib/post";
-    import type { GetStaticPaths, Page } from "astro";
+import type { CollectionEntry } from "astro:content";
+import MoreArticles from "@components/MoreArticles.astro";
+import { NavigationPage } from "@components/Navigation.astro";
+import PageLink from "@components/PageLink.astro";
+import PageTitle from "@layouts/PageTitle.astro";
+import SingleColumnLayout from "@layouts/SingleColumnLayout.astro";
+import { getAllPosts } from "@lib/post";
+import type { GetStaticPaths, Page } from "astro";
 
-    export const pageSize = 30;
+export const pageSize = 30;
 
-    export const getStaticPaths = (async ({ paginate }) => {
-        const posts = await getAllPosts();
+export const getStaticPaths = (async ({ paginate }) => {
+    const posts = await getAllPosts();
 
-        return paginate(posts, { pageSize: pageSize });
-    }) satisfies GetStaticPaths;
+    return paginate(posts, { pageSize: pageSize });
+}) satisfies GetStaticPaths;
 
-    const { page }: { page: Page<CollectionEntry<"posts">> } = Astro.props;
-    const data = page.data.sort(
-        (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
-    );
+const { page }: { page: Page<CollectionEntry<"posts">> } = Astro.props;
+const data = page.data.sort(
+    (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
+);
 ---
+
 <SingleColumnLayout
     title="すべての記事"
     desc="@pullrikuによる技術ブログの、すべての記事を見ることができます。"
@@ -28,11 +29,11 @@
 >
     <PageTitle>すべての記事</PageTitle>
 
-    <PageLink page={page}/>
+    <PageLink page={page} />
 
     <div>
-        <MoreArticles posts={data}/>
+        <MoreArticles posts={data} />
     </div>
 
-    <PageLink page={page}/>
+    <PageLink page={page} />
 </SingleColumnLayout>

@@ -1,23 +1,24 @@
 ---
-    import NavigationEntry from "@components/NavigationEntry.astro";
+import NavigationEntry from "@components/NavigationEntry.astro";
 
-    export enum NavigationPage {
-        Home = "/",
-        Posts = "/all/1",
-        Series = "/series",
-        Tags = "/tags",
-        About = "/about",
-    }
+export enum NavigationPage {
+    Home = "/",
+    Posts = "/all/1",
+    Series = "/series",
+    Tags = "/tags",
+    About = "/about",
+}
 
-    export type NavigationProps = {
-        selectedPage?: NavigationPage;
-    };
+export type NavigationProps = {
+    selectedPage?: NavigationPage;
+};
 
-    type Props = NavigationProps;
+type Props = NavigationProps;
 
-    const { selectedPage } = Astro.props;
-    // ナビゲーションバー。
+const { selectedPage } = Astro.props;
+// ナビゲーションバー。
 ---
+
 <div class="flex h-full flex-wrap justify-center gap-8">
     <NavigationEntry
         href="/"

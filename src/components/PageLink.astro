@@ -1,17 +1,18 @@
 ---
-    import type { CollectionEntry } from "astro:content";
-    import type { DataEntryMap } from "astro:content";
-    import BlueLink from "@components/BlueLink.astro";
-    // ページネーションのリンク。前後のページへのリンクを表示する。
-    import type { Page } from "astro";
+import type { CollectionEntry } from "astro:content";
+import type { DataEntryMap } from "astro:content";
+import BlueLink from "@components/BlueLink.astro";
+// ページネーションのリンク。前後のページへのリンクを表示する。
+import type { Page } from "astro";
 
-    type Props<T extends keyof DataEntryMap> = {
-        page: Page<CollectionEntry<T>>;
-    };
+type Props<T extends keyof DataEntryMap> = {
+    page: Page<CollectionEntry<T>>;
+};
 
-    const { page } = Astro.props;
+const { page } = Astro.props;
 ---
+
 <div class="mx-auto flex w-fit gap-8">
-    {page.url.prev ? <BlueLink text="前へ" href={page.url.prev}/> : null}
-    {page.url.next ? <BlueLink text="次へ" href={page.url.next}/> : null}
+    {page.url.prev ? <BlueLink text="前へ" href={page.url.prev} /> : null}
+    {page.url.next ? <BlueLink text="次へ" href={page.url.next} /> : null}
 </div>

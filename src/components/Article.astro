@@ -13,65 +13,73 @@ import ServiceIcon from "./ServiceIcon.astro";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 type Props<T extends keyof DataEntryMap> = {
-  post: CollectionEntry<T>;
+    post: CollectionEntry<T>;
 };
 
 const { post } = Astro.props;
 const { Content } = await render(post);
 
 const gitDate = getPostHistory(post.id, (post.filePath ?? "").endsWith(".mdx"))
-  .at(-1)
-  ?.date.tz("Asia/Tokyo");
+    .at(-1)
+    ?.date.tz("Asia/Tokyo");
 const postUpdatedDate =
-  gitDate ?? post.data.updatedDate
-    ? dayjs(post.data.updatedDate).tz("Asia/Tokyo")
-    : null;
+    (gitDate ?? post.data.updatedDate)
+        ? dayjs(post.data.updatedDate).tz("Asia/Tokyo")
+        : null;
 ---
 
 <article>
-  <div>
-    <h1 class="text-4xl font-bold">{post.data.title}</h1>
-    <div class="block py-2 text-gray-500">
-      <div class="flex items-center gap-2">
-        <Icon name="ic:baseline-calendar-today" width="1em" height="1em" />
-        公開日:
-        <time datetime={post.data.pubDate.toISOString()} class="">
-          {post.data.pubDate.toISOString().split("T")[0]}
-        </time>
-      </div>
+    <div>
+        <h1 class="text-4xl font-bold">{post.data.title}</h1>
+        <div class="block py-2 text-gray-500">
+            <div class="flex items-center gap-2">
+                <Icon
+                    name="ic:baseline-calendar-today"
+                    width="1em"
+                    height="1em"
+                />
+                公開日:
+                <time datetime={post.data.pubDate.toISOString()} class="">
+                    {post.data.pubDate.toISOString().split("T")[0]}</time
+                >
+            </div>
 
-      {
-        postUpdatedDate && (
-          <div class="flex items-center gap-2">
-            <Icon name="ic:baseline-update" width="1em" height="1em" />
-            更新日:
-            <time
-              datetime={postUpdatedDate.toISOString()}
-              class="block text-gray-500"
-            >
-              {postUpdatedDate.toISOString().split("T")[0]}
-            </time>
-          </div>
-        )
-      }
+            {
+                postUpdatedDate && (
+                    <div class="flex items-center gap-2">
+                        <Icon
+                            name="ic:baseline-update"
+                            width="1em"
+                            height="1em"
+                        />
+                        更新日:
+                        <time
+                            datetime={postUpdatedDate.toISOString()}
+                            class="block text-gray-500"
+                        >
+                            {postUpdatedDate.toISOString().split("T")[0]}
+                        </time>
+                    </div>
+                )
+            }
+        </div>
     </div>
-  </div>
 
-  {
-    post.data.zenn ? (
-      <div class="flex flex-row items-center">
-        <ServiceIcon
-          href={zennUrl(post.id)}
-          name="simple-icons:zenn"
-          width={24}
-          height={24}
-        />
-        <a target="_blank" href={zennUrl(post.id)}>
-          <p class="text-gray-500">外部サイト(Zenn)</p>
-        </a>
-      </div>
-    ) : (
-      <Content />
-    )
-  }
+    {
+        post.data.zenn ? (
+            <div class="flex flex-row items-center">
+                <ServiceIcon
+                    href={zennUrl(post.id)}
+                    name="simple-icons:zenn"
+                    width={24}
+                    height={24}
+                />
+                <a target="_blank" href={zennUrl(post.id)}>
+                    <p class="text-gray-500">外部サイト(Zenn)</p>
+                </a>
+            </div>
+        ) : (
+            <Content />
+        )
+    }
 </article>

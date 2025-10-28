@@ -1,16 +1,15 @@
 ---
-    import BasicLayout, {
-        type BasicLayoutProps,
-    } from "@layouts/BasicLayout.astro";
+import BasicLayout, { type BasicLayoutProps } from "@layouts/BasicLayout.astro";
 
-    type Props = BasicLayoutProps & {
-        class?: string;
-    };
+type Props = BasicLayoutProps & {
+    class?: string;
+};
 
-    const { class: className = "", ...basicLayoutProps } = Astro.props;
+const { class: className = "", ...basicLayoutProps } = Astro.props;
 ---
+
 <BasicLayout {...basicLayoutProps}>
     <div class={"mx-auto lg:px-16" + ` ${className} `}>
-        <slot/>
+        <slot />
     </div>
 </BasicLayout>

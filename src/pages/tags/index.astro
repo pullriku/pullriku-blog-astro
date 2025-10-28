@@ -1,19 +1,20 @@
 ---
-    import { NavigationPage } from "@components/Navigation.astro";
-    import Tag from "@components/TagLink.astro";
-    import BasicLayout from "@layouts/BasicLayout.astro";
-    import PageTitle from "@layouts/PageTitle.astro";
-    import RoundedBox from "@layouts/RoundedBox.astro";
-    import { getTags } from "@lib/post";
+import { NavigationPage } from "@components/Navigation.astro";
+import Tag from "@components/TagLink.astro";
+import BasicLayout from "@layouts/BasicLayout.astro";
+import PageTitle from "@layouts/PageTitle.astro";
+import RoundedBox from "@layouts/RoundedBox.astro";
+import { getTags } from "@lib/post";
 
-    const tagInfoList = await getTags();
-    const sortedTagInfoList = tagInfoList.sort((a, b) => {
-        if (a.count === b.count) {
-            return a.tag.localeCompare(b.tag);
-        }
-        return b.count - a.count;
-    });
+const tagInfoList = await getTags();
+const sortedTagInfoList = tagInfoList.sort((a, b) => {
+    if (a.count === b.count) {
+        return a.tag.localeCompare(b.tag);
+    }
+    return b.count - a.count;
+});
 ---
+
 <BasicLayout
     title="すべてのタグ"
     desc="@pullrikuによる技術ブログの、全てのタグを見ることができます。"
@@ -24,11 +25,11 @@
     </div>
     <div class="px-4 pb-4 lg:px-16">
         {
-            sortedTagInfoList.map(({ tag, count }
-        ) => (
-        <RoundedBox>
-            <Tag tag={tag} count={count}/>
-        </RoundedBox>
-        )) }
+            sortedTagInfoList.map(({ tag, count }) => (
+                <RoundedBox>
+                    <Tag tag={tag} count={count} />
+                </RoundedBox>
+            ))
+        }
     </div>
 </BasicLayout>

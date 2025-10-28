@@ -1,44 +1,43 @@
 ---
-    import type { CollectionEntry } from "astro:content";
-    import { render } from "astro:content";
-    import Article from "@components/Article.astro";
-    import TableOfContents from "@components/TableOfContents.astro";
-    // 必要なレイアウトやコンポーネントのインポート
-    import BasicLayout from "@layouts/BasicLayout.astro";
-    import PostContent from "@layouts/PostContent.astro";
-    import Prose from "@layouts/Prose";
+import type { CollectionEntry } from "astro:content";
+import { render } from "astro:content";
+import Article from "@components/Article.astro";
+import TableOfContents from "@components/TableOfContents.astro";
+// 必要なレイアウトやコンポーネントのインポート
+import BasicLayout from "@layouts/BasicLayout.astro";
+import PostContent from "@layouts/PostContent.astro";
+import Prose from "@layouts/Prose";
 
-    // コンポーネントの Props 型定義（CollectionEntry は使用しない）
-    type Props = {
-        post: CollectionEntry<"docs">;
-    };
+// コンポーネントの Props 型定義（CollectionEntry は使用しない）
+type Props = {
+    post: CollectionEntry<"docs">;
+};
 
-    const { post } = Astro.props;
+const { post } = Astro.props;
 
-    const { headings } = await render(post);
+const { headings } = await render(post);
 
-    // 見出しの深さ調整（最上位が depth 1 でない場合、全体を 1 減算する）
-    const willSubtractDepth = !headings
-        .map((heading) => heading.depth)
-        .includes(1);
-    if (willSubtractDepth) {
-        for (const heading of headings) {
-            heading.depth -= 1;
-        }
+// 見出しの深さ調整（最上位が depth 1 でない場合、全体を 1 減算する）
+const willSubtractDepth = !headings.map((heading) => heading.depth).includes(1);
+if (willSubtractDepth) {
+    for (const heading of headings) {
+        heading.depth -= 1;
     }
+}
 ---
+
 <BasicLayout title={post.data.title} desc={post.data.desc} slug={post.id}>
     <div class="px-0 md:px-4">
         <div class="mx-auto justify-center gap-10 lg:flex">
             {/* 記事の列 */}
             <PostContent post={post}>
                 <Prose>
-                    <article post={post}/>
+                    <Article post={post} />
                 </Prose>
             </PostContent>
             {/* 目次の列（スクロールのためのコンテナ） */}
             <div class={"lg:h-auto lg:w-72 hidden lg:block"}>
-                <TableOfContents headings={headings}/>
+                <TableOfContents headings={headings} />
             </div>
         </div>
     </div>
