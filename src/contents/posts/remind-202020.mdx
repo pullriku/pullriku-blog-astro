@@ -1,0 +1,128 @@
+---
+title: "macOSでn分ごとに通知する"
+desc: "macOSで、スリープが解除されてからn分ごとに通知を表示する方法"
+pubDate: 2025-10-28
+tags: ["macOS", "AppleScript", "通知"]
+pub: false
+---
+
+import Details from "@layouts/Details.astro";
+import X from "@components/XEmbed.astro";
+// 必ずclientディレクティブを設定する
+import Quiz from "@components/Quiz";
+
+## はじめに
+
+macOSで、スリープが解除されてからn分ごとに通知を表示する方法をまとめる。
+
+## システム構成
+
+1. [SleepWatcher](https://www.bernhard-baehr.de)を使ってスリープ解除を検知し、Pythonスクリプトを実行する。
+1. Pythonスクリプトにて、n分ごとにAppleScriptを実行し、通知を表示する。
+
+## 手順
+
+### Python スクリプトを書く
+
+`while`ループと`sleep`を使って、一定間隔でAppleScript(`osascript`)を実行する。以下は20分ごとに通知を表示する例。`sleep_minutes = 20` の部分を変更すれば、任意の分数に変更できる。
+
+```python
+import time
+import subprocess
+import signal
+import sys
+from types import FrameType
+from typing import Optional
+
+def notify(title: str, message: str):
+    subprocess.run(
+        [
+            "osascript",
+            "-e",
+            f'display notification "{message}" with title "{title}" sound name "Ping"',
+        ]
+    )
+
+
+def handle_sigterm(_signum: int, _frame: Optional[FrameType]):
+    # 必要ならここでログや後始末
+    sys.exit(0)
+
+
+def main():
+    # notify("20-20-20ルールスタート", "スタートです。")
+    signal.signal(signal.SIGTERM, handle_sigterm)
+
+    sleep_minutes = 20
+    MINUTE_SEC = 60
+    while True:
+        time.sleep(sleep_minutes * MINUTE_SEC)
+        notify("20-20-20ルール", "20秒間、6m先を見ましょう！")
+
+
+if __name__ == "__main__":
+    main()
+```
+
+### SleepWatcherの設定
+
+SleepWatcherの設定ファイルを作成する。
+
+まず、スリープ解除時の処理として、Pythonスクリプトを起動するコマンドを書く。
+`~/.wakeup`にPythonスクリプトを起動するコマンドを記述する。
+
+念のため、既に起動している同じスクリプトを終了させてから、新たに起動するようにしている。
+
+```zsh:~/.wakeup
+#!/bin/zsh
+
+CMD=(/opt/homebrew/bin/uv run /Users/riku/Private/Languages/Python/notify202020/main.py)
+pkill -f $CMD 2>/dev/null
+nohup $CMD >/tmp/20rule.log 2>&1 &
+
+```
+
+この例では`uv`を使ってPythonスクリプトを実行しているが、`python3`や`python`コマンドを使っても問題ない。
+その場合は`CMD`が以下のようになる。
+
+```
+python3 /path/to/your/script.py
+```
+
+次に、スリープ時にPythonスクリプトを終了させるコマンドを書く。
+`~/.sleep`にファイルを作成する。
+
+```zsh:~/.sleep
+#!/bin/zsh
+
+CMD=(/opt/homebrew/bin/uv run /Users/riku/Private/Languages/Python/notify202020/main.py)
+pkill -f $CMD 2> /dev/null
+```
+
+### SleepWatcherのインストール
+
+Homebrewでインストールできる。
+
+```zsh
+brew install sleepwatcher
+```
+
+### SleepWatcherの起動設定
+
+Homebrewのサービスとして起動する。
+```zsh
+brew services start sleepwatcher
+```
+
+## おわりに
+
+この方法を使って、定期的に休憩を促す通知を表示できる。
+
+
+## 参考
+
+https://zenn.dev/c6tower/articles/5fcb5299f410d4
+
+https://developer.apple.com/library/archive/documentation/LanguagesUtilities/Conceptual/MacAutomationScriptingGuide/DisplayNotifications.html
+
+
