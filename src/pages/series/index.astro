@@ -5,8 +5,10 @@ import BasicLayout from "@layouts/BasicLayout.astro";
 import ContentArea from "@layouts/ContentArea.astro";
 import PageTitle from "@layouts/PageTitle.astro";
 import PostContent from "@layouts/PostContent.astro";
+import Prose from "@layouts/Prose";
 import SingleColumnLayout from "@layouts/SingleColumnLayout.astro";
 import { getAllSeries, getPostsBySeries, getTags } from "@lib/post";
+import { render } from "astro:content";
 
 const series = await getAllSeries();
 const sortedTagInfoList = series.sort((a, b) => a.id.localeCompare(b.id));
@@ -22,14 +24,17 @@ const sortedTagInfoList = series.sort((a, b) => a.id.localeCompare(b.id));
     {
         sortedTagInfoList.map(async (series) => {
             const posts = await getPostsBySeries(series.id);
+            const { Content } = await render(series);
             return (
                 <div class="py-8">
                     <ContentArea>
                         <span class="text-3xl font-bold">
-                            <SeriesLink name={series.id} />
+                            <SeriesLink id={series.id} name={series.data.title} />
                         </span>
                         <p class="mt-6 text-base font-medium">
-                            {series.data.desc && series.data.desc}
+                            <Prose>
+                                <Content />
+                            </Prose>
                         </p>
                     </ContentArea>
                 </div>

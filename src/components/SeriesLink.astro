@@ -2,14 +2,15 @@
 import Series from "./Series.astro";
 
 type Props = {
+    id: string;
     name: string;
 };
 
-const { name } = Astro.props as Props;
+const { id, name } = Astro.props as Props;
 ---
 
 <a
-    href={`/series/${name}`}
+    href={`/series/${id}`}
     class="inline-block rounded bg-orange-100 px-2 text-orange-700 hover:underline dark:bg-orange-700 dark:text-orange-100"
 >
     <Series name={name} />

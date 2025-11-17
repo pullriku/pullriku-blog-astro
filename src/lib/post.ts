@@ -27,11 +27,11 @@ export async function getAllSeries(): Promise<CollectionEntry<"series">[]> {
 }
 
 export async function getSeries(
-  name: string,
+  id: string,
 ): Promise<CollectionEntry<"series">> {
-  const series = await getEntry("series", name);
+  const series = await getEntry("series", id);
   if (!series) {
-    throw new Error(`連載「${name}」は存在しません。`);
+    throw new Error(`連載「${id}」は存在しません。`);
   }
   return series;
 }
@@ -76,11 +76,11 @@ export async function getPostsByTag(
 }
 
 export async function getPostsBySeries(
-  seriesName: string,
+  id: string,
 ): Promise<CollectionEntry<"posts">[]> {
   const posts = await getAllPosts();
   return posts
-    .filter((post) => post.data.series === seriesName)
+    .filter((post) => post.data.series === id)
     .sort((a, b) => a.id.localeCompare(b.id));
 }
 

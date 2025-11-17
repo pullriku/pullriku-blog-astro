@@ -6,12 +6,14 @@ import SingleColumnLayout from "@layouts/SingleColumnLayout.astro";
 import { getAllSeries, getPostsBySeries, getSeries } from "@lib/post";
 import type { GetStaticPaths } from "astro";
 import { Icon } from "astro-icon/components";
+import { render } from "astro:content";
+import Prose from "@layouts/Prose";
 
 export const getStaticPaths = (async () => {
   const allSeries = await getAllSeries();
 
   return allSeries.map((series) => ({
-    params: { name: series.id },
+    params: { id: series.id },
   }));
 }) satisfies GetStaticPaths;
 
@@ -19,27 +21,27 @@ type Props = {
   name: string;
 };
 
-const { name } = Astro.params;
-const posts = await getPostsBySeries(name);
-const series = await getSeries(name);
+const { id } = Astro.params;
+const posts = await getPostsBySeries(id);
+const series = await getSeries(id);
+const { Content } = await render(series);
 ---
 
 <SingleColumnLayout
-  title={`連載: ${name}`}
-  desc={`本ブログの連載「${name}」についての記事を見ることができます。`}
+  title={`連載: ${series.data.title}`}
+  desc={`本ブログの連載「${series.data.title}」についての記事を見ることができます。`}
 >
   <PageTitle>
     <div class="flex items-center gap-2">
       <Icon name="ic:baseline-library-books" width="1em" height="1em" />
-      連載: {name}
+      連載: {series.data.title}
     </div>
   </PageTitle>
-  {
-    series.data.desc && (
-      <div class="mb-4 py-6">
-        <p>{series.data.desc}</p>
-      </div>
-    )
-  }
+
+  <div class="mb-4 py-6">
+    <Prose>
+      <Content />
+    </Prose>
+  </div>
   <MoreArticles posts={posts} />
 </SingleColumnLayout>

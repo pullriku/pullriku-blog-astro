@@ -49,14 +49,14 @@ const posts = defineCollection({
 });
 
 const seriesSchema = z.object({
-  desc: z.string(),
+  title: z.string(),
 });
 
 const series = defineCollection({
   loader: glob({
-    pattern: "**/*.toml",
+    pattern: "**/*.(md|mdx)",
     base: "./src/contents/series",
-    generateId: ({ entry }) => entry.replace(/\.toml$/, ""),
+    generateId: ({ entry }) => entry.replace(/\.(md|mdx)$/, ""),
   }),
   schema: seriesSchema,
 });
