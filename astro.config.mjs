@@ -59,7 +59,7 @@ export default defineConfig({
       footnoteLabelTagName: "hr",
     },
     shikiConfig: {
-      // theme: "dark-plus",
+      theme: "github-dark-default",
     },
   },
 });
