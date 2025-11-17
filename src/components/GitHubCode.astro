@@ -1,0 +1,42 @@
+---
+import type { CodeLanguage } from 'astro';
+import { Code } from 'astro:components';
+
+type Props = {
+    permalink: string;
+};
+
+const { permalink } = Astro.props as Props;
+// https://github.com/pullriku/pullriku-blog-astro/blob/e48ee9b6d674139cd2662dfb2378131c35fd750a/src/components/Article.astro#L7C7-L9C18
+// https://raw.githubusercontent.com/pullriku/pullriku-blog-astro/refs/heads/main/src/components/Article.astro
+
+const permalinkUrl = new URL(permalink);
+if (permalinkUrl.hostname !== "github.com") {
+    throw new Error("Only GitHub permalink URLs are supported.");
+}
+const [_slash, owner, repo, _blob, commit, ...path] =  permalinkUrl.pathname.split("/");
+const rawSrcUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${commit}/${path.join("/")}`;
+const res = await fetch(rawSrcUrl);
+let rawSrc = await res.text();
+
+let lines: { start: number; end: number } | null = null;
+const hash = permalinkUrl.hash;
+if (hash.startsWith("#L")) {
+    const lineParts = hash.slice(2).split("-L");
+    const start = parseInt(lineParts[0], 10);
+    const end = lineParts.length === 2 ? parseInt(lineParts[1], 10) : start;
+    lines = { start, end };
+} else {
+    lines = null;
+}
+
+if (lines) {
+    const rawSrcLines = rawSrc.split("\n");
+    rawSrc = rawSrcLines.slice(lines.start - 1, lines.end).join("\n");
+}
+
+const ext = (path[path.length - 1].split(".").pop() ?? "txt") as CodeLanguage;
+---
+<div>
+    <Code code={rawSrc} lang={ext} style="github-dark-default"/>
+</div>
