@@ -76,7 +76,7 @@ export default function Quiz({
                     : selectedIndex !== null
                       ? "border-none bg-gray-200 dark:bg-gray-600"
                       : "border-none bg-white dark:bg-slate-600"
-              } ${selectedIndex !== null ? "cursor-default" : "cursor-pointer hover:bg-gray-200"} `}
+              } ${selectedIndex !== null ? "cursor-default" : "cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700"} `}
               onClick={() => {
                 setSelectedIndex(index);
                 setIsCorrect(correctAnswerArray.includes(answer));
