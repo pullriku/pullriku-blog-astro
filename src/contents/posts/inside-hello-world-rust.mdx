@@ -214,7 +214,7 @@ impl Write for &Stdout {
 今ここまで辿ってきたのは、`print_to`関数の中で呼ばれている`global_s().write_fmt(args)`が最終的にどの実装へ到達するのか、その呼び出し先を明らかにするためでした。`stdout`関数が代入された`global_s`はこの`Stdout`構造体を返し、その`Write`トレイトの`write_fmt`メソッドが呼び出されます。
 
 `ReentrantLock`でロックを取得してから書き込んでいるようですね。
-書き込みには`LineWriter`構造体が使われています。私なりのコメントをコード内に追加してあります。
+書き込みには`LineWriter`構造体が使われています。
 
 ```rust:std/src/io/buffered/linewriter.rs:68,216
 pub struct LineWriter<W: ?Sized + Write> {
@@ -231,6 +231,7 @@ impl<W: ?Sized + Write> Write for LineWriter<W> {
 `LineWriter`は`BufWriter`をベースに行単位でバッファリングを行うための構造体です。改行文字が現れた時点でバッファをフラッシュ（書き込み）します。これにより、`print!` と `println!` の混在でも表示が崩れにくく、出力が自然なタイミングで流れます。
 
 `write_fmt`メソッドでは、`LineWriter`の補助的な役割を持つ`LineWriterShim`構造体を使って書き込んでいるようです。
+私なりのコメントをコード内に追加してあります。
 
 ```rust:std/src/io/buffered/linewritershim.rs:16,268
 pub struct LineWriterShim<'a, W: ?Sized + Write> {
@@ -258,14 +259,13 @@ impl<'a, W: ?Sized + Write> Write for LineWriterShim<'a, W> {
         };
 
         // フラッシュする
-        // write 関数には、新しいデータをインナーに書き込むのは1回だけ、という契約がある。
-        // フラッシュを後回しにすると、書き込み時にエラーが起きたときに
+        // write 関数には、新しいデータをインナーに書き込むのは1回だけ、という契約がある
+        // フラッシュを後回しにすると、書き込み時にエラーが起きたときに、
         // 何バイト消費したかを整合的に出すのが不可能になる
-        // ただし、内部ライターWはフラッシュしない
-        // 改行かわからないため
-        // このメソッドはBufWriterのみフラッシュし、内部ライターWはフラッシュしない
+        // ただし、このメソッドはBufWriterのみフラッシュし、内部ライターWはフラッシュしない
+        // なぜならここが改行かわからないため
         //
-        // `write_all` は「必要なら複数回書くことが許される」ため、よりシンプル
+        // ちなみに`write_all` は「必要なら複数回書くことが許される」ため、よりシンプル
         self.buffer.flush_buf()?;
 
         // 改行までを書き込む
@@ -326,7 +326,7 @@ impl<'a, W: ?Sized + Write> Write for LineWriterShim<'a, W> {
                 self.buffer.write_all(buf)
             }
             Some(newline_idx) => {
-                // 改行あり
+                // 改行がある場合
                 let (lines, tail) = buf.split_at(newline_idx + 1);
 
                 if self.buffered().is_empty() {
@@ -346,7 +346,7 @@ impl<'a, W: ?Sized + Write> Write for LineWriterShim<'a, W> {
 }
 ```
 
-`write_fmt`の実装はありません。この場合は`Write`トレイトのデフォルト実装が使われます。このトレイトの`write_fmt`メソッドは、フォーマットがなく、完全に決まっている文字列に対しては`write_all`メソッドを呼び出すようになっています。よって、上に示す`write_all`が呼び出されます。
+`write_fmt`の実装はありません。この場合は`io::Write`トレイトのデフォルト実装が使われます。このトレイトの`write_fmt`メソッドは、フォーマットがなく完全に決まっている文字列に対しては、`write_all`メソッドを呼び出すようになっています。よって、上に示す`write_all`が呼び出されます。
 
 ```rust:std/src/io/mod.rs:1950
 pub trait Write {
@@ -361,8 +361,8 @@ pub trait Write {
 }
 ```
 
-
-さらに、呼び出されている`stdout_raw`関数を見てみましょう。
+さらに、実際に`LineWriter`の内部に渡されている構造体を見てみましょう。
+`stdout`関数内で呼び出されている`stdout_raw`関数を確認します。
 
 ```rust:std/src/io/stdio.rs:82
 const fn stdout_raw() -> StdoutRaw {
@@ -383,7 +383,7 @@ impl Write for StdoutRaw {
 }
 ```
 
-内部には、`sys::stdio`モジールの`Stdout`構造体が保持されています。
+この内部には、`sys::stdio`モジールの`Stdout`構造体が保持されています。
 
 ここまで階層を遡ってきたのは、`print_to` が呼んでいる `write_fmt` が最終的にどの実装へ到達するのか、その呼び出し先を明らかにするためでした。
 `print_to`関数の中で、`global_s().write_fmt(args)`が呼ばれていましたね。`global_s`には`stdout`関数が代入されおり、この関数は`Stdout`構造体を返します。その`Stdout`の内部にある構造体を知りたくてここに来たわけです。
@@ -392,6 +392,22 @@ impl Write for StdoutRaw {
 このメソッドは、さらに内部にある構造体の`write_fmt`メソッドを呼び出し、`handle_ebadf`関数でエラーハンドリングを行っています。
 
 `handle_ebadf`関数は、`EBADF`（不正なファイルディスクリプタ）エラーが発生した場合に特別な処理を行うための関数です。標準出力が存在しない・閉じられた場合に、エラーにならないよう、`Ok(())`を返すようにしています。
+
+ちなみにこの`sys::stdio`モジュールは、OSごとに異なる実装が提供されています。今回はLinuxを使っているため、UNIX系OS向けの実装が使われますが、WindowsやUEFIの場合は別の実装が使われます。
+
+```rust:std/src/sys/stdio/mod.rs:3
+cfg_select! {
+    any(target_family = "unix", target_os = "hermit") => {
+        mod unix;
+        pub use unix::*;
+    }
+    target_os = "windows" => {
+        mod windows;
+        pub use windows::*;
+    }
+    // 続く...
+}
+```
 
 さて、内側の構造体を見てみましょう。
 
@@ -436,9 +452,10 @@ impl FileDesc {
 }
 ```
 
-**ついに発見しました！**`libc::write`関数が呼ばれています。
+**ついに発見しました！**
+`libc::write`関数が呼ばれています。
 
-Unix系OSは全てをファイルとして扱うため、標準出力もファイルディスクリプタを通じて書き込みを行います。そして、ファイルディスクリプタに書き込むには、`write`システムコールを使います。
+UNIX系OSは全てをファイルとして扱うため、標準出力もファイルディスクリプタを通じて書き込みを行います。そして、ファイルディスクリプタに書き込むには、`write`システムコールを使います。
 システムコールはOSが提供する機能を呼び出すためのインターフェースです。`write`システムコールは、指定されたファイルディスクリプタにデータを書き込みます。
 このようなシステムコールは、C言語の標準ライブラリ（`libc`）を通じて利用されることが一般的で、今回はRustの`libc`クレートを通じて呼び出されています。
 
@@ -459,7 +476,6 @@ extern "C" {
 ![Rust の println! から libc::write に到達するまでの呼び出し階層の概要](@/contents/images/posts/inside-hello-world-rust/libc_write.jpeg)
 
 以降の処理は、この記事の環境なら、GNU C ライブラリ（`glibc`）が担当します。
-そちらの実装も追ってみたいですね。
 
 ## まとめ
 
