@@ -1,7 +1,0 @@
-ignoredBuiltDependencies:
-  - "@tailwindcss/oxide"
-onlyBuiltDependencies:
-  - "@biomejs/biome"
-  - esbuild
-  - sharp
-  - workerd

@@ -29,7 +29,10 @@ const sortedTagInfoList = series.sort((a, b) => a.id.localeCompare(b.id));
                 <div class="py-8">
                     <ContentArea>
                         <span class="text-3xl font-bold">
-                            <SeriesLink id={series.id} name={series.data.title} />
+                            <SeriesLink
+                                id={series.id}
+                                name={series.data.title}
+                            />
                         </span>
                         <p class="mt-6 text-base font-medium">
                             <Prose>

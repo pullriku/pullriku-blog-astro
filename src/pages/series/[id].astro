@@ -10,15 +10,15 @@ import { render } from "astro:content";
 import Prose from "@layouts/Prose";
 
 export const getStaticPaths = (async () => {
-  const allSeries = await getAllSeries();
+    const allSeries = await getAllSeries();
 
-  return allSeries.map((series) => ({
-    params: { id: series.id },
-  }));
+    return allSeries.map((series) => ({
+        params: { id: series.id },
+    }));
 }) satisfies GetStaticPaths;
 
 type Props = {
-  name: string;
+    name: string;
 };
 
 const { id } = Astro.params;
@@ -28,20 +28,20 @@ const { Content } = await render(series);
 ---
 
 <SingleColumnLayout
-  title={`連載: ${series.data.title}`}
-  desc={`本ブログの連載「${series.data.title}」についての記事を見ることができます。`}
+    title={`連載: ${series.data.title}`}
+    desc={`本ブログの連載「${series.data.title}」についての記事を見ることができます。`}
 >
-  <PageTitle>
-    <div class="flex items-center gap-2">
-      <Icon name="ic:baseline-library-books" width="1em" height="1em" />
-      連載: {series.data.title}
-    </div>
-  </PageTitle>
+    <PageTitle>
+        <div class="flex items-center gap-2">
+            <Icon name="ic:baseline-library-books" width="1em" height="1em" />
+            連載: {series.data.title}
+        </div>
+    </PageTitle>
 
-  <div class="mb-4 py-6">
-    <Prose>
-      <Content />
-    </Prose>
-  </div>
-  <MoreArticles posts={posts} />
+    <div class="mb-4 py-6">
+        <Prose>
+            <Content />
+        </Prose>
+    </div>
+    <MoreArticles posts={posts} />
 </SingleColumnLayout>

@@ -12,20 +12,20 @@ import PostContent from "@layouts/PostContent.astro";
 import Prose from "@layouts/Prose";
 import { zennUrl } from "@lib/foreign";
 import { ogpImagePath } from "@lib/ogp";
-import { getAllPosts } from "@lib/post";
+import { getAllPosts, getSeries } from "@lib/post";
 import type { GetStaticPaths } from "astro";
 
 export const getStaticPaths = (async () => {
-  const posts = await getAllPosts();
+    const posts = await getAllPosts();
 
-  return (
-    posts.map((post) => ({
-      params: {
-        id: post.id,
-      },
-      props: post,
-    })) ?? []
-  );
+    return (
+        posts.map((post) => ({
+            params: {
+                id: post.id,
+            },
+            props: post,
+        })) ?? []
+    );
 }) satisfies GetStaticPaths;
 
 type Props = CollectionEntry<"posts">;
@@ -34,86 +34,91 @@ const post = Astro.props;
 const { headings } = await render(post);
 const willSubtractDepth = !headings.map((heading) => heading.depth).includes(1);
 if (willSubtractDepth) {
-  for (const heading of headings) {
-    heading.depth -= 1;
-  }
+    for (const heading of headings) {
+        heading.depth -= 1;
+    }
 }
 
 const coverImageOpt = await getCover(post.id);
 const ogpImageUrl = ogpImagePath(post.id);
 const origin = Astro.site?.origin;
 
+const seriesOpt = post.data.series ? await getSeries(post.data.series) : null;
+
 const image = [origin + ogpImageUrl];
 if (coverImageOpt) {
-  image.unshift(origin + coverImageOpt.src);
+    image.unshift(origin + coverImageOpt.src);
 }
 const schemaArticle = {
-  "@context": "http://schema.org",
-  "@type": "Article",
-  mainEntityOfPage: {
-    "@type": "WebPage",
-    "@id": origin,
-  },
-  headline: post.data.title,
-  description: post.data.desc,
-  image: image,
-  datePublished: post.data.pubDate.toISOString(),
-  dateModified:
-    post.data.updatedDate?.toISOString() ?? post.data.pubDate.toISOString(),
-  author: {
-    "@type": "Person",
-    name: "pullriku",
-    url: "https://blog.pullriku.net/about/",
-  },
-  publisher: {
-    "@type": "Organization",
-    name: "pullriku-blog",
-    url: "https://blog.pullriku.net/",
-    logo: {
-      "@type": "ImageObject",
-      url: `${origin}/og-image.png`,
+    "@context": "http://schema.org",
+    "@type": "Article",
+    mainEntityOfPage: {
+        "@type": "WebPage",
+        "@id": origin,
     },
-  },
+    headline: post.data.title,
+    description: post.data.desc,
+    image: image,
+    datePublished: post.data.pubDate.toISOString(),
+    dateModified:
+        post.data.updatedDate?.toISOString() ?? post.data.pubDate.toISOString(),
+    author: {
+        "@type": "Person",
+        name: "pullriku",
+        url: "https://blog.pullriku.net/about/",
+    },
+    publisher: {
+        "@type": "Organization",
+        name: "pullriku-blog",
+        url: "https://blog.pullriku.net/",
+        logo: {
+            "@type": "ImageObject",
+            url: `${origin}/og-image.png`,
+        },
+    },
 };
 ---
 
 <BasicLayout
-  title={post.data.title}
-  desc={post.data.desc}
-  ,
-  canonicalUrl={post.data.zenn ? zennUrl(post.id) : undefined}
-  slug={post.id}
-  keywords={post.data.tags}
-  additionalSchemas={[schemaArticle]}
-  }
+    title={post.data.title}
+    desc={post.data.desc}
+    ,
+    canonicalUrl={post.data.zenn ? zennUrl(post.id) : undefined}
+    slug={post.id}
+    keywords={post.data.tags}
+    additionalSchemas={[schemaArticle]}
+    }
 >
-  <div class="px-0 md:px-4">
-    <Tags tags={post.data.tags ?? []} />
-    <div class="mx-auto justify-center gap-10 lg:flex">
-      <PostContent post={post} coverImageOpt={coverImageOpt}>
-        {
-          post.data.series && (
-            <div class="mb-4">
-              <SeriesLink name={post.data.series} />
-            </div>
-          )
-        }
-        <Prose>
-          <Article post={post} />
-          <PostHistory post={post} />
-        </Prose>
-        <div class="mt-8">
-          <Discussion />
+    <div class="px-0 md:px-4">
+        <Tags tags={post.data.tags ?? []} />
+        <div class="mx-auto justify-center gap-10 lg:flex">
+            <PostContent post={post} coverImageOpt={coverImageOpt}>
+                {
+                    seriesOpt && (
+                        <div class="mb-4">
+                            <SeriesLink
+                                id={seriesOpt.id}
+                                name={seriesOpt.data.title}
+                            />
+                        </div>
+                    )
+                }
+                <Prose>
+                    <Article post={post} />
+                    <PostHistory post={post} />
+                </Prose>
+                <div class="mt-8">
+                    <Discussion />
+                </div>
+            </PostContent>
+            {/* 目次の列（スクロールのためのコンテナ） */}
+            {
+                !post.data.zenn && (
+                    <div class={"hidden lg:block lg:h-auto lg:w-72"}>
+                        <TableOfContents headings={headings} />
+                    </div>
+                )
+            }
         </div>
-      </PostContent>
-      {/* 目次の列（スクロールのためのコンテナ） */}
-      {
-        !post.data.zenn && (
-          <div class={"hidden lg:block lg:h-auto lg:w-72"}>
-            <TableOfContents headings={headings} />
-          </div>
-        )
-      }
     </div>
-  </div>
 </BasicLayout>

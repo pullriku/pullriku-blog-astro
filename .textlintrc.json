@@ -1,10 +1,10 @@
 {
-  "plugins": {
-    "mdx": true
-  },
-  "filters": {},
-  "rules": {
-    "preset-ja-technical-writing": true,
-    "no-dropping-the-ra": true
-  }
+    "plugins": {
+        "mdx": true
+    },
+    "filters": {},
+    "rules": {
+        "preset-ja-technical-writing": true,
+        "no-dropping-the-ra": true
+    }
 }

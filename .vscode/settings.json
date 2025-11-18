@@ -1,20 +1,20 @@
 {
-  "files.associations": {
-    "*.css": "tailwindcss"
-  },
-  "[mdx]": {
-    "editor.wordWrap": "on"
-  },
-  "[astro]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "search.exclude": {
-    "**/.yarn": true,
-    "**/.pnp.*": true
-  },
-  "editor.codeActionsOnSave": {
-    "source.organizeImports.biome": "explicit"
-  },
-  "editor.indentSize": 4
+    "files.associations": {
+        "*.css": "tailwindcss"
+    },
+    "[mdx]": {
+        "editor.wordWrap": "on"
+    },
+    "[astro]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "biomejs.biome"
+    },
+    "search.exclude": {
+        "**/.yarn": true,
+        "**/.pnp.*": true
+    },
+    "editor.codeActionsOnSave": {
+        "source.organizeImports.biome": "explicit"
+    },
+    "editor.indentSize": 4
 }
