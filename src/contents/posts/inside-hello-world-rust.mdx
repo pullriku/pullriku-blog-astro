@@ -15,9 +15,9 @@ series = "inside-hello-world"
 part = 1
 pub = true
 
-# [[changelog]]
-# date = 
-# note = ""
+[[changelog]]
+date = 2025-11-18T17:11:00+09:00
+note = "LineWriterの説明を追加"
 +++
 
 import Details from "@layouts/Details.astro";
@@ -27,11 +27,13 @@ import Quiz from "@components/Quiz";
 
 Rust の「Hello, world!」は`println!`を使うだけのシンプルなコードですが、その裏ではどのような処理が行われているのでしょうか？
 
+結論から言うと、`write`システムコールを呼び出すために、C言語の`write`関数を呼び出すことになるのですが、そこに至るまでにはRust標準ライブラリの多層的な I/O 抽象化が存在しています。
+
 そこで今回は、`println!`マクロがどのように展開され、どのような関数が呼び出されていくのか、その実装を追いかけてみました。
 
 ## Hello, world!
 
-今回取り上げるのは、Hello, world! プログラムです。
+今回取り上げるのは、以下の Hello, world! プログラムです。
 
 ```rust
 fn main() {
@@ -74,9 +76,10 @@ git submodule update --init --recursive
 まずはこのマクロから始まります。
 `println!` マクロは、標準出力に文字列を出力するためのマクロです。このマクロはRust言語の標準ライブラリ`std`に含まれています。そのため、ここからは標準ライブラリを辿っていきます。
 
-GitHubでRust言語のリポジトリを開き、標準ライブラリを実装を確認します。
+GitHubでRust言語のリポジトリを開き、標準ライブラリの実装を確認します。
 
 - これ以降に取り上げるソースコードは、Rust言語の標準ライブラリや`libc`クレートのソースコードからの抜粋です。一部省略している箇所があります。
+- 解説は、ソースコードのコメントも参考にしつつ、筆者が理解した内容をまとめたものです。
 - コードブロックの上部にファイルパスと行番号を記載しています。
 
 https://github.com/rust-lang/rust/tree/1.91.1/library/std/src
@@ -128,7 +131,7 @@ pub fn _print(args: fmt::Arguments<'_>) {
 }
 ```
 
-引数の`fmt::Arguments`は、フォーマット済みの文字列を作るための“設計図”のような中間データです。まだ文字列にはなっていない状態で、後で I/O 層に渡して実際のバイト列にします。
+引数の`fmt::Arguments`は、フォーマット済みの文字列を作るための中間データです。
 `println!` / `format!` / `write!` などは、すべてまず `format_args!` / `format_args_nl` を内部で呼んで、この `Arguments` を作るところから始まります。
 
 ```rust:core/src/fmt/mod.rs:617
@@ -151,8 +154,8 @@ fn print_to<T>(args: fmt::Arguments<'_>, global_s: fn() -> T, label: &str)
 where
     T: Write,
 {
+    // キャプチャしていたらバッファに書き込む
     if print_to_buffer_if_capture_used(args) {
-        // Successfully wrote to capture buffer.
         return;
     }
 
@@ -164,7 +167,7 @@ where
 `print_to_buffer_if_capture_used`は「出力をキャプチャしているかを確認し、キャプチャしている場合はバッファに書き込む」関数です。
 例えば、`cargo test`では、デフォルトで`println!`の出力はキャプチャされ、テストが失敗した場合にのみ表示されます。今回は標準出力に書き込む場合を確認したいため、`false`が返ると仮定して次に進みます。
 
-引数の`global_s`関数を呼んで、`write_fmt`メソッドで書き込んでいるようです。この場合では、`stdout`関数が渡されています。
+引数の`global_s`関数を呼んで、`write_fmt`メソッドで書き込んでいるようです。この場合では、`global_s`には`stdout`関数が渡されています。
 その実装はこちら。
 
 ```rust:std/src/io/stdio.rs:716
@@ -177,7 +180,6 @@ pub fn stdout() -> Stdout {
 ```
 
 標準出力を表すデータをグローバル変数（static変数）に保持し、これを参照しているようですね。
-
 大文字の`STDOUT`はグローバル変数で、以下のようになっています。
 
 ```rust:std/src/io/stdio.rs:644
@@ -185,9 +187,180 @@ static STDOUT: OnceLock<ReentrantLock<RefCell<LineWriter<StdoutRaw>>>> = OnceLoc
 ```
 
 `OnceLock`は、一度だけ初期化されることを保証するための型です。`get_or_init`メソッドは、まだ初期化されていない場合に初期化を行い、その後は初期化済みの値を返します。これにより、`STDOUT`はプログラムの実行中に一度だけ初期化され、その後は同じインスタンスが使用されます。
-`ReentrantLock`は同じスレッドだけが何回ロックしても OK な Mutexです。通常の Mutex では、同じスレッドが二回ロックしようとするとデッドロックになりますが、`ReentrantLock`はそのスレッドがすでにロックしていれば lock_count を増やして何度でも再入できます。
 
-一度に複数のスレッドからアクセスされないよう、参照の際にロック（`ReentrantLock`）を取得する構造になっています。
+この`STDOUT`を使って初期化を行い、`Stdout`構造体を返しています。
+
+```rust:std/src/io/stdio.rs:608,787
+pub struct Stdout {
+    inner: &'static ReentrantLock<RefCell<LineWriter<StdoutRaw>>>,
+}
+
+impl Write for Stdout {
+    fn write_fmt(&mut self, args: fmt::Arguments<'_>) -> io::Result<()> {
+        // &*self は可変参照（排他参照）を不変参照（共有参照）に変換する
+        // つまり `&Stdout` の実装が呼ばれる
+        (&*self).write_fmt(args)
+    }
+}
+
+impl Write for &Stdout {
+    fn write_fmt(&mut self, args: fmt::Arguments<'_>) -> io::Result<()> {
+        self.lock().write_fmt(args)
+    }
+}
+```
+`ReentrantLock`は同じスレッドだけが何回ロックしても OK な Mutexです。通常の Mutex では、同じスレッドが二回ロックしようとするとデッドロックになりますが、`ReentrantLock`はそのスレッドがすでにロックしていれば `lock_count` を増やして何度でも再入できます。
+
+今ここまで辿ってきたのは、`print_to`関数の中で呼ばれている`global_s().write_fmt(args)`が最終的にどの実装へ到達するのか、その呼び出し先を明らかにするためでした。`stdout`関数が代入された`global_s`はこの`Stdout`構造体を返し、その`Write`トレイトの`write_fmt`メソッドが呼び出されます。
+
+`ReentrantLock`でロックを取得してから書き込んでいるようですね。
+書き込みには`LineWriter`構造体が使われています。私なりのコメントをコード内に追加してあります。
+
+```rust:std/src/io/buffered/linewriter.rs:68,216
+pub struct LineWriter<W: ?Sized + Write> {
+    inner: BufWriter<W>,
+}
+
+impl<W: ?Sized + Write> Write for LineWriter<W> {
+    fn write_fmt(&mut self, fmt: fmt::Arguments<'_>) -> io::Result<()> {
+        LineWriterShim::new(&mut self.inner).write_fmt(fmt)
+    }
+}
+```
+
+`LineWriter`は`BufWriter`をベースに行単位でバッファリングを行うための構造体です。改行文字が現れた時点でバッファをフラッシュ（書き込み）します。これにより、`print!` と `println!` の混在でも表示が崩れにくく、出力が自然なタイミングで流れます。
+
+`write_fmt`メソッドでは、`LineWriter`の補助的な役割を持つ`LineWriterShim`構造体を使って書き込んでいるようです。
+
+```rust:std/src/io/buffered/linewritershim.rs:16,268
+pub struct LineWriterShim<'a, W: ?Sized + Write> {
+    buffer: &'a mut BufWriter<W>,
+}
+
+// 実装を読む上での前提知識
+// flush: バッファの内容を内部ライターWに書き込み、さらにWをflushすること
+// flush_buf: バッファの内容を内部ライターWに書き込むこと（Wはflushしない）
+
+impl<'a, W: ?Sized + Write> Write for LineWriterShim<'a, W> {
+    /// 今回は関係ないが、面白いので載せておく
+    fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
+        // 今回のbufに新しい改行が含まれているかを調べる
+        // 後ろから探す
+        let newline_idx = match memchr::memrchr(b'\n', buf) {
+            None => {
+                // ないなら、既存バッファの末尾が改行ならフラッシュする
+                self.flush_if_completed_line()?;
+                // 今回のbufはバッファに追加して終わり
+                return self.buffer.write(buf);
+            }
+            // あるなら、位置を取得する
+            Some(newline_idx) => newline_idx + 1,
+        };
+
+        // フラッシュする
+        // write 関数には、新しいデータをインナーに書き込むのは1回だけ、という契約がある。
+        // フラッシュを後回しにすると、書き込み時にエラーが起きたときに
+        // 何バイト消費したかを整合的に出すのが不可能になる
+        // ただし、内部ライターWはフラッシュしない
+        // 改行かわからないため
+        // このメソッドはBufWriterのみフラッシュし、内部ライターWはフラッシュしない
+        //
+        // `write_all` は「必要なら複数回書くことが許される」ため、よりシンプル
+        self.buffer.flush_buf()?;
+
+        // 改行までを書き込む
+        let lines = &buf[..newline_idx];
+        // 内部ライターWに書き込めたバイト数
+        let flushed = self.inner_mut().write(lines)?;
+
+        if flushed == 0 {
+            return Ok(0);
+        }
+
+        // 残りの部分
+        let tail = if flushed >= newline_idx {
+            // 改行まで書き込めた場合
+            let tail = &buf[flushed..];
+
+            // 残りが大きすぎれば次回書く
+            if tail.len() >= self.buffer.capacity() {
+                return Ok(flushed);
+            }
+            // 残りをバッファに入れる
+            tail
+        } else if newline_idx - flushed <= self.buffer.capacity() {
+            // 残りのバッファに改行が収まる場合
+            // つまり、さっき改行までを全部書けなかった場合
+            // 改行までをバッファに入れる
+            &buf[flushed..newline_idx]
+        } else {
+            // 改行までの残りがバッファに収まらない場合
+            let scan_area = &buf[flushed..];
+            // バッファに入りきる範囲で改行を探す
+            let scan_area = &scan_area[..self.buffer.capacity()];
+            match memchr::memrchr(b'\n', scan_area) {
+                Some(newline_idx) => &scan_area[..newline_idx + 1],
+                None => scan_area,
+            }
+        };
+
+        // 残りをバッファへ
+        let buffered = self.buffer.write_to_buf(tail);
+        Ok(flushed + buffered)
+    }
+
+    fn flush(&mut self) -> io::Result<()> {
+        self.buffer.flush()
+    }
+
+    /// 関係あるのはこのメソッド
+    /// buf を全て書き込む
+    /// 必要なら複数回に分けて書き込むことが許される
+    fn write_all(&mut self, buf: &[u8]) -> io::Result<()> {
+        // 新しい改行があるか？
+        match memchr::memrchr(b'\n', buf) {
+            None => {
+                // ないならバッファに追加するだけ
+                // 既存バッファが改行で終わるならフラッシュする
+                self.flush_if_completed_line()?;
+                self.buffer.write_all(buf)
+            }
+            Some(newline_idx) => {
+                // 改行あり
+                let (lines, tail) = buf.split_at(newline_idx + 1);
+
+                if self.buffered().is_empty() {
+                    // バッファが空なら内部ライターWに直接書き込む
+                    self.inner_mut().write_all(lines)?;
+                } else {
+                    // 空でないなら、バッファに書き込んでからフラッシュする
+                    self.buffer.write_all(lines)?;
+                    self.buffer.flush_buf()?;
+                }
+
+                // 残りはバッファに追加する
+                self.buffer.write_all(tail)
+            }
+        }
+    }
+}
+```
+
+`write_fmt`の実装はありません。この場合は`Write`トレイトのデフォルト実装が使われます。このトレイトの`write_fmt`メソッドは、フォーマットがなく、完全に決まっている文字列に対しては`write_all`メソッドを呼び出すようになっています。よって、上に示す`write_all`が呼び出されます。
+
+```rust:std/src/io/mod.rs:1950
+pub trait Write {
+    fn write_fmt(&mut self, args: fmt::Arguments<'_>) -> Result<()> {
+        if let Some(s) = args.as_statically_known_str() {
+            self.write_all(s.as_bytes())
+        } else {
+            // フォーマットありなら、フォーマットの処理を行う
+            default_write_fmt(self, args)
+        }
+    }
+}
+```
+
 
 さらに、呼び出されている`stdout_raw`関数を見てみましょう。
 
