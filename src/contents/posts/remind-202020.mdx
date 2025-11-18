@@ -13,18 +13,21 @@ import Quiz from "@components/Quiz";
 
 ## はじめに
 
-macOSで、スリープが解除されてからn分ごとに通知を表示する方法をまとめる。
+macOSで、スリープが解除されてからn分ごとに通知を表示する方法をまとめておきます。
 
 ## システム構成
 
-1. [SleepWatcher](https://www.bernhard-baehr.de)を使ってスリープ解除を検知し、Pythonスクリプトを実行する。
-1. Pythonスクリプトにて、n分ごとにAppleScriptを実行し、通知を表示する。
+今回のシステム構成は以下の通りです。
+
+1. [SleepWatcher](https://www.bernhard-baehr.de)を使ってスリープ解除を検知し、Pythonスクリプトを実行する
+1. Pythonスクリプトにて、n分ごとにAppleScriptを実行し、通知を表示する
 
 ## 手順
 
 ### Python スクリプトを書く
 
-`while`ループと`sleep`を使って、一定間隔でAppleScript(`osascript`)を実行する。以下は20分ごとに通知を表示する例。`sleep_minutes = 20` の部分を変更すれば、任意の分数に変更できる。
+`while`ループと`sleep`を使って、一定間隔でAppleScript(`osascript`)を実行します。
+以下は20分ごとに通知を表示する例で、`sleep_minutes = 20` の部分を変更すれば、任意の分数に変更できます。
 
 ```python
 import time
@@ -66,12 +69,12 @@ if __name__ == "__main__":
 
 ### SleepWatcherの設定
 
-SleepWatcherの設定ファイルを作成する。
+SleepWatcherの設定ファイルを作成します。
 
-まず、スリープ解除時の処理として、Pythonスクリプトを起動するコマンドを書く。
-`~/.wakeup`にPythonスクリプトを起動するコマンドを記述する。
+まず、スリープ解除時の処理として、Pythonスクリプトを起動するコマンドを書きます。
+`~/.wakeup`にPythonスクリプトを起動するコマンドを記述します。
 
-念のため、既に起動している同じスクリプトを終了させてから、新たに起動するようにしている。
+念のため、既に起動している同じスクリプトを終了させてから、新たに起動するようにしています。
 
 ```zsh:~/.wakeup
 #!/bin/zsh
@@ -82,15 +85,15 @@ nohup $CMD >/tmp/20rule.log 2>&1 &
 
 ```
 
-この例では`uv`を使ってPythonスクリプトを実行しているが、`python3`や`python`コマンドを使っても問題ない。
-その場合は`CMD`が以下のようになる。
+この例では`uv`を使ってPythonスクリプトを実行しているが、`python3`や`python`コマンドを使っても問題ありません。
+その場合は`CMD`が以下のようになります。
 
 ```
 python3 /path/to/your/script.py
 ```
 
-次に、スリープ時にPythonスクリプトを終了させるコマンドを書く。
-`~/.sleep`にファイルを作成する。
+次に、スリープ時にPythonスクリプトを終了させるコマンドを書きます。
+`~/.sleep`にファイルを作成します。
 
 ```zsh:~/.sleep
 #!/bin/zsh
@@ -101,7 +104,7 @@ pkill -f $CMD 2> /dev/null
 
 ### SleepWatcherのインストール
 
-Homebrewでインストールできる。
+Homebrewでインストールできます。
 
 ```zsh
 brew install sleepwatcher
@@ -109,14 +112,14 @@ brew install sleepwatcher
 
 ### SleepWatcherの起動設定
 
-Homebrewのサービスとして起動する。
+Homebrewのサービスとして起動します。
 ```zsh
 brew services start sleepwatcher
 ```
 
 ## おわりに
 
-この方法を使って、定期的に休憩を促す通知を表示できる。
+この方法を使って、定期的に休憩を促す通知を表示できます。休憩の目安として使ってみるといいかもしれません。
 
 
 ## 参考
