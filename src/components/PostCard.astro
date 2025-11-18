@@ -14,6 +14,7 @@ import { zennUrl } from "@lib/foreign.ts";
 import { Icon } from "astro-icon/components";
 import IssueBadge from "./IssueBadge.astro";
 import SeriesName from "./SeriesName.astro";
+import { getSeries } from "@lib/post";
 
 type Props = {
     post: CollectionEntry<"posts">;
@@ -25,6 +26,8 @@ const cover = await getCover(post.id);
 const time = post.data.pubDate.toISOString().split("T")[0];
 
 const href = post.data.zenn ? zennUrl(post.id) : `/posts/${post.id}`;
+
+const seriesOpt = post.data.series ? await getSeries(post.data.series) : null;
 ---
 
 <a
@@ -51,12 +54,12 @@ const href = post.data.zenn ? zennUrl(post.id) : `/posts/${post.id}`;
 
     <div class="flex flex-1 flex-col">
         {
-            post.data.series && post.data.part && (
+            seriesOpt && (
                 <div class="mb-2 flex items-center gap-2">
                     <div class="shrink-0">
-                        <IssueBadge number={post.data.part} />
+                        <IssueBadge number={post.data.part!} />
                     </div>
-                    <SeriesName name={post.data.series} />
+                    <SeriesName name={seriesOpt.data.title} />
                 </div>
             )
         }
