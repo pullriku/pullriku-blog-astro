@@ -5,7 +5,7 @@ import ContentArea from "@layouts/ContentArea.astro";
 import PageTitle from "@layouts/PageTitle.astro";
 import Prose from "@layouts/Prose";
 import SingleColumnLayout from "@layouts/SingleColumnLayout.astro";
-import { getAllSeries, getPostsBySeries } from "@lib/post";
+import { getAllSeries } from "@lib/post";
 import { render } from "astro:content";
 
 const series = await getAllSeries();
