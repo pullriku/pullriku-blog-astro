@@ -17,7 +17,7 @@ const logs: { date: Date, note: string}[] | undefined = post.data.changelog;
 ---
 
 {
-    logs && (
+    logs && logs.length !== 0 && (
         <div>
             <h2>変更履歴</h2>
             <table>
