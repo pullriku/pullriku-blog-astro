@@ -1,0 +1,290 @@
+---
+title: Rustの「Hello, world!」は何をしているのか？
+desc: "Rust の「Hello, world!」が println! マクロから標準ライブラリの I/O 層を経て、libc::write を呼び出すまでの内部処理を調べてみました"
+pubDate: 2025-11-18
+tags: [
+    "Rust",
+    "Hello, world!",
+    "Rust std",
+    " libc",
+    "低レイヤ",
+    "システムプログラミング",
+    "システムコール",
+]
+pub: false
+---
+
+import Details from "@layouts/Details.astro";
+import X from "@components/XEmbed.astro";
+// 必ずclientディレクティブを設定する
+import Quiz from "@components/Quiz";
+
+Rust の「Hello, world!」は`println!`を使うだけのシンプルなコードですが、その裏ではどのような処理が行われているのでしょうか？
+
+そこで今回は、`println!`マクロがどのように展開され、どのような関数が呼び出されていくのか、その実装を追いかけてみました。
+
+## Hello, world!
+
+今回取り上げるのは、Hello, world! プログラムです。
+
+```rust
+fn main() {
+    println!("Hello, world!");
+}
+```
+
+```
+$ cargo run
+Hello, world!
+```
+
+<Details title="環境と調査方法">
+環境は以下の通りです。
+
+- Rust 1.91.1
+- OS: Ubuntu 22.04 LTS
+- アーキテクチャ: x86_64
+
+Rustのターゲットは`x86_64-unknown-linux-gnu`です。
+
+Rust言語のGitHubリポジトリをクローンし、`1.91.1`タグをチェックアウトしてソースコードを調査しました。
+Rust Analyzerが動くように、`./x.py setup`コマンドを実行します。
+
+```bash
+git clone https://github.com/rust-lang/rust.git
+cd rust
+git checkout 1.91.1
+git submodule update --init --recursive
+./x.py setup
+```
+
+このようにすると、VSCodeでRust Analyzerが動作するようになり、ソースコードの定義ジャンプやシンボル検索ができるようになります。
+</Details>
+
+## 深掘り
+
+### `println!` マクロ
+
+まずはこのマクロから始まります。
+`println!` マクロは、標準出力に文字列を出力するためのマクロです。このマクロはRust言語の標準ライブラリ`std`に含まれています。そのため、ここからは標準ライブラリを辿っていきます。
+
+GitHubでRust言語のリポジトリを開き、標準ライブラリを実装を確認します。
+
+- これ以降に取り上げるソースコードは、Rust言語の標準ライブラリや`libc`クレートのソースコードからの抜粋です。一部省略している箇所があります。
+- コードブロックの上部にファイルパスと行番号を記載しています。
+
+https://github.com/rust-lang/rust/tree/1.91.1/library/std/src
+
+このマクロの定義は`macro.rs`ファイルにあります。
+
+```rust:std/src/macro.rs:138
+macro_rules! println {
+    () => {
+        $crate::print!("\n")
+    };
+    ($($arg:tt)*) => {{
+        $crate::io::_print($crate::format_args_nl!($($arg)*));
+    }};
+}
+```
+
+引数ありの場合は2つめのパターンにマッチし、`format_args_nl` マクロでフォーマットされた引数を `_print` 関数に渡しています。
+`format_args_nl`マクロは`std`ではなく、`core`で定義されているようです。
+
+```rust:std/src/lib.rs:726
+pub use core::{
+    assert, assert_matches, cfg, column, compile_error, concat, const_format_args, env, file,
+    format_args, format_args_nl, // ...
+};
+```
+
+`nl`は「new line」の略で、改行を意味します。改行なしの`format_args!`マクロもあります。
+coreライブラリの実装を見に行きましょう。
+
+```rust:core/src/macros/mod.rs:1022
+macro_rules! format_args_nl {
+    ($fmt:expr) => {{ /* compiler built-in */ }};
+    ($fmt:expr, $($args:tt)*) => {{ /* compiler built-in */ }};
+}
+```
+
+これはコンパイラに組み込まれているマクロのため、coreでの実装は特にありません。Rustコンパイラ（`rustc`）が最終的にフォーマット処理を行います。
+
+詳細を知りたい場合は、[Rustコンパイラのソースコード](https://github.com/rust-lang/rust/blob/ed61e7d7e242494fb7057f2657300d9e77bb4fcb/compiler/rustc_builtin_macros/src/format.rs#L1075C1-L1081C2)を調べる必要がありますが、ここでは割愛します。
+
+### 標準出力への書き込み
+
+フォーマットが完了したら、`_print`関数に渡されます。次にこの関数を見てみましょう。
+
+```rust:std/src/io/stdio.rs:1274
+pub fn _print(args: fmt::Arguments<'_>) {
+    print_to(args, stdout, "stdout");
+}
+```
+
+引数の`fmt::Arguments`は、フォーマット済みの文字列を作るための“設計図”のような中間データです。まだ文字列にはなっていない状態で、後で I/O 層に渡して実際のバイト列にします。
+`println!` / `format!` / `write!` などは、すべてまず `format_args!` / `format_args_nl` を内部で呼んで、この `Arguments` を作るところから始まります。
+
+```rust:core/src/fmt/mod.rs:617
+pub struct Arguments<'a> {
+    // 出力するフォーマット文字列の分割された部分（リテラル部分）
+    pieces: &'a [&'static str],
+
+    // {} の中の指定（幅・整形など）。全部デフォルトなら None。
+    fmt: Option<&'a [rt::Placeholder]>,
+
+    // {} に入れる値たち。pieces のあいだに順番に差し込まれる。
+    args: &'a [rt::Argument<'a>],
+}
+```
+
+この`Arguments`を`print_to`関数に渡しています。次にこの関数を見てみましょう。
+
+```rust:std/src/io/stdio.rs:1155
+fn print_to<T>(args: fmt::Arguments<'_>, global_s: fn() -> T, label: &str)
+where
+    T: Write,
+{
+    if print_to_buffer_if_capture_used(args) {
+        // Successfully wrote to capture buffer.
+        return;
+    }
+
+    if let Err(e) = global_s().write_fmt(args) {
+        panic!("failed printing to {label}: {e}");
+    }
+}
+```
+`print_to_buffer_if_capture_used`は「出力をキャプチャしているかを確認し、キャプチャしている場合はバッファに書き込む」関数です。
+例えば、`cargo test`では、デフォルトで`println!`の出力はキャプチャされ、テストが失敗した場合にのみ表示されます。今回は標準出力に書き込む場合を確認したいため、`false`が返ると仮定して次に進みます。
+
+引数の`global_s`関数を呼んで、`write_fmt`メソッドで書き込んでいるようです。この場合では、`stdout`関数が渡されています。
+その実装はこちら。
+
+```rust:std/src/io/stdio.rs:716
+pub fn stdout() -> Stdout {
+    Stdout {
+        inner: STDOUT
+            .get_or_init(|| ReentrantLock::new(RefCell::new(LineWriter::new(stdout_raw())))),
+    }
+}
+```
+
+標準出力を表すデータをグローバル変数（static変数）に保持し、これを参照しているようですね。
+
+大文字の`STDOUT`はグローバル変数で、以下のようになっています。
+
+```rust:std/src/io/stdio.rs:644
+static STDOUT: OnceLock<ReentrantLock<RefCell<LineWriter<StdoutRaw>>>> = OnceLock::new();
+```
+
+`OnceLock`は、一度だけ初期化されることを保証するための型です。`get_or_init`メソッドは、まだ初期化されていない場合に初期化を行い、その後は初期化済みの値を返します。これにより、`STDOUT`はプログラムの実行中に一度だけ初期化され、その後は同じインスタンスが使用されます。
+`ReentrantLock`は同じスレッドだけが何回ロックしても OK な Mutexです。通常の Mutex では、同じスレッドが二回ロックしようとするとデッドロックになりますが、`ReentrantLock`はそのスレッドがすでにロックしていれば lock_count を増やして何度でも再入できます。
+
+一度に複数のスレッドからアクセスされないよう、参照の際にロック（`ReentrantLock`）を取得する構造になっています。
+
+さらに、呼び出されている`stdout_raw`関数を見てみましょう。
+
+```rust:std/src/io/stdio.rs:82
+const fn stdout_raw() -> StdoutRaw {
+    StdoutRaw(stdio::Stdout::new())
+}
+```
+
+この構造体を返しています。
+
+```rust:std/src/io/stdio.rs:52,139
+struct StdoutRaw(stdio::Stdout);
+
+impl Write for StdoutRaw {
+
+    fn write_fmt(&mut self, fmt: fmt::Arguments<'_>) -> io::Result<()> {
+        handle_ebadf(self.0.write_fmt(fmt), || Ok(()))
+    }
+}
+```
+
+内部には、`sys::stdio`モジールの`Stdout`構造体が保持されています。
+
+ここまで階層を遡ってきたのは、`print_to` が呼んでいる `write_fmt` が最終的にどの実装へ到達するのか、その呼び出し先を明らかにするためでした。
+`print_to`関数の中で、`global_s().write_fmt(args)`が呼ばれていましたね。`global_s`には`stdout`関数が代入されおり、この関数は`Stdout`構造体を返します。その`Stdout`の内部にある構造体を知りたくてここに来たわけです。
+
+つまり、この構造体の`write_fmt`メソッドが呼び出されます。
+このメソッドは、さらに内部にある構造体の`write_fmt`メソッドを呼び出し、`handle_ebadf`関数でエラーハンドリングを行っています。
+
+`handle_ebadf`関数は、`EBADF`（不正なファイルディスクリプタ）エラーが発生した場合に特別な処理を行うための関数です。標準出力が存在しない・閉じられた場合に、エラーにならないよう、`Ok(())`を返すようにしています。
+
+さて、内側の構造体を見てみましょう。
+
+```rust:std/src/sys/stdio/unix.rs:15,49
+pub struct Stdout;
+
+impl io::Write for Stdout {
+    fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
+        unsafe { ManuallyDrop::new(FileDesc::from_raw_fd(STDOUT_FILENO)).write(buf) }
+    }
+```
+
+`write_fmt`メソッドの定義はなく、この場合は`io::Write`トレイトのデフォルト実装が使われます。このトレイトの`write_fmt`メソッドは、いずれ`write`メソッドを呼び出すようになっています。よって`write`の実装を確認します。
+
+この`write`メソッドは標準出力のファイルディスクリプタを取得して書き込んでいます。
+ファイルディスクリプタは、UNIX系OSがファイル・ディレクトリ・ソケット・端末・デバイスなどの、「ファイルっぽいもの」を一元的に扱うための仕組みです。
+
+ファイルディスクリプタの番号を表す`STDOUT_FILENO`の定義は、`libc`クレートにあります。このクレートはC言語をRustから利用するための橋渡しの役割を果たします。
+
+```rust:<外部クレート>libc-0.2.175/src/unix/unix_like/mod.rs:552
+pub const STDOUT_FILENO: c_int = 1;
+```
+
+標準出力はファイルディスクリプタの番号`1`に対応しています。`0`は標準入力、`2`は標準エラー出力です。
+
+次に、`FileDesc`構造体がどうやって書き込みを行うのかを見てみます。
+
+```rust:std/src/sys/fd/unix.rs:47,344
+pub struct FileDesc(OwnedFd);
+
+impl FileDesc {
+    pub fn write(&self, buf: &[u8]) -> io::Result<usize> {
+        let ret = cvt(unsafe {
+            libc::write(
+                self.as_raw_fd(),
+                buf.as_ptr() as *const libc::c_void,
+                cmp::min(buf.len(), READ_LIMIT),
+            )
+        })?;
+        Ok(ret as usize)
+    }
+}
+```
+
+**ついに発見しました！**`libc::write`関数が呼ばれています。
+
+Unix系OSは全てをファイルとして扱うため、標準出力もファイルディスクリプタを通じて書き込みを行います。そして、ファイルディスクリプタに書き込むには、`write`システムコールを使います。
+システムコールはOSが提供する機能を呼び出すためのインターフェースです。`write`システムコールは、指定されたファイルディスクリプタにデータを書き込みます。
+このようなシステムコールは、C言語の標準ライブラリ（`libc`）を通じて利用されることが一般的で、今回はRustの`libc`クレートを通じて呼び出されています。
+
+`write`は、ファイルディスクリプタ、書き込むデータのポインタ、書き込むデータの長さを引数に取ります。
+`libc`クレートの中にある宣言を見てみましょう。
+
+```rust:<外部クレート>libc-0.2.175/src/unix/mod.rs:1122
+extern "C" {
+    pub fn write(fd: c_int, buf: *const c_void, count: size_t) -> ssize_t;
+}
+```
+
+この関数はC言語の`write`関数を呼び出しており、最終的にはOSの`write`システムコールを通じで、標準出力にデータを書き込んでいます。
+
+この関数の実装がC言語側にあるため、Rust言語側ではこれ以上掘り下げられません。
+というわけで、この記事で掘り下げるのはここまでです。たくさんの抽象化レイヤを越えて、C言語の`write`関数に到達しました。
+
+![Rust の println! から libc::write に到達するまでの呼び出し階層の概要](@/contents/images/posts/inside-hello-world-rust/libc_write.jpeg)
+
+以降の処理は、この記事の環境なら、GNU C ライブラリ（`glibc`）が担当します。
+そちらの実装も追ってみたいですね。
+
+## まとめ
+
+Rustの「Hello, world!」プログラムでは、`println!`マクロが呼び出され、フォーマットされた文字列が標準出力に書き込まれます。この過程で、標準ライブラリのI/O層を経由し、最終的には`libc::write`関数を通じて、C言語の処理が呼び出されます。
+
+今回はRust側の実装まででしたが、この先には`glibc`の内部処理やLinuxカーネルの`sys_write`も続いています。また、端末（ターミナル）への表示処理も関わってきます。
+こちらも別の記事で追ってみたいですね。
