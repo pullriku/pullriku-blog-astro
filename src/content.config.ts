@@ -25,6 +25,13 @@ const postsSchema = z
         series: z.string().optional(),
         /** 記事の連載のパート番号 */
         part: z.number().int().optional(),
+        /** 変更履歴 */
+        changelog: z.object({
+            /** 変更日 */
+            date: z.date(),
+            /** 変更内容 */
+            note: z.string(),
+        }).array().optional(),
     })
     .superRefine((data, ctx) => {
         // seriesが指定されている場合、partも指定されていることを確認
