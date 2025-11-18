@@ -10,21 +10,17 @@ jobs:
             deployments: write
         steps:
             - name: Checkout
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
               with:
                   submodules: true
                   fetch-depth: 0
                   token: ${{ secrets.GITHUB_TOKEN }}
-            - name: Setup Node.js
-              uses: actions/setup-node@v2
-              with:
-                  node-version: "23"
-            - name: enable corepack
-              run: corepack enable
+            - name: Setup Bun
+              uses: oven-sh/setup-bun@v2
             - name: Install dependencies
-              run: pnpm install
+              run: bun --bun install
             - name: Build
-              run: pnpm astro build
+              run: bun --bun run build
 
             - name: Publish to Cloudflare Pages
               uses: cloudflare/wrangler-action@v3
